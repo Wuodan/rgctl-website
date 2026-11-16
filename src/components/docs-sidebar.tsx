@@ -97,7 +97,7 @@ export function DocsSidebar({ currentPath }: { currentPath?: string }) {
       aria-label="Documentation"
       className="space-y-6 text-sm lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto"
     >
-      <p className="font-[family-name:var(--font-serif)] text-base font-semibold text-[var(--ink)]">
+      <p className="font-[family-name:var(--font-ui)] text-[13px] font-medium uppercase tracking-wider text-[var(--mute)]">
         Docs
       </p>
       {DOCS_NAV.map((section) => (
@@ -116,8 +116,8 @@ export function DocsSidebar({ currentPath }: { currentPath?: string }) {
                     href={link.href}
                     className={
                       active
-                        ? "font-medium text-[var(--primary)] underline"
-                        : "text-[var(--body)] hover:text-[var(--ink)] hover:underline"
+                        ? "rounded-md border border-[var(--chip-border)] bg-[var(--chip)] px-2 py-0.5 font-medium text-[var(--chip-fg)]"
+                        : "rounded-md px-2 py-0.5 text-[var(--body)] hover:text-[var(--ink)]"
                     }
                   >
                     {link.label}

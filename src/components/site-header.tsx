@@ -25,12 +25,12 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--hairline)] bg-[var(--canvas)]/92 backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[var(--hairline)] bg-[var(--canvas)]/92 font-[family-name:var(--font-ui)] backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 text-[var(--ink)]">
             <Terminal className="h-4 w-4 text-[var(--primary)]" aria-hidden />
-            <span className="font-[family-name:var(--font-serif)] text-[19px] font-semibold tracking-tight">
+            <span className="text-[15px] font-medium tracking-wide">
               rgctl
             </span>
           </Link>
@@ -43,10 +43,10 @@ export function SiteHeader() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "rounded-[3px] px-2.5 py-1.5 text-sm font-medium transition-colors",
+                    "rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors",
                     active
-                      ? "bg-[var(--canvas-soft)] text-[var(--ink)]"
-                      : "text-[var(--body)] hover:text-[var(--ink)]",
+                      ? "border border-[var(--chip-border)] bg-[var(--chip)] text-[var(--chip-fg)]"
+                      : "border border-transparent text-[var(--body)] hover:text-[var(--ink)]",
                   )}
                 >
                   {item.label}

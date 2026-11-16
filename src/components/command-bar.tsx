@@ -3,6 +3,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { TokenSpans } from "@/components/highlighted-code";
+import { highlightRgctlInvocation } from "@/lib/code-highlight";
 
 const examples = [
   {
@@ -51,8 +53,8 @@ export function CommandBar() {
       </div>
       <div className="flex items-center gap-3 px-2 py-3 font-[family-name:var(--font-mono)] text-[13px]">
         <span className="text-[var(--mute)]">$</span>
-        <span className="flex-1 truncate text-[var(--ink)]">
-          rgctl {current.cmd}
+        <span className="flex-1 truncate">
+          <TokenSpans tokens={highlightRgctlInvocation(`rgctl ${current.cmd}`)} />
         </span>
         <Link
           href={current.href}

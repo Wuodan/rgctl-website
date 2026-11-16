@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { Copy, Check } from "lucide-react";
+import { HighlightedCode, TokenSpans } from "@/components/highlighted-code";
+import { highlightSource, lineInvokesRgctl } from "@/lib/code-highlight";
 import { cn } from "@/lib/utils";
 
 export function TerminalBlock({
@@ -25,7 +27,7 @@ export function TerminalBlock({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-lg border border-[var(--hairline)] bg-[var(--canvas-soft)]",
+        "overflow-hidden rounded-lg border border-[var(--hairline)] bg-[var(--code-bg)]",
         className,
       )}
     >
@@ -49,20 +51,22 @@ export function TerminalBlock({
         </button>
       </div>
       <pre className="overflow-x-auto p-4 font-[family-name:var(--font-mono)] text-[13px] leading-relaxed text-[var(--body-strong)]">
-        {lines.map((line, i) => (
-          <div key={i} className="whitespace-pre-wrap">
-            {line.startsWith("$") || line.startsWith("rgctl") ? (
-              <>
-                <span className="text-[var(--mute)]">{prompt} </span>
-                <span className="text-[var(--ink)]">
-                  {line.replace(/^\$\s?/, "")}
-                </span>
-              </>
-            ) : (
-              <span className="text-[var(--body)]">{line}</span>
-            )}
-          </div>
-        ))}
+        {lines.map((line, i) => {
+          const body = line.replace(/^\$\s?/, "");
+          const command = line.startsWith("$") || lineInvokesRgctl(body);
+          return (
+            <div key={i} className="whitespace-pre-wrap">
+              {command ? (
+                <>
+                  <span className="text-[var(--mute)]">{prompt} </span>
+                  <TokenSpans tokens={highlightSource(body, "bash").flat()} />
+                </>
+              ) : (
+                <span className="text-[var(--body)]">{line}</span>
+              )}
+            </div>
+          );
+        })}
       </pre>
     </div>
   );
@@ -80,15 +84,15 @@ export function JsonPanel({
   return (
     <div
       className={cn(
-        "overflow-hidden rounded-lg border border-[var(--hairline)] bg-[var(--canvas-soft)]",
+        "overflow-hidden rounded-lg border border-[var(--hairline)] bg-[var(--code-bg)]",
         className,
       )}
     >
       <div className="border-b border-[var(--hairline)] px-3 py-2 font-[family-name:var(--font-mono)] text-[11px] text-[var(--mute)]">
         {title}
       </div>
-      <pre className="overflow-x-auto p-4 font-[family-name:var(--font-mono)] text-[12px] leading-relaxed text-[var(--body-strong)]">
-        {json}
+      <pre className="overflow-x-auto p-4 font-[family-name:var(--font-mono)] text-[13px] leading-[1.55] text-[var(--tok-plain)]">
+        <HighlightedCode source={json} language="json" />
       </pre>
     </div>
   );

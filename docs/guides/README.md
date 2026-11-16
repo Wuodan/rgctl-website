@@ -2,37 +2,38 @@
 
 Practical, step-by-step guides for every major rgctl feature.
 
-Most CLI how-tos embed a short **VHS walkthrough** (captioned) at the top of the page. Tapes live in [`docs/videos/`](https://github.com/rgctl/rgctl/tree/main/docs/videos) and record against **CoolStore**.
+Most CLI how-tos embed a short **VHS walkthrough** (captioned) at the top of the page. Tapes live in [docs/videos/](https://github.com/rgctl/rgctl/tree/main/docs/videos) and record against **CoolStore**.
 
 > **Which fixture?**  
-> - **In-tree quickstart:** `rgctl-tests/ecommerce-java` (ships with the product repo — no extra clone). Best for first `discover` / `find` / `blast-radius` runs and the [User Guide](../user-guide.md).  
-> - **Full feature guides + demos:** **CoolStore** (`example/coolstore` or [konveyor-ecosystem/coolstore](https://github.com/konveyor-ecosystem/coolstore)) — larger Java EE app used in the how-tos below.
+> - **In-tree quickstart:** rgctl-tests/ecommerce-java (ships with the product repo — no extra clone). Best for first discover / find / blast-radius runs and the [User Guide](../user-guide.md).  
+> - **Full feature guides + demos:** **CoolStore** (example/coolstore or [konveyor-ecosystem/coolstore](https://github.com/konveyor-ecosystem/coolstore)) — larger Java EE app used in the how-tos below.
 
 ## Guides
 
 | Guide | Feature | Description |
 |-------|---------|-------------|
-| [CLI Command Reference & Architecture Guide](cli-command-reference.md) | All commands (`Lifecycle`, `Query`, `Analysis`, `Security`, `Policy`, `Meta`) | Complete command taxonomy, canonical vs alias map, and copy-pasteable CLI reference |
-| [Discovering and Indexing a Codebase](discovering-and-indexing.md) | `discover` | Build the knowledge graph from source code |
-| [Structured graph queries](structured-query.md) | `find` / `callers` / `relations` / … | Agent-facing graph exploration verbs |
-| [Dependency Injection and Frameworks](dependency-injection-and-frameworks.md) | `ExposesRoute` / `Injects` / `semantic` | HTTP routes, DI wiring, reflection & compiled `frameworks.bin` catalog (User + Developer guide) |
-| [Blast Radius Analysis](blast-radius-analysis.md) | `blast-radius` | Measure upstream impact before changing a function |
-| [Semantic Search](semantic-search.md) | `semantic` | Natural-language search over function symbols |
-| [Graph Metrics](graph-metrics.md) | `metrics` | FastPageRank, SampledBetweenness, Fast-Leiden communities, git churn |
-| [Community Detection](community-detection.md) | `communities` | Fast-Leiden clusters + HubStripPolicy; list and label |
-| [Program Slicing](program-slicing.md) | `slice` | Extract the minimal set of statements affecting a variable |
-| [Hybrid CPG](hybrid-cpg.md) | `cpg` | Combined call-graph + per-function CFG/PDG analysis |
-| [Inspecting CFG, PDG, and Dominance](inspecting-cfg-pdg-dominance.md) | `inspect` | Examine low-level control flow, data dependence, and dominator trees |
-| [Exporting Graphs](exporting-graphs.md) | `export` | Serialize graph data to JSON, GraphML, Graphviz, Mermaid, or Obsidian |
-| [Markdown Context Graph](markdown-context-graph.md) | `discover -l markdown` · `export` | Index docs, Obsidian/OKF export, fixture feature tour (k8s-website scale example) |
-| [CI Policy Checks](ci-policy-checks.md) | `check`, `review check` | PR temporal gates and local policy checks (`pr-check` alias) |
-| [Pull Request Review](pr-review.md) | `review paths` / `check` / `export` | Structural before/after call-path inspection and PR gates |
-| [HTTP Server and Dashboard](http-server-and-dashboard.md) | `serve` | Run an HTTP API and browser-based dashboard |
-| [Watch mode and incremental update](watch-mode.md) | `update`, `watch`, `serve --watch` | Keep the graph fresh without full rediscover |
-| [Migration Planning](migration-planning.md) | `discover --export-migration-hints` | Generate a dependency-aware migration roadmap |
-| [Clone Detection](clone-detection.md) | `clones` | Detect exact (Type-1), bloom, and sub-function fragment clones |
-| [Vulnerability and OSV Supply-Chain Analysis](vulnerability-and-osv-analysis.md) | `vuln`, `deps`, `taint`, `security` | End-to-end OSV advisory triage, manifest scanning, call-path reachability, and OpenVEX generation |
-| [Agent pack](agent-skill.md) | CoolStore install walkthrough | NL → `rgctl` + `/rgctl:review` · `/rgctl:vuln` · `/rgctl:migrate` → CLI |
+| [CLI Command Reference & Architecture Guide](cli-command-reference.md) | All commands (Lifecycle, Query, Analysis, Security, Policy, Meta) | Complete command taxonomy, canonical vs alias map, and copy-pasteable CLI reference |
+| [Discovering and Indexing a Codebase](discovering-and-indexing.md) | discover | Build the knowledge graph from source code |
+| [Structured graph queries](structured-query.md) | find / callers / relations / … | Agent-facing graph exploration verbs |
+| [Dependency Injection and Frameworks](dependency-injection-and-frameworks.md) | ExposesRoute / Injects / semantic | HTTP routes, DI wiring, reflection & compiled frameworks.bin catalog (User + Developer guide) |
+| [Blast Radius Analysis](blast-radius-analysis.md) | blast-radius | Measure upstream impact before changing a function |
+| [Semantic Search](semantic-search.md) | semantic | Natural-language search over function symbols |
+| [Graph Metrics](graph-metrics.md) | metrics | FastPageRank, SampledBetweenness, Fast-Leiden communities, git churn |
+| [Community Detection](community-detection.md) | communities | Fast-Leiden clusters + HubStripPolicy; list and label |
+| [Program Slicing](program-slicing.md) | slice | Extract the minimal set of statements affecting a variable |
+| [Hybrid CPG](hybrid-cpg.md) | cpg | Combined call-graph + per-function CFG/PDG analysis |
+| [Inspecting CFG, PDG, and Dominance](inspecting-cfg-pdg-dominance.md) | inspect | Examine low-level control flow, data dependence, and dominator trees |
+| [Exporting Graphs](exporting-graphs.md) | export | Serialize graph data to JSON, GraphML, Graphviz, Mermaid, or Obsidian |
+| [Markdown Context Graph](markdown-context-graph.md) | discover -l markdown · export | Index docs, Obsidian/OKF export, fixture feature tour (k8s-website scale example) |
+| [CI Policy Checks](ci-policy-checks.md) | check, review check | PR temporal gates and local policy checks (pr-check alias) |
+| [Pull Request Review](pr-review.md) | review paths / check / export | Structural before/after call-path inspection and PR gates |
+| [HTTP Server and Dashboard](http-server-and-dashboard.md) | serve | Run an HTTP API and browser-based dashboard |
+| [Watch mode and incremental update](watch-mode.md) | update, watch, serve --watch | Keep the graph fresh without full rediscover |
+| [Migration Planning](migration-planning.md) | discover --export-migration-hints | Generate a dependency-aware migration roadmap |
+| [Clone Detection](clone-detection.md) | clones | Detect exact (Type-1), bloom, and sub-function fragment clones |
+| [Vulnerability Reachability, OSV Fetch & OpenVEX/SARIF](vulnerability-reachability.md) | vuln fetch, vuln scan, vuln analyze, -f sarif | Network OSV feed + offline/Trivy/SBOM overrides, --strict-reachability, --with-dep-stubs, Tier-1 lockfile matrix, OpenVEX PURLs & SARIF 2.1.0 |
+| [Vulnerability and OSV Supply-Chain Analysis](vulnerability-and-osv-analysis.md) | vuln, deps, taint, security | Step-by-step CoolStore walkthrough of OSV triage, manifest scanning, call-path reachability, and OpenVEX generation |
+| [Agent pack](agent-skill.md) | CoolStore install walkthrough | NL → rgctl + /rgctl:review · /rgctl:vuln · /rgctl:migrate → CLI |
 
 ## Prerequisites
 
@@ -48,6 +49,6 @@ cd coolstore
 ## Related Resources
 
 - [User Guide](../user-guide.md) -- full CLI reference and tutorial
-- [JSON API Reference](../json-api.md) -- schema details for `-f json` output
-- [Agent pack](agent-skill.md) -- install `rgctl` + review/vuln/migrate skills (and slash commands)
+- [JSON API Reference](../json-api.md) -- schema details for -f json output
+- [Agent pack](agent-skill.md) -- install rgctl + review/vuln/migrate skills (and slash commands)
 - [Introduction](../Introduction.md) -- definitions of key terms

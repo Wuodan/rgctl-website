@@ -2,18 +2,18 @@
 
 ## Introduction
 
-The `clones` command detects duplicated code across your repository. Unlike whole-file comparison tools or brute-force pairwise AST isomorphism, `rgctl` uses high-performance graph representations, token sketches, and canonical graph hashing to detect both whole-function and sub-function clones in sub-second time without polluting the graph snapshot.
+The clones command detects duplicated code across your repository. Unlike whole-file comparison tools or brute-force pairwise AST isomorphism, rgctl uses high-performance graph representations, token sketches, and canonical graph hashing to detect both whole-function and sub-function clones in sub-second time without polluting the graph snapshot.
 
-`rgctl` provides three complementary clone detection modes:
+rgctl provides three complementary clone detection modes:
 
 | Mode | Target | Technique | Guarantee | Schema |
 |------|--------|-----------|-----------|--------|
-| **`exact`** | Whole function | BLAKE3 `code_hash` equality | Type-1 exact body match | v1 |
-| **`bloom`** | Whole function | 256-bit `token_bloom` LSH bands (64-bit band keys) + Jaccard | Type-2 similarity candidate | v1 |
-| **`fragment`** | Sub-function | SESE hammocks + 2-iter 1-WL canonical hash | Type-3/4 structural match ($3 \le |S| \le 15$) | v2 |
+| **exact** | Whole function | BLAKE3 code_hash equality | Type-1 exact body match | v1 |
+| **bloom** | Whole function | 256-bit token_bloom LSH bands (64-bit band keys) + Jaccard | Type-2 similarity candidate | v1 |
+| **fragment** | Sub-function | SESE hammocks + 2-iter 1-WL canonical hash | Type-3/4 structural match ($3 \le |S| \le 15$) | v2 |
 
 > [!NOTE]
-> **Clone detection vs. Semantic search:** `clones` answers *"Where else is this exact code or control-flow fragment copied?"* by grouping implementations against each other. Conversely, `semantic query` answers *"Which functions implement this natural-language intent?"* via dense embedding nearest neighbors.
+> **Clone detection vs. Semantic search:** clones answers *"Where else is this exact code or control-flow fragment copied?"* by grouping implementations against each other. Conversely, semantic query answers *"Which functions implement this natural-language intent?"* via dense embedding nearest neighbors.
 
 ---
 
@@ -28,9 +28,9 @@ The `clones` command detects duplicated code across your repository. Unlike whol
 
 ## Architecture & Algorithms
 
-### Sub-Function Fragment Clones (`--mode fragment`)
+### Sub-Function Fragment Clones (--mode fragment)
 
-Instead of arbitrary linear sliding windows (which break under interleaved comments or minor edits) or exponential subgraph isomorphism ($\mathcal{O}(2^{|V|})$), `rgctl` extracts and matches **Single-Entry Single-Exit (SESE) hammocks**:
+Instead of arbitrary linear sliding windows (which break under interleaved comments or minor edits) or exponential subgraph isomorphism ($\mathcal{O}(2^{|V|})$), rgctl extracts and matches **Single-Entry Single-Exit (SESE) hammocks**:
 
 ```mermaid
 flowchart TD
@@ -40,11 +40,11 @@ flowchart TD
   S2 --> MATCH["Emit Schema v2 Matches<br/>start_line, end_line, enclosing_function"]
 ```
 
-1. **SESE Hammock Extraction:** Bounded by statement count ($3 \le |S| \le 15$), CFG regions are identified using dominator trees and post-dominator trees (`crates/rgctl-analysis/src/sese.rs`). Every path entering the region enters through node $u$, and every path exiting leaves through node $v$.
-2. **Weisfeiler-Lehman (1-WL) Canonical Hashing:** Subgraphs are assigned invariant 64-bit structural hashes using 2 iterations of 1-WL color refinement (`crates/rgctl-analysis/src/wl_hash.rs`). Statements are categorized into normalized kinds (`If`, `Loop`, `Call`, `Assign`, `Decl`, `Return`) and combined with directed edge tags (`Next`, `IfTrue`, `IfFalse`, Def-Use). Renaming variables, adding comments, or reformatting whitespace does not alter the hash.
+1. **SESE Hammock Extraction:** Bounded by statement count ($3 \le |S| \le 15$), CFG regions are identified using dominator trees and post-dominator trees (crates/rgctl-analysis/src/sese.rs). Every path entering the region enters through node $u$, and every path exiting leaves through node $v$.
+2. **Weisfeiler-Lehman (1-WL) Canonical Hashing:** Subgraphs are assigned invariant 64-bit structural hashes using 2 iterations of 1-WL color refinement (crates/rgctl-analysis/src/wl_hash.rs). Statements are categorized into normalized kinds (If, Loop, Call, Assign, Decl, Return) and combined with directed edge tags (Next, IfTrue, IfFalse, Def-Use). Renaming variables, adding comments, or reformatting whitespace does not alter the hash.
 3. **Two-Stage Filtering:**
-   - **Stage 1 (Bitwise Pre-Filter):** Evaluates `(func.bloom & seed_bloom) == seed_bloom` in $\mathcal{O}(N)$ bitwise time across all functions in `graph.snapshot.bin`, pruning $>95\%$ of functions before any parsing occurs.
-   - **Stage 2 (CFG Matching):** Evaluates candidate functions by reading the v3 CFG/PDG archive (`.rgctl/analysis/cfg_pdg.archive.bin` when pre-built with `discover --with-cfg`) or performing fast, ephemeral tree-sitter parses. Fragment mode does **not** require a whole-repo `--with-cfg` upfront.
+   - **Stage 1 (Bitwise Pre-Filter):** Evaluates (func.bloom & seed_bloom) == seed_bloom in $\mathcal{O}(N)$ bitwise time across all functions in graph.snapshot.bin, pruning $>95\%$ of functions before any parsing occurs.
+   - **Stage 2 (CFG Matching):** Evaluates candidate functions by reading the v3 CFG/PDG archive (.rgctl/analysis/cfg_pdg.archive.bin when pre-built with discover --with-cfg) or performing fast, ephemeral tree-sitter parses. Fragment mode does **not** require a whole-repo --with-cfg upfront.
 
 ---
 
@@ -52,7 +52,7 @@ flowchart TD
 
 ### 1. Build the Graph Snapshot
 
-Clone detection queries the pre-built snapshot. CoolStore examples use `-l java`:
+Clone detection queries the pre-built snapshot. CoolStore examples use -l java:
 
 ```bash
 rgctl -r example/coolstore discover . -l java
@@ -64,7 +64,7 @@ Exact and bloom modes need only the structural snapshot. Fragment Stage 2 prefer
 
 ---
 
-### 2. Whole-Function Exact Clones (`--mode exact`)
+### 2. Whole-Function Exact Clones (--mode exact)
 
 Locate all functions with identical code bodies (Type-1 clones):
 
@@ -72,7 +72,7 @@ Locate all functions with identical code bodies (Type-1 clones):
 rgctl -r example/coolstore -f json clones --mode exact --min-loc 5 --exclude test
 ```
 
-**Output** (Java-only CoolStore currently has no Type-1 pairs at `min-loc` 5):
+**Output** (Java-only CoolStore currently has no Type-1 pairs at min-loc 5):
 
 ```json
 {
@@ -88,11 +88,11 @@ rgctl -r example/coolstore -f json clones --mode exact --min-loc 5 --exclude tes
 }
 ```
 
-Writes `.rgctl/clones.json` sidecar cache keyed by `graph_digest`. On larger corpora, `groups[]` members include `id`, `name`, `file`, `start_line`, `end_line`, `loc`, plus `hash` / `confidence` on each group.
+Writes .rgctl/clones.json sidecar cache keyed by graph_digest. On larger corpora, groups[] members include id, name, file, start_line, end_line, loc, plus hash / confidence on each group.
 
 ---
 
-### 3. Whole-Function Similarity Candidates (`--mode bloom`)
+### 3. Whole-Function Similarity Candidates (--mode bloom)
 
 Locate functions with similar vocabulary using 256-bit token Bloom sketches:
 
@@ -143,13 +143,13 @@ rgctl -r example/coolstore -f json clones --mode bloom --threshold 0.85 --min-lo
 }
 ```
 
-Writes `.rgctl/clones.bloom.json` sidecar cache keyed by `graph_digest`.
+Writes .rgctl/clones.bloom.json sidecar cache keyed by graph_digest.
 
 ---
 
-### 4. Seed-First Sub-Function Fragment Clones (`--mode fragment`)
+### 4. Seed-First Sub-Function Fragment Clones (--mode fragment)
 
-To search for duplicates of a SESE region inside `priceShoppingCart`:
+To search for duplicates of a SESE region inside priceShoppingCart:
 
 ```bash
 rgctl -r example/coolstore -f json clones \
@@ -181,8 +181,8 @@ rgctl -r example/coolstore -f json clones \
 ```
 
 **What this tells you:**
-- The seed hammock was extracted (`structural_hash` set) even when `group_count` is 0 — useful for confirming the SESE bounds before mining a larger corpus.
-- On repos with duplicated control-flow fragments, `groups[].members` include `enclosing_function`, `start_line` / `end_line`, and `statement_count`.
+- The seed hammock was extracted (structural_hash set) even when group_count is 0 — useful for confirming the SESE bounds before mining a larger corpus.
+- On repos with duplicated control-flow fragments, groups[].members include enclosing_function, start_line / end_line, and statement_count.
 
 ---
 
@@ -194,7 +194,7 @@ If a function name appears in multiple files:
 rgctl clones --mode fragment --seed priceShoppingCart
 ```
 
-`rgctl` detects the ambiguity and returns:
+rgctl detects the ambiguity and returns:
 
 ```text
 Error: Ambiguous symbol 'priceShoppingCart': 2 matches
@@ -219,7 +219,7 @@ To mine all duplicated sub-function fragments across the whole codebase without 
 rgctl -r example/coolstore -f json clones --mode fragment --min-statements 3 --max-statements 15
 ```
 
-This scans all indexed functions, extracts SESE hammocks within the statement bounds, groups them by their 1-WL canonical hash, and writes `.rgctl/clones.fragment.json`.
+This scans all indexed functions, extracts SESE hammocks within the statement bounds, groups them by their 1-WL canonical hash, and writes .rgctl/clones.fragment.json.
 
 ---
 
@@ -227,22 +227,22 @@ This scans all indexed functions, extracts SESE hammocks within the statement bo
 
 | Option | Modes | Default | Description |
 |--------|-------|---------|-------------|
-| `--mode <MODE>` | All | `exact` | Detection mode: `exact`, `bloom`, or `fragment`. |
-| `--seed <SEED>` | `fragment` | — | Seed function name or `file:lines` coordinate. |
-| `--file <PATH>` | `fragment`, symbol-scoped | — | Disambiguation file path. |
-| `--lines <START-END>` | `fragment` | — | 1-based line range (e.g. `24-32`) targeting a specific snippet. |
-| `--min-statements <N>` | `fragment` | `3` | Minimum statements in an extracted SESE hammock. |
-| `--max-statements <N>` | `fragment` | `15` | Maximum statements in an extracted SESE hammock. |
-| `--min-loc <N>` | `exact`, `bloom` | `5` | Minimum lines of code for whole functions. |
-| `--threshold <F>` | `bloom`, `fragment` | `0.85` (bloom), `1.0` (fragment) | Similarity threshold score. |
-| `--exclude <GLOB>` | All | `[]` | Exclude matching path components (e.g. `--exclude test`). |
-| `--lang <LANG>` | `exact` | — | Filter functions by programming language. |
-| `--no-cache` | `exact`, `bloom` | `false` | Bypass reading `.rgctl/clones*.json` sidecar. |
-| `--no-write` | `exact`, `bloom` | `false` | Prevent writing `.rgctl/clones*.json` sidecar. |
+| --mode \<MODE\> | All | exact | Detection mode: exact, bloom, or fragment. |
+| --seed \<SEED\> | fragment | — | Seed function name or file:lines coordinate. |
+| --file \<PATH\> | fragment, symbol-scoped | — | Disambiguation file path. |
+| --lines \<START-END\> | fragment | — | 1-based line range (e.g. 24-32) targeting a specific snippet. |
+| --min-statements \<N\> | fragment | 3 | Minimum statements in an extracted SESE hammock. |
+| --max-statements \<N\> | fragment | 15 | Maximum statements in an extracted SESE hammock. |
+| --min-loc \<N\> | exact, bloom | 5 | Minimum lines of code for whole functions. |
+| --threshold \<F\> | bloom, fragment | 0.85 (bloom), 1.0 (fragment) | Similarity threshold score. |
+| --exclude \<GLOB\> | All | [] | Exclude matching path components (e.g. --exclude test). |
+| --lang \<LANG\> | exact | — | Filter functions by programming language. |
+| --no-cache | exact, bloom | false | Bypass reading .rgctl/clones\*.json sidecar. |
+| --no-write | exact, bloom | false | Prevent writing .rgctl/clones\*.json sidecar. |
 
 ---
 
-## Working with `jq`
+## Working with jq
 
 Extract summary metrics:
 
@@ -261,7 +261,7 @@ rgctl -r example/coolstore -f json clones \
 
 ## Related Documentation
 
-- [JSON API Reference (`clones`)](../json-api.md#16b-clones)
+- [JSON API Reference (clones)](../json-api.md#16b-clones)
 - [Clone Detection Design](../design/clone-detection-design.md)
 - [CLI Command Reference](cli-command-reference.md)
 - [Inspecting CFG, PDG, and Dominance](inspecting-cfg-pdg-dominance.md)

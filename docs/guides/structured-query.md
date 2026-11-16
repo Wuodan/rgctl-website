@@ -2,7 +2,7 @@
 
 ## Introduction
 
-After `discover`, use **structured query verbs** to explore the indexed knowledge graph: `find`, `callers`, `callees`, `relations`, `inventory`, and `status`. Query verbs use a stable JSON envelope (`schema_version` **2**) when you pass `-f json`; `status` uses `schema_version` **3**.
+After discover, use **structured query verbs** to explore the indexed knowledge graph: find, callers, callees, relations, inventory, and status. Query verbs use a stable JSON envelope (schema_version **2**) when you pass -f json; status uses schema_version **3**.
 
 These commands are the **agent-facing** way to answer structural questions — symbol lookup, call neighborhoods, typed edges, and inventories — without loading whole files into context. Prefer them over ad-hoc graph languages in scripts and CI.
 
@@ -11,14 +11,14 @@ These commands are the **agent-facing** way to answer structural questions — s
 - **Inventory a codebase.** Count or list functions, classes, edge types, or communities.
 - **Resolve symbols.** Find definitions by name pattern, type, file glob, or scope prefix.
 - **Trace calls.** List direct or multi-hop callers and callees for a method.
-- **Walk relations.** Follow typed edges (`calls`, `overrides`, `cochangeswith`, `exposesroute`, `injects`, `contains`, `imports`, `violates`, …) with explicit direction — zero-hydration hot-column scans over `graph.snapshot.bin`.
-- **Session health.** `status` reports whether `.rgctl/graph.snapshot.bin` is present before heavier commands.
+- **Walk relations.** Follow typed edges (calls, overrides, cochangeswith, exposesroute, injects, contains, imports, violates, …) with explicit direction — zero-hydration hot-column scans over graph.snapshot.bin.
+- **Session health.** status reports whether .rgctl/graph.snapshot.bin is present before heavier commands.
 
 ## Example project
 
-This guide uses **CoolStore** (`example/coolstore`). Index first:
+This guide uses **CoolStore** (example/coolstore). Index first:
 
-CoolStore examples use `-l java` to index the Java backend only (skip Angular/bower).
+CoolStore examples use -l java to index the Java backend only (skip Angular/bower).
 
 ```bash
 rgctl -r example/coolstore discover -l java
@@ -32,7 +32,7 @@ rgctl -r example/coolstore discover -l java
 rgctl -r example/coolstore -f json status | jq '{status, nodes, edges, schema_version}'
 ```
 
-**Example** (after `discover -l java --with-cfg --with-harmonic`):
+**Example** (after discover -l java --with-cfg --with-harmonic):
 
 ```json
 {
@@ -43,7 +43,7 @@ rgctl -r example/coolstore -f json status | jq '{status, nodes, edges, schema_ve
 }
 ```
 
-Returns `status: "ok"` when a snapshot exists, plus node/edge counts, snapshot digest, and source staleness flags.
+Returns status: "ok" when a snapshot exists, plus node/edge counts, snapshot digest, and source staleness flags.
 
 ### 2. Function inventory
 
@@ -51,10 +51,10 @@ Returns `status: "ok"` when a snapshot exists, plus node/edge counts, snapshot d
 rgctl -r example/coolstore -f json inventory --by type | jq '.counts[] | select(.key=="function")'
 ```
 
-**Example:** `{"count": 152, "key": "function"}`
+**Example:** {"count": 152, "key": "function"}
 
 
-Text mode prints `key<TAB>count` rows. `--by` also accepts `edge`, `lang`, `file`, `community`, and `import-prefix`.
+Text mode prints key\<TAB\>count rows. --by also accepts edge, lang, file, community, and import-prefix.
 
 Count all functions without listing rows:
 
@@ -87,11 +87,11 @@ Pattern search (default limit 50):
 rgctl -r example/coolstore find '*Cart*' --type function
 ```
 
-Disambiguate overloads with `--file`, `--class`, or `--line` (same idea as `blast-radius`).
+Disambiguate overloads with --file, --class, or --line (same idea as blast-radius).
 
 ### 4. Callers and callees
 
-Who calls `priceShoppingCart`?
+Who calls priceShoppingCart?
 
 ```bash
 rgctl -r example/coolstore -f json callers priceShoppingCart | jq '.callers[:5]'
@@ -128,17 +128,17 @@ rgctl -r example/coolstore -f json callers priceShoppingCart | jq '.callers[:5]'
 ]
 ```
 
-Envelope keys: `callers`, `total`, `schema_version` (2). What does it call?
+Envelope keys: callers, total, schema_version (2). What does it call?
 
 ```bash
 rgctl -r example/coolstore callees priceShoppingCart --depth 2
 ```
 
-JSON uses `callers` / `callees` keys (not `neighbors`). Each row is an `EntityRow` with `id`, `name`, `type`, `file`, and optional `qualified_name`.
+JSON uses callers / callees keys (not neighbors). Each row is an EntityRow with id, name, type, file, and optional qualified_name.
 
 ### 5. Relations (CALLS and more)
 
-List call edges involving `priceShoppingCart`:
+List call edges involving priceShoppingCart:
 
 ```bash
 rgctl -r example/coolstore -f json relations priceShoppingCart --edge calls --direction both
@@ -166,7 +166,7 @@ rgctl -r example/coolstore -f json relations --edge exposesroute --limit 50
 rgctl -r example/coolstore -f json relations CartEndpoint --edge injects --direction out
 ```
 
-Edge names are lowercase CLI tokens (`calls`, `overrides`, `cochangeswith`, `exposesroute`, `injects`, `contains`, `imports`, `references`, `violates`, …). Direction: `out`, `in`, or `both`. See [Dependency Injection and Frameworks](dependency-injection-and-frameworks.md).
+Edge names are lowercase CLI tokens (calls, overrides, cochangeswith, exposesroute, injects, contains, imports, references, violates, …). Direction: out, in, or both. See [Dependency Injection and Frameworks](dependency-injection-and-frameworks.md).
 
 ### 6. Classes and modules
 
@@ -182,7 +182,7 @@ rgctl -r example/coolstore find '*Service' --type class --scope com.redhat.cools
 
 ### 7. Communities
 
-Community detection runs at `discover` and lives in `.rgctl/analysis_results.bin` (not as topology edges).
+Community detection runs at discover and lives in .rgctl/analysis_results.bin (not as topology edges).
 
 ```bash
 rgctl -r example/coolstore -f json communities list | jq '.communities[:5]'
@@ -221,17 +221,17 @@ rgctl -r example/coolstore -f json inventory --by community | jq '.counts[:5]'
 ]
 ```
 
-Heuristic labels (for example `coolstore.model::shoppingCartToJson`) help you choose a `--scope` prefix for `find`. Refresh labels with `communities label --write`. See [Community detection](community-detection.md).
+Heuristic labels (for example coolstore.model::shoppingCartToJson) help you choose a --scope prefix for find. Refresh labels with communities label --write. See [Community detection](community-detection.md).
 
 ### 8. Framework migration census (import prefixes & annotation attributes)
 
-Group imports by two-segment package/namespace prefix across any Tier-1 language (`.`, `::`, `/`, `\`):
+Group imports by two-segment package/namespace prefix across any Tier-1 language (., ::, /, \):
 
 ```bash
 rgctl -r example/coolstore -f json inventory --by import-prefix --prefix javax. | jq '.counts[:5]'
 ```
 
-Find classes or functions by annotation, decorator, or attribute (comma-separated) and include raw source arguments with `--show-attributes`:
+Find classes or functions by annotation, decorator, or attribute (comma-separated) and include raw source arguments with --show-attributes:
 
 ```bash
 rgctl -r example/coolstore -f json find \
@@ -240,7 +240,7 @@ rgctl -r example/coolstore -f json find \
   | jq '.entities[:5] | map({name, type, attributes})'
 ```
 
-You can also pass a container type (`Class`, `Interface`, `Struct`, `Enum`, or `Module`) directly to `callers` to aggregate incoming calls across all member methods plus DI `Injects` edges:
+You can also pass a container type (Class, Interface, Struct, Enum, or Module) directly to callers to aggregate incoming calls across all member methods plus DI Injects edges:
 
 ```bash
 rgctl -r example/coolstore -f json callers ShoppingCartService --depth 2 | jq '{total, callers: .callers[:4]}'
@@ -248,17 +248,17 @@ rgctl -r example/coolstore -f json callers ShoppingCartService --depth 2 | jq '{
 
 ### 9. Compatibility alias
 
-Prefer top-level **`rgctl find` / `callers` / `callees` / `relations` / `inventory`**. The hidden `rgctl query <verb> …` namespace remains a compatibility alias only.
+Prefer top-level **rgctl find / callers / callees / relations / inventory**. The hidden rgctl query \<verb\> … namespace remains a compatibility alias only.
 
 ## JSON shapes (summary)
 
 | Verb | Primary keys |
 |------|----------------|
-| `find` | `entities`, `returned`, `total`, `schema_version` (2) |
-| `callers` / `callees` | `callers` or `callees`, `total`, `schema_version` (2) |
-| `relations` | `edges` (`source`, `edge`, `target`, `direction`, `hops`), `returned`, `total`, optional seed `target` |
-| `inventory` | `by`, `counts` |
-| `status` | `status`, `nodes`, `edges`, `digest`, `schema_version` (3) |
+| find | entities, returned, total, schema_version (2) |
+| callers / callees | callers or callees, total, schema_version (2) |
+| relations | edges (source, edge, target, direction, hops), returned, total, optional seed target |
+| inventory | by, counts |
+| status | status, nodes, edges, digest, schema_version (3) |
 
 Full field catalog: [json-api.md](../json-api.md#5-structured-query-verbs).
 
@@ -266,27 +266,27 @@ Full field catalog: [json-api.md](../json-api.md#5-structured-query-verbs).
 
 | Flag | Verbs | Purpose |
 |------|-------|---------|
-| `-r REPO` | all | Repository root (same as `discover`) |
-| `-f json` | all | Machine-readable stdout |
-| `--type` | `find` | Node type (`function`, `class`, `interface`, `struct`, `enum`, `module`, …) |
-| `--annotation LIST` | `find` | Comma-separated annotation / attribute / decorator filter |
-| `--show-attributes` | `find` | Join raw annotation arguments from `.rgctl/annotation_args.json` |
-| `--file GLOB` | find, callers, callees, relations | Path filter |
-| `--scope PREFIX` | find, callers, callees, relations | Qualified-name prefix filter |
-| `--limit N` | find, callers, callees, relations, inventory | Cap rows (default 50 where applicable) |
-| `--exact` | `find` | Exact name match |
-| `--count-only` | `find` | Return counts only |
+| -r REPO | all | Repository root (same as discover) |
+| -f json | all | Machine-readable stdout |
+| --type | find | Node type (function, class, interface, struct, enum, module, …) |
+| --annotation LIST | find | Comma-separated annotation / attribute / decorator filter |
+| --show-attributes | find | Join raw annotation arguments from .rgctl/annotation_args.json |
+| --file GLOB | find, callers, callees, relations | Path filter |
+| --scope PREFIX | find, callers, callees, relations | Qualified-name prefix filter |
+| --limit N | find, callers, callees, relations, inventory | Cap rows (default 50 where applicable) |
+| --exact | find | Exact name match |
+| --count-only | find | Return counts only |
 
 ## Benefits
 
-- **Stable contracts.** Fixed verbs with `schema_version` 2 envelopes (query verbs) and `schema_version` 3 for `status`.
+- **Stable contracts.** Fixed verbs with schema_version 2 envelopes (query verbs) and schema_version 3 for status.
 - **Fast.** Queries mmap the session snapshot; no re-parse of source trees.
-- **Composable.** Chain with `blast-radius`, `metrics`, `cpg`, and `semantic query` on the same `.rgctl/` session.
+- **Composable.** Chain with blast-radius, metrics, cpg, and semantic query on the same .rgctl/ session.
 
 ## Related guides
 
-- [Discovering and indexing](discovering-and-indexing.md) — build `.rgctl/` first
+- [Discovering and indexing](discovering-and-indexing.md) — build .rgctl/ first
 - [Blast radius analysis](blast-radius-analysis.md) — weighted upstream impact from a symbol
-- [Community detection](community-detection.md) — labels and `communities list`
-- [Agent pack](agent-skill.md) — install the `rgctl` skill that calls these verbs
+- [Community detection](community-detection.md) — labels and communities list
+- [Agent pack](agent-skill.md) — install the rgctl skill that calls these verbs
 - [JSON API](../json-api.md) — exhaustive stdout schemas

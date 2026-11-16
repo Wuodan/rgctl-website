@@ -2,17 +2,17 @@
 
 ## Introduction
 
-The rgctl **agent pack** teaches AI coding agents (Claude Code, Antigravity, Codex, Cursor, …) how to answer structural questions with the rgctl CLI. `rgctl install --skill` installs a **core router skill** plus **three on-demand workflow skills** (and matching slash commands where the adapter supports them):
+The rgctl **agent pack** teaches AI coding agents (Claude Code, Antigravity, Codex, Cursor, …) how to answer structural questions with the rgctl CLI. rgctl install --skill installs a **core router skill** plus **three on-demand workflow skills** (and matching slash commands where the adapter supports them):
 
 | Piece | What it is | Example (Cursor, repo-local) |
 |-------|------------|------------------------------|
-| **Skill `rgctl`** | Core structural router + `references/` (command encyclopedia, workflow scenarios) | `.cursor/skills/rgctl/SKILL.md` |
-| **Skill `rgctl-review`** + **`/rgctl:review`** | PR / branch / worktree review → `REVIEW_REPORT.md` | `.cursor/skills/rgctl-review/` · `.cursor/commands/rgctl-review.md` |
-| **Skill `rgctl-vuln`** + **`/rgctl:vuln`** | OSV / CVE triage → deps check → analyze / OpenVEX | `.cursor/skills/rgctl-vuln/` · `.cursor/commands/rgctl-vuln.md` |
-| **Skill `rgctl-migrate`** + **`/rgctl:migrate`** | Strangler-Fig migration brief (`--export-migration-hints`) | `.cursor/skills/rgctl-migrate/` · `.cursor/commands/rgctl-migrate.md` |
-| **Policy snippet** | Optional structural bias | `.cursor/rules/rgctl-structural.mdc` (`--with-policy`) |
+| **Skill rgctl** | Core structural router + references/ (command encyclopedia, workflow scenarios) | .cursor/skills/rgctl/SKILL.md |
+| **Skill rgctl-review** + **/rgctl:review** | PR / branch / worktree review → REVIEW_REPORT.md | .cursor/skills/rgctl-review/ · .cursor/commands/rgctl-review.md |
+| **Skill rgctl-vuln** + **/rgctl:vuln** | OSV / CVE triage → deps check → analyze / OpenVEX | .cursor/skills/rgctl-vuln/ · .cursor/commands/rgctl-vuln.md |
+| **Skill rgctl-migrate** + **/rgctl:migrate** | Strangler-Fig migration brief (--export-migration-hints) | .cursor/skills/rgctl-migrate/ · .cursor/commands/rgctl-migrate.md |
+| **Policy snippet** | Optional structural bias | .cursor/rules/rgctl-structural.mdc (--with-policy) |
 
-The pack is **embedded in the `rgctl` binary** (OpenSpec-style dual install — no separate `--with-commands` flag). Retired per-workflow skills (`rgctl-discover`, `rgctl-gql`, `rgctl-impact`, …) are **not** reintroduced. Atomic lookups (`find`, `callers`, `blast-radius`, `slice`, …) stay in the meta skill **`rgctl`**; keep the slash palette to the three high-ceremony commands above. Agents load skills / invoke `/rgctl:review` · `/rgctl:vuln` · `/rgctl:migrate` and run `rgctl -f json` structured verbs. Scenario playbooks live under `references/workflows.md` inside the meta skill.
+The pack is **embedded in the rgctl binary** (OpenSpec-style dual install — no separate --with-commands flag). Retired per-workflow skills (rgctl-discover, rgctl-gql, rgctl-impact, …) are **not** reintroduced. Atomic lookups (find, callers, blast-radius, slice, …) stay in the meta skill **rgctl**; keep the slash palette to the three high-ceremony commands above. Agents load skills / invoke /rgctl:review · /rgctl:vuln · /rgctl:migrate and run rgctl -f json structured verbs. Scenario playbooks live under references/workflows.md inside the meta skill.
 
 ## Use Cases
 
@@ -40,9 +40,9 @@ With the pack installed, every code review conversation has access to architectu
 
 ## Example Project
 
-This guide uses the **CoolStore** (`example/coolstore`). Make sure you have run `discover` first:
+This guide uses the **CoolStore** (example/coolstore). Make sure you have run discover first:
 
-CoolStore examples use `-l java` to index the Java backend only (skip Angular/bower).
+CoolStore examples use -l java to index the Java backend only (skip Angular/bower).
 
 ```bash
 rgctl -r example/coolstore discover -l java
@@ -62,25 +62,25 @@ rgctl -r example/coolstore install --skill --tools cursor,claude,codex,antigravi
 
 Text mode lists each created or updated path. Typical layout (Cursor example):
 
-- `.cursor/skills/rgctl/SKILL.md` — core structural router
-- `.cursor/skills/rgctl/references/` — command encyclopedia, workflows, communities & policy
-- `.cursor/skills/rgctl-review/SKILL.md` — PR/branch review protocol
-- `.cursor/skills/rgctl-vuln/SKILL.md` — OSV / CVE triage protocol
-- `.cursor/skills/rgctl-migrate/SKILL.md` — Strangler-Fig migration protocol
-- `.cursor/commands/rgctl-review.md` — slash `/rgctl:review` (writes `REVIEW_REPORT.md`)
-- `.cursor/commands/rgctl-vuln.md` — slash `/rgctl:vuln`
-- `.cursor/commands/rgctl-migrate.md` — slash `/rgctl:migrate`
+- .cursor/skills/rgctl/SKILL.md — core structural router
+- .cursor/skills/rgctl/references/ — command encyclopedia, workflows, communities & policy
+- .cursor/skills/rgctl-review/SKILL.md — PR/branch review protocol
+- .cursor/skills/rgctl-vuln/SKILL.md — OSV / CVE triage protocol
+- .cursor/skills/rgctl-migrate/SKILL.md — Strangler-Fig migration protocol
+- .cursor/commands/rgctl-review.md — slash /rgctl:review (writes REVIEW_REPORT.md)
+- .cursor/commands/rgctl-vuln.md — slash /rgctl:vuln
+- .cursor/commands/rgctl-migrate.md — slash /rgctl:migrate
 
 **What happened:**
 
-- rgctl unpacked the embedded **agent pack** (codegen from `skills/rgctl/`, `skills/rgctl-{review,vuln,migrate}/`, and `agent-pack/`).
-- **Claude** uses `.claude/skills/` (+ commands where supported).
-- **Codex / agents / zed** share `.agents/skills/` (install dedupes).
-- **Cursor** uses `.cursor/skills/` and `.cursor/commands/`.
-- Scenario prose lives in `skills/rgctl/references/workflows.md` and is copied into the installed meta skill.
-- No network — content matches your `rgctl` binary version.
+- rgctl unpacked the embedded **agent pack** (codegen from skills/rgctl/, skills/rgctl-{review,vuln,migrate}/, and agent-pack/).
+- **Claude** uses .claude/skills/ (+ commands where supported).
+- **Codex / agents / zed** share .agents/skills/ (install dedupes).
+- **Cursor** uses .cursor/skills/ and .cursor/commands/.
+- Scenario prose lives in skills/rgctl/references/workflows.md and is copied into the installed meta skill.
+- No network — content matches your rgctl binary version.
 
-See [Install options reference](#install-options-reference) below for the full flag table and registry (`install --list-agents`).
+See [Install options reference](#install-options-reference) below for the full flag table and registry (install --list-agents).
 
 ### 2. Verify with JSON Output
 
@@ -115,15 +115,15 @@ rgctl -r example/coolstore -f json install --skill --tools cursor \
 }
 ```
 
-The `status` field for each write is one of:
-- `created` -- new file written
-- `unchanged` -- file already exists with identical content (idempotent)
-- `overwritten` -- existing file replaced (with `--force`)
-- `skipped_exists` -- file differs but `--force` was not set (exit code 1)
+The status field for each write is one of:
+- created -- new file written
+- unchanged -- file already exists with identical content (idempotent)
+- overwritten -- existing file replaced (with --force)
+- skipped_exists -- file differs but --force was not set (exit code 1)
 
 ### 3. Install for specific agents
 
-Limit adapters with **`--tools`** (comma-separated registry ids):
+Limit adapters with **--tools** (comma-separated registry ids):
 
 ```bash
 rgctl -r example/coolstore install --skill --tools claude
@@ -133,11 +133,11 @@ rgctl -r example/coolstore install --skill --tools cursor
 rgctl install --list-agents   # all ids and paths
 ```
 
-**`--host`** is deprecated; it still maps to a subset of tools but prints a warning.
+**--host** is deprecated; it still maps to a subset of tools but prints a warning.
 
 ### 4. Update After Upgrading rgctl
 
-When you upgrade rgctl, the embedded skill may have changed. Update it with `--force`:
+When you upgrade rgctl, the embedded skill may have changed. Update it with --force:
 
 ```bash
 rgctl -r example/coolstore install --skill --force
@@ -165,7 +165,7 @@ The skill includes a **decision table** that maps 19 categories of natural-langu
 
 ### Scenario
 
-You want to refactor `priceShoppingCart` in the CoolStore application -- perhaps splitting it into separate pricing methods for items and shipping. Before making changes, you need to understand the full impact.
+You want to refactor priceShoppingCart in the CoolStore application -- perhaps splitting it into separate pricing methods for items and shipping. Before making changes, you need to understand the full impact.
 
 ### What the Agent Does
 
@@ -212,7 +212,7 @@ The agent then reports:
 
 ### Going Deeper: Call Neighborhood
 
-The agent can then trace the call neighborhood to understand what `priceShoppingCart` itself depends on:
+The agent can then trace the call neighborhood to understand what priceShoppingCart itself depends on:
 
 ```bash
 rgctl -r example/coolstore -f json cpg calls priceShoppingCart
@@ -237,7 +237,7 @@ rgctl -r example/coolstore -f json cpg calls priceShoppingCart
 }
 ```
 
-Keys are `edges`, `function_id`, `function_name`, `schema_version` (not `edges_sample` / `returned`). Live CoolStore returns **17** edges (outgoing callees plus inbound callers). The agent reports: *"priceShoppingCart participates in a dense call neighborhood — initializing pricing, iterating cart items for totals/promo savings, shipping lookups, and final cart total — with inbound REST/service callers. A refactoring that splits item pricing from shipping pricing should preserve these call relationships."*
+Keys are edges, function_id, function_name, schema_version (not edges_sample / returned). Live CoolStore returns **17** edges (outgoing callees plus inbound callers). The agent reports: *"priceShoppingCart participates in a dense call neighborhood — initializing pricing, iterating cart items for totals/promo savings, shipping lookups, and final cart total — with inbound REST/service callers. A refactoring that splits item pricing from shipping pricing should preserve these call relationships."*
 
 ### Verifying Field Mutations
 
@@ -248,7 +248,7 @@ rgctl -r example/coolstore -f json cpg mutations \
   --type ShoppingCart --exclude-ctors
 ```
 
-**Output** (envelope keys; CoolStore currently returns an empty `mutations` array even though `cpg status` reports `field_write_count: 41` — type matching for Java setters is incomplete on this corpus):
+**Output** (envelope keys; CoolStore currently returns an empty mutations array even though cpg status reports field_write_count: 41 — type matching for Java setters is incomplete on this corpus):
 
 ```json
 {
@@ -261,7 +261,7 @@ rgctl -r example/coolstore -f json cpg mutations \
 }
 ```
 
-The agent should still cross-check field writes via `cpg status` / PDG / source when `mutations` is empty, and prefer `inspect` / `cpg flows` for pricing-field updates on `sc`.
+The agent should still cross-check field writes via cpg status / PDG / source when mutations is empty, and prefer inspect / cpg flows for pricing-field updates on sc.
 
 ---
 
@@ -285,7 +285,7 @@ rgctl -r example/coolstore discover -l java \
 
 Then reads the plan:
 
-With `-f json`, discover stdout **is** the migration plan (`schema_version` 2, `steps`); the same JSON is written to `.rgctl/migration_plan.json`.
+With -f json, discover stdout **is** the migration plan (schema_version 2, steps); the same JSON is written to .rgctl/migration_plan.json.
 
 ```json
 {
@@ -317,7 +317,7 @@ With `-f json`, discover stdout **is** the migration plan (`schema_version` 2, `
 
 The agent reports:
 
-> The migration plan contains 5 scheduled steps using the hybrid_default preset (balanced weighting of PageRank, harmonic centrality, and blast radius). First extraction targets are low-coupling packages such as `com.redhat.coolstore.persistence`, then utilities and REST, before denser service/model communities.
+> The migration plan contains 5 scheduled steps using the hybrid_default preset (balanced weighting of PageRank, harmonic centrality, and blast radius). First extraction targets are low-coupling packages such as com.redhat.coolstore.persistence, then utilities and REST, before denser service/model communities.
 
 ### Investigating a Migration Step
 
@@ -338,7 +338,7 @@ And checks blast radius on key functions (already shown above).
 
 ### Scenario
 
-You are migrating `priceShoppingCart` from Java to Go (or TypeScript, Rust, Python, etc.) and need to ensure the new implementation preserves the same data flow and logic.
+You are migrating priceShoppingCart from Java to Go (or TypeScript, Rust, Python, etc.) and need to ensure the new implementation preserves the same data flow and logic.
 
 ### What the Agent Does
 
@@ -383,7 +383,7 @@ rgctl -r example/coolstore -f json cpg mutations \
   --type ShoppingCart --exclude-ctors
 ```
 
-This lists every field that `priceShoppingCart` writes to, which the new implementation must also write.
+This lists every field that priceShoppingCart writes to, which the new implementation must also write.
 
 **Step 4: Extract the PDG.**
 
@@ -411,11 +411,11 @@ rgctl -r example/coolstore -f json cpg pdg priceShoppingCart
 
 **How the agent uses this:**
 
-The agent now has four language-independent facts about `priceShoppingCart`:
+The agent now has four language-independent facts about priceShoppingCart:
 
 1. **Data flow path**: iteration over cart items, accumulation of totals, shipping calculation, final total.
-2. **Call contract**: the outgoing callees from `cpg calls` (plus inbound callers in the same envelope).
-3. **Mutation contract**: field writes on `ShoppingCart` (via PDG / flows when `cpg mutations` is empty).
+2. **Call contract**: the outgoing callees from cpg calls (plus inbound callers in the same envelope).
+3. **Mutation contract**: field writes on ShoppingCart (via PDG / flows when cpg mutations is empty).
 4. **Dependency graph**: 19 control edges and 5 data edges encoding the computation structure.
 
 When writing the Go implementation, the agent verifies each fact against the new code. If a data-flow step is missing, a call is omitted, or a field mutation is skipped, the agent flags it.
@@ -428,7 +428,7 @@ The agent can report: *"The Java implementation of priceShoppingCart has 4 data-
 
 ### Scenario
 
-You need to write tests for `priceShoppingCart` and want to ensure you cover all branch paths and edge cases.
+You need to write tests for priceShoppingCart and want to ensure you cover all branch paths and edge cases.
 
 ### What the Agent Does
 
@@ -465,9 +465,9 @@ rgctl -r example/coolstore -f json inspect priceShoppingCart cfg
 }
 ```
 
-Keys are `edges`, `layer`, `nodes`, `pruned`, `schema_version`, `symbol` (12 nodes / 16 edges on CoolStore — not `node_count` / `edge_count` / `nodes_sample`). The agent identifies branch points from `nodes[].statements`:
+Keys are edges, layer, nodes, pruned, schema_version, symbol (12 nodes / 16 edges on CoolStore — not node_count / edge_count / nodes_sample). The agent identifies branch points from nodes[].statements:
 
-> priceShoppingCart CFG starts with a null check (`sc != null` on block_1) and continues through list/loop/shipping branches — test with null, empty, single-item, multi-item, and shipping-threshold carts.
+> priceShoppingCart CFG starts with a null check (sc != null on block_1) and continues through list/loop/shipping branches — test with null, empty, single-item, multi-item, and shipping-threshold carts.
 
 **Step 2: Examine data dependencies.**
 
@@ -477,7 +477,7 @@ rgctl -r example/coolstore -f json inspect priceShoppingCart pdg --edge-layer da
 
 The agent identifies the key data flows:
 
-> Variable `sc` flows through 3 data-dependency edges. Variable `sci` flows through the loop body. Test cases should verify that each accumulation step (cartItemTotal, cartItemPromoSavings, shippingTotal) produces correct values.
+> Variable sc flows through 3 data-dependency edges. Variable sci flows through the loop body. Test cases should verify that each accumulation step (cartItemTotal, cartItemPromoSavings, shippingTotal) produces correct values.
 
 **Step 3: Check field mutations to verify test assertions.**
 
@@ -486,11 +486,11 @@ rgctl -r example/coolstore -f json cpg mutations \
   --type ShoppingCart --exclude-ctors
 ```
 
-The agent reports: *"Your tests should assert on ShoppingCart pricing fields after calling priceShoppingCart (cartItemTotal, shippingTotal, cartTotal, promo savings) using PDG/flows when `cpg mutations` returns no rows. Here are the test cases derived from the CFG:"*
+The agent reports: *"Your tests should assert on ShoppingCart pricing fields after calling priceShoppingCart (cartItemTotal, shippingTotal, cartTotal, promo savings) using PDG/flows when cpg mutations returns no rows. Here are the test cases derived from the CFG:"*
 
 The agent can then generate concrete test cases:
 
-1. **Null input**: call `priceShoppingCart(null)` -- no fields should be mutated.
+1. **Null input**: call priceShoppingCart(null) -- no fields should be mutated.
 2. **Empty cart**: cart with no items -- totals should be zero.
 3. **Single item below threshold**: one item priced below 25 -- no shipping insurance.
 4. **Single item above threshold**: one item priced at or above 25 -- shipping insurance applied.
@@ -505,22 +505,22 @@ The skill embeds a decision table that maps natural-language patterns to CLI com
 
 | What You Ask the Agent | What the Agent Runs |
 |------------------------|---------------------|
-| "Generate a migration plan" | `discover . --with-harmonic --export-migration-hints` |
-| "What are the bottlenecks?" | `metrics --pagerank` |
-| "List all functions" | `find --type function --count-only` / `find --type function --limit 50` |
-| "What communities exist?" | `communities list` |
-| "Where is the checkout flow?" | `semantic index` then `semantic query "checkout flow"` |
-| "What's the impact of changing X?" | `blast-radius X` |
-| "Show the call stack around X" | `callers X --depth 3` / `callees X` |
-| "Where is ShoppingCart mutated?" | `cpg mutations --type ShoppingCart` |
-| "Trace variable X forward" | `cpg flows FILE --line N --variable X --direction forward` |
-| "Validate against policies" | `check --policy-file policy.json` or `review check --policy-file …` |
-| "PR call-path review" | Prefer `/rgctl:review` · or `review paths --base-ref origin/main` |
-| "Are we affected by this CVE?" | Prefer `/rgctl:vuln` · or `vuln triage` → `deps check` → `vuln analyze` |
-| "Generate a Strangler-Fig brief" | Prefer `/rgctl:migrate` · or `discover . --export-migration-hints` |
-| "Find fragment clones of this block" | `clones --mode fragment --seed FILE:START-END` |
+| "Generate a migration plan" | discover . --with-harmonic --export-migration-hints |
+| "What are the bottlenecks?" | metrics --pagerank |
+| "List all functions" | find --type function --count-only / find --type function --limit 50 |
+| "What communities exist?" | communities list |
+| "Where is the checkout flow?" | semantic index then semantic query "checkout flow" |
+| "What's the impact of changing X?" | blast-radius X |
+| "Show the call stack around X" | callers X --depth 3 / callees X |
+| "Where is ShoppingCart mutated?" | cpg mutations --type ShoppingCart |
+| "Trace variable X forward" | cpg flows FILE --line N --variable X --direction forward |
+| "Validate against policies" | check --policy-file policy.json or review check --policy-file … |
+| "PR call-path review" | Prefer /rgctl:review · or review paths --base-ref origin/main |
+| "Are we affected by this CVE?" | Prefer /rgctl:vuln · or vuln triage → deps check → vuln analyze |
+| "Generate a Strangler-Fig brief" | Prefer /rgctl:migrate · or discover . --export-migration-hints |
+| "Find fragment clones of this block" | clones --mode fragment --seed FILE:START-END |
 
-The agent handles disambiguation (e.g., adding `--class` or `--file` when a symbol name is ambiguous). For slicing, prefer lazy `rgctl slice` (no upfront `--with-cfg`); reserve `discover --with-cfg` for `taint --sink`, `cpg mutations`, and batch `inspect`.
+The agent handles disambiguation (e.g., adding --class or --file when a symbol name is ambiguous). For slicing, prefer lazy rgctl slice (no upfront --with-cfg); reserve discover --with-cfg for taint --sink, cpg mutations, and batch inspect.
 
 ## Install options reference
 
@@ -528,18 +528,18 @@ The agent handles disambiguation (e.g., adding `--class` or `--file` when a symb
 rgctl [-r REPO] install [FLAGS]
 ```
 
-You must pass at least one of **`--skill`** or **`--with-policy`**.
+You must pass at least one of **--skill** or **--with-policy**.
 
 | Flag | Effect |
 |------|--------|
-| **`--skill`** | Install meta skill **`rgctl`**, companion skills **`rgctl-review`**, **`rgctl-vuln`**, **`rgctl-migrate`**, and slash **commands** `/rgctl:review` · `/rgctl:vuln` · `/rgctl:migrate` for commands-enabled adapters. |
-| **`--with-policy`** | Structural bias snippet (e.g. `.cursor/rules/rgctl-structural.mdc`). Optional; does not replace skills. |
-| **`--tools id1,id2`** or **`--tools all`** | Which **registry adapters** receive files. **Default (omit flag):** `cursor`, `claude`, `codex`, `agents`, `antigravity`. **`all`** = full registry (~40 products). Unknown ids: stderr warning; if none valid, exit **1**. |
-| **`-g` / `--global`** | Install under your **home** (e.g. `~/.cursor/skills/…`) instead of repo-local paths. Only agents with `supports_global: true` (see `--list-agents`). |
-| **`--list-agents`** | Print the registry table and exit (no install). |
-| **`--force`** | Overwrite rgctl-managed files that differ from the bundled version. |
-| **`--host`** | **Deprecated** — use **`--tools`**. |
-| **`-f json`** | Schema version **3** install payload (`scope`, `agents`, per-write `kind` / `status`). |
+| **--skill** | Install meta skill **rgctl**, companion skills **rgctl-review**, **rgctl-vuln**, **rgctl-migrate**, and slash **commands** /rgctl:review · /rgctl:vuln · /rgctl:migrate for commands-enabled adapters. |
+| **--with-policy** | Structural bias snippet (e.g. .cursor/rules/rgctl-structural.mdc). Optional; does not replace skills. |
+| **--tools id1,id2** or **--tools all** | Which **registry adapters** receive files. **Default (omit flag):** cursor, claude, codex, agents, antigravity. **all** = full registry (~40 products). Unknown ids: stderr warning; if none valid, exit **1**. |
+| **-g / --global** | Install under your **home** (e.g. ~/.cursor/skills/…) instead of repo-local paths. Only agents with supports_global: true (see --list-agents). |
+| **--list-agents** | Print the registry table and exit (no install). |
+| **--force** | Overwrite rgctl-managed files that differ from the bundled version. |
+| **--host** | **Deprecated** — use **--tools**. |
+| **-f json** | Schema version **3** install payload (scope, agents, per-write kind / status). |
 
 ### Typical installs
 
@@ -559,41 +559,41 @@ rgctl install --skill --tools cursor --with-policy
 rgctl install --skill -g --tools cursor
 ```
 
-Install does **not** run `discover`. Index separately (`rgctl discover .`), then query with `rgctl -f json …`.
+Install does **not** run discover. Index separately (rgctl discover .), then query with rgctl -f json ….
 
 ### What gets written
 
-Paths come from **`agent-pack/agents/registry.toml`**.
+Paths come from **agent-pack/agents/registry.toml**.
 
 | Kind | Example (Cursor, repo-local) |
 |------|------------------------------|
-| Meta skill | `.cursor/skills/rgctl/SKILL.md` + `references/` |
-| Workflow skills | `.cursor/skills/rgctl-review/`, `rgctl-vuln/`, `rgctl-migrate/` |
-| Slash commands | `.cursor/commands/rgctl-{review,vuln,migrate}.md` → `/rgctl:review` · `/rgctl:vuln` · `/rgctl:migrate` |
-| Policy | `.cursor/rules/rgctl-structural.mdc` (with `--with-policy`) |
+| Meta skill | .cursor/skills/rgctl/SKILL.md + references/ |
+| Workflow skills | .cursor/skills/rgctl-review/, rgctl-vuln/, rgctl-migrate/ |
+| Slash commands | .cursor/commands/rgctl-{review,vuln,migrate}.md → /rgctl:review · /rgctl:vuln · /rgctl:migrate |
+| Policy | .cursor/rules/rgctl-structural.mdc (with --with-policy) |
 
-**Shared dedup:** `codex`, `agents`, and `zed` share `.agents/skills/` — install writes each destination once. Run `rgctl install --list-agents` for the full adapter table.
+**Shared dedup:** codex, agents, and zed share .agents/skills/ — install writes each destination once. Run rgctl install --list-agents for the full adapter table.
 
 ### Scenarios inside the skill
 
-Intent → CLI mappings for day-to-day structural work live in the meta skill’s NL routing table and `references/workflows.md` (discover, impact, flow, search, migrate, gate, vuln). High-ceremony workflows prefer the dedicated skills / slash commands:
+Intent → CLI mappings for day-to-day structural work live in the meta skill’s NL routing table and references/workflows.md (discover, impact, flow, search, migrate, gate, vuln). High-ceremony workflows prefer the dedicated skills / slash commands:
 
 | Intent | Prefer |
 |--------|--------|
-| PR / branch / worktree review | **`/rgctl:review`** → skill `rgctl-review` |
-| OSV / CVE / OpenVEX triage | **`/rgctl:vuln`** → skill `rgctl-vuln` |
-| Strangler-Fig migration brief | **`/rgctl:migrate`** → skill `rgctl-migrate` |
-| Find / callers / blast-radius / slice / … | Meta skill **`rgctl`** (no slash command) |
+| PR / branch / worktree review | **/rgctl:review** → skill rgctl-review |
+| OSV / CVE / OpenVEX triage | **/rgctl:vuln** → skill rgctl-vuln |
+| Strangler-Fig migration brief | **/rgctl:migrate** → skill rgctl-migrate |
+| Find / callers / blast-radius / slice / … | Meta skill **rgctl** (no slash command) |
 
-**Migrate** uses `--export-migration-hints` → `.rgctl/migration_plan.json` as the agent-facing migration deliverable. Retired folders (`rgctl-discover`, `rgctl-impact`, …) are not recreated.
+**Migrate** uses --export-migration-hints → .rgctl/migration_plan.json as the agent-facing migration deliverable. Retired folders (rgctl-discover, rgctl-impact, …) are not recreated.
 
 ## How the pack is distributed
 
-At **rgctl build** time, `rgctl-agent-pack-codegen` generates the pack from `agent-pack/manifest.yaml`, `agent-pack/agents/registry.toml`, and `skills/{rgctl,rgctl-review,rgctl-vuln,rgctl-migrate}/` (including `references/workflows.md`), then embeds it as a zip in the binary. This means:
+At **rgctl build** time, rgctl-agent-pack-codegen generates the pack from agent-pack/manifest.yaml, agent-pack/agents/registry.toml, and skills/{rgctl,rgctl-review,rgctl-vuln,rgctl-migrate}/ (including references/workflows.md), then embeds it as a zip in the binary. This means:
 
 - No network access needed to install.
 - Pack version matches the CLI version.
-- Upgrading `rgctl` and running `install --skill --force` refreshes skills.
+- Upgrading rgctl and running install --skill --force refreshes skills.
 - Target repos do not need a checkout of the rgctl source tree.
 
 ## Benefits
@@ -609,10 +609,10 @@ At **rgctl build** time, `rgctl-agent-pack-codegen` generates the pack from `age
 
 ## Related Guides
 
-- [USER_AGENTS_TEMPLATE](../agents/USER_AGENTS_TEMPLATE.md) — paste into *another* repo as `AGENTS.md`
+- [USER_AGENTS_TEMPLATE](../agents/USER_AGENTS_TEMPLATE.md) — paste into *another* repo as AGENTS.md
 - [Install page](/install/) — binary install / PATH
-- [Structured graph queries](structured-query.md) — `find` / `callers` / `relations`
-- [Discovering and Indexing a Codebase](discovering-and-indexing.md) — the `discover` step that all agent queries depend on
+- [Structured graph queries](structured-query.md) — find / callers / relations
+- [Discovering and Indexing a Codebase](discovering-and-indexing.md) — the discover step that all agent queries depend on
 - [Blast Radius Analysis](blast-radius-analysis.md) — the most common agent query for refactoring safety
 - [Hybrid CPG](hybrid-cpg.md) — mutations, flows, and call neighborhoods used in porting and testing
 - [Migration Planning](migration-planning.md) — the migration roadmap the agent can generate and explain

@@ -6,7 +6,7 @@ rgctl can generate a **dependency-aware migration roadmap** that tells you the o
 
 Migration planning answers the critical question: "In what order should we extract pieces of this monolith so that each step is safe and dependencies are respected?"
 
-For AI agents, prefer slash command **`/rgctl:migrate`** (skill `rgctl-migrate`) after `rgctl install --skill` — see the [agent pack guide](agent-skill.md). The CLI deliverable is still `.rgctl/migration_plan.json` from `discover --export-migration-hints`.
+For AI agents, prefer slash command **/rgctl:migrate** (skill rgctl-migrate) after rgctl install --skill — see the [agent pack guide](agent-skill.md). The CLI deliverable is still .rgctl/migration_plan.json from discover --export-migration-hints.
 
 ## Use Cases
 
@@ -18,7 +18,7 @@ For AI agents, prefer slash command **`/rgctl:migrate`** (skill `rgctl-migrate`)
 
 ## Example Project
 
-This guide uses the **CoolStore** (`example/coolstore`) -- a Java EE e-commerce application that is a realistic migration candidate.
+This guide uses the **CoolStore** (example/coolstore) -- a Java EE e-commerce application that is a realistic migration candidate.
 
 ## Step-by-Step
 
@@ -26,7 +26,7 @@ This guide uses the **CoolStore** (`example/coolstore`) -- a Java EE e-commerce 
 
 Migration planning requires harmonic centrality and the migration hints export:
 
-CoolStore examples use `-l java` to index the Java backend only (skip Angular/bower).
+CoolStore examples use -l java to index the Java backend only (skip Angular/bower).
 
 ```bash
 rgctl -r example/coolstore discover -l java \
@@ -48,17 +48,17 @@ rgctl -r example/coolstore discover -l java \
 [✓] rgctl discover finished in ~300ms
 ```
 
-With `-f json`, **stdout is the migration plan itself** (`schema_version` 2, `preset`, `steps`, …) — not DiscoverResponse telemetry (`command` / `metrics`). The same document is also written to `.rgctl/migration_plan.json`.
+With -f json, **stdout is the migration plan itself** (schema_version 2, preset, steps, …) — not DiscoverResponse telemetry (command / metrics). The same document is also written to .rgctl/migration_plan.json.
 
 **What happened:**
 
-- `--with-harmonic` computed **HyperBallHarmonic** centrality for every node, measuring how "reachable" each module is from the rest of the graph. This feeds into the migration priority score.
-- `--export-migration-hints` generated `.rgctl/migration_plan.json` with the full roadmap (and, with `-f json`, emitted that plan on stdout).
-- Communities come from **Fast-Leiden** (not Louvain / label propagation). Optional `--with-cfg` can enrich blast-radius / slice-aware scoring but is not required for the basic plan.
+- --with-harmonic computed **HyperBallHarmonic** centrality for every node, measuring how "reachable" each module is from the rest of the graph. This feeds into the migration priority score.
+- --export-migration-hints generated .rgctl/migration_plan.json with the full roadmap (and, with -f json, emitted that plan on stdout).
+- Communities come from **Fast-Leiden** (not Louvain / label propagation). Optional --with-cfg can enrich blast-radius / slice-aware scoring but is not required for the basic plan.
 
 ### 2. Read the Migration Plan
 
-Read the on-disk plan (same JSON as `-f json` stdout when `--export-migration-hints` is set):
+Read the on-disk plan (same JSON as -f json stdout when --export-migration-hints is set):
 
 ```bash
 cat example/coolstore/.rgctl/migration_plan.json
@@ -140,12 +140,12 @@ cat example/coolstore/.rgctl/migration_plan.json
 
 **What this tells you:**
 
-- **`preset: "hybrid_default"`** -- the default migration strategy, balancing PageRank, harmonic centrality, and blast radius with equal weights (0.33/0.33/0.34).
-- **`order_mode: "scheduled"`** -- steps are topologically sorted so dependencies are extracted before dependents.
-- **Step 1** -- extract `com.redhat.coolstore.persistence` first (lowest coupling / priority on this run).
-- **Step 2** -- extract `com.redhat.coolstore.utils` next in the scheduled order.
-- **`priority_score`** -- a combined score from the three metrics. Lower (more negative) scores come first in the scheduled order.
-- **`max_blast: 0.0`** -- neither of the first two steps has any blast-radius impact, making them safe starting points.
+- **preset: "hybrid_default"** -- the default migration strategy, balancing PageRank, harmonic centrality, and blast radius with equal weights (0.33/0.33/0.34).
+- **order_mode: "scheduled"** -- steps are topologically sorted so dependencies are extracted before dependents.
+- **Step 1** -- extract com.redhat.coolstore.persistence first (lowest coupling / priority on this run).
+- **Step 2** -- extract com.redhat.coolstore.utils next in the scheduled order.
+- **priority_score** -- a combined score from the three metrics. Lower (more negative) scores come first in the scheduled order.
+- **max_blast: 0.0** -- neither of the first two steps has any blast-radius impact, making them safe starting points.
 
 ### 3. Migration Presets
 
@@ -170,10 +170,10 @@ rgctl -r example/coolstore discover -l java \
 
 | Preset | Strategy | Best For |
 |--------|----------|----------|
-| `hybrid_default` | Equal weight to PageRank, harmonic, blast radius | General purpose |
-| `foundational_first` | Prioritize shared infrastructure | Libraries-first approach |
-| `dense_cluster` | Group tightly-coupled modules | Cluster extraction |
-| `risk_mitigation` | Prioritize low-risk, low-impact modules | Conservative migration |
+| hybrid_default | Equal weight to PageRank, harmonic, blast radius | General purpose |
+| foundational_first | Prioritize shared infrastructure | Libraries-first approach |
+| dense_cluster | Group tightly-coupled modules | Cluster extraction |
+| risk_mitigation | Prioritize low-risk, low-impact modules | Conservative migration |
 
 ### 4. Migration Order Modes
 
@@ -193,8 +193,8 @@ rgctl -r example/coolstore discover -l java \
 
 | Mode | Sorting | Use When |
 |------|---------|----------|
-| `scheduled` | Topological (respects dependencies) | You want a safe, step-by-step plan |
-| `priority` | By priority score (highest risk reduction first) | You want to see which modules matter most |
+| scheduled | Topological (respects dependencies) | You want a safe, step-by-step plan |
+| priority | By priority score (highest risk reduction first) | You want to see which modules matter most |
 
 ### 5. Reading the Plan Fields
 
@@ -202,15 +202,15 @@ Each step in the migration plan contains:
 
 | Field | Meaning |
 |-------|---------|
-| `step` | Extraction order (1 = first) |
-| `community_id` | The community (module cluster) to extract |
-| `label` | Human-readable name for the community |
-| `priority_score` | Combined metric score |
-| `schedule_step` | Position in the topological sort |
-| `priority_rank` | Position in the pure priority ranking |
-| `avg_pagerank` | Average PageRank of functions in this community |
-| `avg_harmonic` | Average harmonic centrality of functions in this community |
-| `max_blast` | Maximum blast-radius score of any function in this community |
+| step | Extraction order (1 = first) |
+| community_id | The community (module cluster) to extract |
+| label | Human-readable name for the community |
+| priority_score | Combined metric score |
+| schedule_step | Position in the topological sort |
+| priority_rank | Position in the pure priority ranking |
+| avg_pagerank | Average PageRank of functions in this community |
+| avg_harmonic | Average harmonic centrality of functions in this community |
+| max_blast | Maximum blast-radius score of any function in this community |
 
 ### 6. Exploring Migration Steps
 
@@ -231,7 +231,7 @@ rgctl -r example/coolstore -f json cpg mutations \
 
 ### 7. Dashboard Visualization
 
-If you enabled `--with-universe`, the migration plan is also available in the browser dashboard:
+If you enabled --with-universe, the migration plan is also available in the browser dashboard:
 
 ```bash
 rgctl -r example/coolstore serve --open
@@ -243,7 +243,7 @@ Navigate to the **Migration** tab to see the roadmap as an interactive timeline.
 
 The migration plan is generated by:
 
-1. **Community detection** -- partition the graph into functional clusters (**Fast-Leiden** + $\mu + 4\sigma$ hub stripping; `louvain_community_id` is a schema-compat field name only).
+1. **Community detection** -- partition the graph into functional clusters (**Fast-Leiden** + $\mu + 4\sigma$ hub stripping; louvain_community_id is a schema-compat field name only).
 2. **Metric computation** -- compute FastPageRank, HyperBallHarmonic centrality, and blast radius for every function.
 3. **Community scoring** -- aggregate metrics per community (average PageRank, average harmonic, max blast).
 4. **Priority ranking** -- combine the three scores with configurable weights (alpha, beta, gamma).
@@ -261,8 +261,8 @@ See [Analysis Architecture](../analysis-architecture.md) for the mathematical sp
 
 ## Related Guides
 
-- [Agent pack](agent-skill.md) -- prefer **`/rgctl:migrate`** (skill `rgctl-migrate`)
-- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- `discover` with migration flags
+- [Agent pack](agent-skill.md) -- prefer **/rgctl:migrate** (skill rgctl-migrate)
+- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- discover with migration flags
 - [Graph Metrics](graph-metrics.md) -- the metrics that feed into migration scoring
 - [Community Detection](community-detection.md) -- communities define the extraction units
 - [Blast Radius Analysis](blast-radius-analysis.md) -- per-function impact analysis for migration steps

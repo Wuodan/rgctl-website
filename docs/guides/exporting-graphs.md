@@ -2,9 +2,9 @@
 
 ## Introduction
 
-The `export` command serializes your code knowledge graph into standard file formats for use in external tools, visualization platforms, and documentation systems. rgctl supports six export formats: JSON, GraphML, Graphviz (DOT), Mermaid, Obsidian vault, and OKF (Open Knowledge Foundation).
+The export command serializes your code knowledge graph into standard file formats for use in external tools, visualization platforms, and documentation systems. rgctl supports six export formats: JSON, GraphML, Graphviz (DOT), Mermaid, Obsidian vault, and OKF (Open Knowledge Foundation).
 
-Whether you want to load your code graph into Neo4j, visualize it in Gephi, embed diagrams in documentation, or browse it as an Obsidian vault, `export` produces the right format.
+Whether you want to load your code graph into Neo4j, visualize it in Gephi, embed diagrams in documentation, or browse it as an Obsidian vault, export produces the right format.
 
 ## Use Cases
 
@@ -17,15 +17,15 @@ Whether you want to load your code graph into Neo4j, visualize it in Gephi, embe
 
 ## Example Project
 
-This guide uses the **CoolStore** (`example/coolstore`). Make sure you have run `discover` first:
+This guide uses the **CoolStore** (example/coolstore). Make sure you have run discover first:
 
-CoolStore examples use `-l java` to index the Java backend only (skip Angular/bower).
+CoolStore examples use -l java to index the Java backend only (skip Angular/bower).
 
 ```bash
 rgctl -r example/coolstore discover . -l java
 ```
 
-After `discover . -l java` on clean CoolStore you should see **608** nodes / **1,709** edges / **152** functions (`rgctl -f json status` / `find --type function --count-only`). Structural export does not require `--with-cfg` (that flag pre-builds the CFG/PDG archive for procedural analysis).
+After discover . -l java on clean CoolStore you should see **608** nodes / **1,709** edges / **152** functions (rgctl -f json status / find --type function --count-only). Structural export does not require --with-cfg (that flag pre-builds the CFG/PDG archive for procedural analysis).
 
 ## Step-by-Step
 
@@ -49,7 +49,7 @@ Exported 152 nodes, 130 edges -> /tmp/coolstore.graphml
 **What happened:**
 
 - rgctl exported all **152** function nodes and **130** call edges for the Java CoolStore backend.
-- The `--query "type:Function"` filter restricts the export to function nodes only.
+- The --query "type:Function" filter restricts the export to function nodes only.
 - Open the GraphML file in Gephi, yEd, or any GraphML-compatible tool.
 
 ### 2. Export Everything to JSON
@@ -69,7 +69,7 @@ rgctl -r example/coolstore export \
 Exported 608 nodes, 1709 edges -> /tmp/coolstore.json
 ```
 
-The `all` query exports every node and edge in the `-l java` structural graph -- **608** nodes and **1,709** edges for CoolStore’s Java backend.
+The all query exports every node and edge in the -l java structural graph -- **608** nodes and **1,709** edges for CoolStore’s Java backend.
 
 ### 3. Filtered Export
 
@@ -153,27 +153,27 @@ rgctl -r example/coolstore export \
 
 ## Query Filter Syntax
 
-The `--query` parameter accepts the following filter expressions:
+The --query parameter accepts the following filter expressions:
 
 | Filter | Description | Example |
 |--------|-------------|---------|
-| `all` | Export everything | `--query all` |
-| `functions` | All function nodes | `--query functions` |
-| `type:TYPE` | Nodes of a specific type | `--query "type:Class"` |
-| `name:NAME` | Nodes matching a name | `--query "name:ShoppingCartService"` |
+| all | Export everything | --query all |
+| functions | All function nodes | --query functions |
+| type:TYPE | Nodes of a specific type | --query "type:Class" |
+| name:NAME | Nodes matching a name | --query "name:ShoppingCartService" |
 
-Note: these are filter expressions, not `find` / `relations` patterns.
+Note: these are filter expressions, not find / relations patterns.
 
 ## Export Formats Comparison
 
 | Format | File Extension | Best For | Tools |
 |--------|---------------|----------|-------|
-| **json** | `.json` | Scripts, APIs, data analysis | jq, Python, custom tools |
-| **graphml** | `.graphml` | Graph databases, visualization | Neo4j, Gephi, yEd |
-| **graphviz** | `.dot` | Static diagrams | Graphviz (dot, neato) |
-| **mermaid** | `.mmd` | Documentation | Markdown renderers, Mermaid Live |
+| **json** | .json | Scripts, APIs, data analysis | jq, Python, custom tools |
+| **graphml** | .graphml | Graph databases, visualization | Neo4j, Gephi, yEd |
+| **graphviz** | .dot | Static diagrams | Graphviz (dot, neato) |
+| **mermaid** | .mmd | Documentation | Markdown renderers, Mermaid Live |
 | **obsidian** | directory | Knowledge browsing | Obsidian |
-| **okf** | `.json` | Knowledge platforms | CKAN, DataHub |
+| **okf** | .json | Knowledge platforms | CKAN, DataHub |
 
 ## Benefits
 
@@ -185,7 +185,7 @@ Note: these are filter expressions, not `find` / `relations` patterns.
 
 ## Related Guides
 
-- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- must run `discover` before exporting
+- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- must run discover before exporting
 - [Structured graph queries](structured-query.md) -- explore the graph before exporting subsets
 - [HTTP Server and Dashboard](http-server-and-dashboard.md) -- interactive exploration as an alternative to static export
-- [Hybrid CPG](hybrid-cpg.md) -- `cpg export` for CPG-specific GraphSON/GraphML export
+- [Hybrid CPG](hybrid-cpg.md) -- cpg export for CPG-specific GraphSON/GraphML export

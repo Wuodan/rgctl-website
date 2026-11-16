@@ -2,22 +2,22 @@
 
 ## Introduction
 
-The `serve` command launches an HTTP server that provides both a **browser-based dashboard** for visual exploration and a **semantic search API** for programmatic NL lookup. The dashboard lets you explore the code graph, visualize blast radius, inspect CFGs, and browse communities — all from your browser.
+The serve command launches an HTTP server that provides both a **browser-based dashboard** for visual exploration and a **semantic search API** for programmatic NL lookup. The dashboard lets you explore the code graph, visualize blast radius, inspect CFGs, and browse communities — all from your browser.
 
-For **structural** questions (symbols, callers, relations, inventories), agents and scripts should use CLI verbs with `-f json` (`find`, `callers`, `callees`, `relations`, `inventory`, `status`) — see [Structured graph queries](structured-query.md).
+For **structural** questions (symbols, callers, relations, inventories), agents and scripts should use CLI verbs with -f json (find, callers, callees, relations, inventory, status) — see [Structured graph queries](structured-query.md).
 
 ## Use Cases
 
 - **Interactive exploration.** Browse functions, classes, and communities in a visual UI.
-- **Persistent semantic session.** Keep the server running and POST natural-language queries to `/api/semantic/query`.
+- **Persistent semantic session.** Keep the server running and POST natural-language queries to /api/semantic/query.
 - **Team sharing.** Run the server on a shared host so the whole team can explore the codebase.
 - **Demo and presentation.** Show stakeholders the architecture of a codebase through the dashboard.
 
 ## Example Project
 
-This guide uses the **CoolStore** (`example/coolstore`). `rgctl serve` is serve-only (it does not run `discover` or a background pipeline). Index first with `--with-universe`, then start `serve`:
+This guide uses the **CoolStore** (example/coolstore). rgctl serve is serve-only (it does not run discover or a background pipeline). Index first with --with-universe, then start serve:
 
-CoolStore examples use `-l java` to index the Java backend only (skip Angular/bower).
+CoolStore examples use -l java to index the Java backend only (skip Angular/bower).
 
 ```bash
 rgctl -r example/coolstore discover -l java --with-universe
@@ -25,7 +25,7 @@ rgctl -r example/coolstore discover -l java --with-universe
 rgctl -r example/coolstore serve --open
 ```
 
-The `--with-universe` flag exports the static Universe dashboard bundle to `.rgctl/dashboard/`.
+The --with-universe flag exports the static Universe dashboard bundle to .rgctl/dashboard/.
 
 ## Step-by-Step
 
@@ -39,13 +39,13 @@ rgctl -r example/coolstore serve --open
 rgctl -r example/coolstore serve --watch --open
 ```
 
-See [Watch mode](watch-mode.md) for `serve --watch` vs `rgctl update`.
+See [Watch mode](watch-mode.md) for serve --watch vs rgctl update.
 
 **What happens:**
 
-- The server starts on `http://127.0.0.1:8080`.
-- The `--open` flag opens the dashboard in your default browser.
-- The dashboard serves from `.rgctl/dashboard/`. Semantic search is available at `/api/semantic/*` when an index exists.
+- The server starts on http://127.0.0.1:8080.
+- The --open flag opens the dashboard in your default browser.
+- The dashboard serves from .rgctl/dashboard/. Semantic search is available at /api/semantic/\* when an index exists.
 
 ### 2. Custom Host and Port
 
@@ -65,7 +65,7 @@ If you only need the API (no dashboard UI):
 rgctl -r example/coolstore serve --query-only
 ```
 
-This starts a lighter server with `/api/status` and `/api/semantic/*` (no static files).
+This starts a lighter server with /api/status and /api/semantic/\* (no static files).
 
 ### 4. Structural queries from the CLI
 
@@ -86,7 +86,7 @@ curl -s http://127.0.0.1:8080/api/semantic/query \
   -d '{"query": "shopping cart checkout", "limit": 5}'
 ```
 
-Build the index first: `rgctl semantic index` (then restart `serve`).
+Build the index first: rgctl semantic index (then restart serve).
 
 ### 6. Dashboard tabs
 
@@ -101,40 +101,40 @@ When the dashboard opens in your browser, you will see several tabs:
 | **Dataflow** | Data-flow and PDG visualization |
 | **Slice** | Interactive program slicing |
 | **Blast** | Blast radius visualization with caller/impact trees |
-| **Taint** | Taint analysis results (requires `--with-taint`) |
-| **Migration** | Migration roadmap viewer (requires `--export-migration-hints`) |
+| **Taint** | Taint analysis results (requires --with-taint) |
+| **Migration** | Migration roadmap viewer (requires --export-migration-hints) |
 
 ## API Endpoints
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/status` | GET | Pipeline status document (`schema_version` 1; same shape as `.rgctl/pipeline_status.json`). Distinct from CLI `rgctl status` (`schema_version` 3). |
-| `/api/semantic/query` | POST | Semantic search |
-| `/api/semantic/status` | GET | Semantic index availability |
-| `/` | GET | Dashboard UI |
+| /api/status | GET | Pipeline status document (schema_version 1; same shape as .rgctl/pipeline_status.json). Distinct from CLI rgctl status (schema_version 3). |
+| /api/semantic/query | POST | Semantic search |
+| /api/semantic/status | GET | Semantic index availability |
+| / | GET | Dashboard UI |
 
 ## Server Options Reference
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--host` | `127.0.0.1` | Bind host |
-| `--port` | `8080` | HTTP port |
-| `--open` | off | Open Universe dashboard in the default browser |
-| `--query-only` | off | Serve API only, no dashboard static files |
-| `--watch` | off | Watch source files and apply incremental graph updates |
-| `--dashboard-dir` | `.rgctl/dashboard` | Dashboard directory |
+| --host | 127.0.0.1 | Bind host |
+| --port | 8080 | HTTP port |
+| --open | off | Open Universe dashboard in the default browser |
+| --query-only | off | Serve API only, no dashboard static files |
+| --watch | off | Watch source files and apply incremental graph updates |
+| --dashboard-dir | .rgctl/dashboard | Dashboard directory |
 
 ## Benefits
 
 - **Zero setup.** One command to launch a full-featured analysis dashboard.
 - **Dual interface.** Visual dashboard for humans; CLI JSON for agents and scripts.
 - **Session persistence.** The server keeps artifacts hot; repeated semantic queries stay fast.
-- **Team accessible.** Bind to `0.0.0.0` to share the dashboard across a network.
-- **Low resource.** HTTP `serve` stays up until Ctrl+C.
+- **Team accessible.** Bind to 0.0.0.0 to share the dashboard across a network.
+- **Low resource.** HTTP serve stays up until Ctrl+C.
 
 ## Related Guides
 
-- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- `discover --with-universe` generates the dashboard bundle
+- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- discover --with-universe generates the dashboard bundle
 - [Structured graph queries](structured-query.md) -- CLI verbs for agents
-- [Semantic Search](semantic-search.md) -- semantic queries available via `/api/semantic/*`
+- [Semantic Search](semantic-search.md) -- semantic queries available via /api/semantic/\*
 - [Blast Radius Analysis](blast-radius-analysis.md) -- blast-radius visualization in the dashboard

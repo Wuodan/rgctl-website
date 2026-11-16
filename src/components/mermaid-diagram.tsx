@@ -29,11 +29,29 @@ export function MermaidDiagram({ chart }: Props) {
     (async () => {
       try {
         const mermaid = (await import("mermaid")).default;
+        const styles = getComputedStyle(document.documentElement);
+        const token = (name: string) => styles.getPropertyValue(name).trim();
         mermaid.initialize({
           startOnLoad: false,
           securityLevel: "strict",
-          theme: theme === "dark" ? "dark" : "neutral",
+          theme: "base",
           fontFamily: "inherit",
+          themeVariables: {
+            darkMode: theme === "dark",
+            background: token("--canvas-soft"),
+            primaryColor: token("--chip"),
+            primaryTextColor: token("--chip-fg"),
+            primaryBorderColor: token("--chip-border"),
+            secondaryColor: token("--surface"),
+            tertiaryColor: token("--canvas"),
+            lineColor: token("--mute"),
+            textColor: token("--ink"),
+            mainBkg: token("--chip"),
+            nodeBorder: token("--chip-border"),
+            clusterBkg: token("--surface"),
+            titleColor: token("--ink"),
+            edgeLabelBackground: token("--canvas"),
+          },
         });
         const id = `mermaid-${reactId}-${Math.random().toString(36).slice(2, 9)}`;
         const { svg: rendered } = await mermaid.render(id, source);

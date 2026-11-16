@@ -1,63 +1,91 @@
 @import "tailwindcss";
 
-/* Light — quiet palette */
+/*
+ * Colors copied from the universe dashboard (rgctl dashboard/src/v2):
+ * canvas #0b0d10, chrome #0e1116, stage #060a12, ink #e6e8eb,
+ * sky-400 #38bdf8, sky-500 #0ea5e9, selected room #16566e,
+ * amber-400 #fbbf24, zinc body text.
+ * Duplicated on purpose. This site does not import dashboard CSS.
+ *
+ * Light values are the same hues lifted for article contrast. The dashboard
+ * itself is dark only.
+ */
 :root,
 [data-theme="light"] {
-  --primary: #22635a;
+  --font-ui: ui-sans-serif, -apple-system, "SF Pro Text", system-ui, sans-serif;
+  --primary: #0369a1;
   --on-primary: #ffffff;
-  --ink: #1a1d21;
-  --body: #5b6470;
-  --body-strong: #1a1d21;
-  --mute: #8b94a0;
-  --canvas: #fcfcfa;
-  --canvas-soft: #f4f4f0;
+  --ink: #18181b;
+  --body: #52525b;
+  --body-strong: #18181b;
+  --mute: #71717a;
+  --canvas: #f6f7f9;
+  --canvas-soft: #eef0f3;
   --surface: #ffffff;
-  --hairline: #e4e4de;
-  --accent-hover: #1b5148;
-  --selection: #d8ebe7;
+  --code-bg: #f4f4f5;
+  --hairline: #e4e4e7;
+  --accent-hover: #0284c7;
+  --selection: rgba(2, 132, 199, 0.16);
+  --chip: #e0f2fe;
+  --chip-fg: #0c4a6e;
+  --chip-border: #0284c7;
+  --tok-plain: #3f3f46;
+  --tok-comment: #71717a;
+  --tok-string: #047857;
+  --tok-number: #b45309;
+  --tok-keyword: #0369a1;
   --background: var(--canvas);
   --foreground: var(--ink);
 
-  /* Hero graph (quiet-adapted redesign) */
-  --graph-edge: #c5cbc3;
-  --graph-edge-on: #22635a;
-  --graph-node-fill: #f4f4f0;
-  --graph-node-accent-fill: #e8f3f1;
-  --graph-amber: #7a5c22;
-  --graph-amber-fill: #f7f1e6;
-  --graph-focus: #e9ff57;
-  --graph-label: #8b94a0;
-  --graph-label-strong: #1a1d21;
-  --graph-glow: rgba(34, 99, 90, 0.08);
+  --graph-edge: #d4d4d8;
+  --graph-edge-on: #b45309;
+  --graph-node-fill: #f4f4f5;
+  --graph-node-accent-fill: #e0f2fe;
+  --graph-amber: #b45309;
+  --graph-amber-fill: #fffbeb;
+  --graph-focus: #0284c7;
+  --graph-label: #71717a;
+  --graph-label-strong: #18181b;
+  --scrollbar: #d4d4d8;
 }
 
-/* Dark — redesign palette */
+/* Dark — copied dashboard canvas, sky selection, amber path */
 [data-theme="dark"] {
-  --primary: #56e1c9;
-  --on-primary: #06231c;
-  --ink: #e8ebf1;
-  --body: #8d96ac;
-  --body-strong: #e8ebf1;
-  --mute: #8d96ac;
-  --canvas: #0a0d13;
-  --canvas-soft: #161b29;
-  --surface: #111520;
-  --hairline: #232a3d;
-  --accent-hover: #6febd6;
-  --selection: rgba(86, 225, 201, 0.22);
+  --primary: #0ea5e9;
+  --on-primary: #020617;
+  --ink: #e6e8eb;
+  --body: #a1a1aa;
+  --body-strong: #e4e4e7;
+  --mute: #71717a;
+  --canvas: #0b0d10;
+  --canvas-soft: #0e1116;
+  --surface: #10141a;
+  --code-bg: #060a12;
+  --hairline: rgba(255, 255, 255, 0.1);
+  --accent-hover: #38bdf8;
+  --selection: rgba(56, 189, 248, 0.28);
+  --chip: #16566e;
+  --chip-fg: #ffffff;
+  --chip-border: rgba(56, 189, 248, 0.7);
+  /* Dashboard source pane: zinc-300, zinc-500, emerald-300/90, amber-200/90, sky-300. */
+  --tok-plain: #d4d4d8;
+  --tok-comment: #71717a;
+  --tok-string: rgba(110, 231, 183, 0.9);
+  --tok-number: rgba(253, 230, 138, 0.9);
+  --tok-keyword: #7dd3fc;
   --background: var(--canvas);
   --foreground: var(--ink);
 
-  --graph-edge: #33405a;
-  --graph-edge-on: #56e1c9;
-  --graph-node-fill: #161b29;
-  --graph-node-accent-fill: #0e2723;
-  --graph-amber: #f2a65a;
-  --graph-amber-fill: #2b1e0f;
-  --graph-focus: #e9ff57;
-  --graph-label: #8d96ac;
-  --graph-label-strong: #e8ebf1;
-  --graph-glow: rgba(86, 225, 201, 0.05);
+  --graph-edge: #2a2f36;
+  --graph-edge-on: #fbbf24;
+  --graph-node-fill: #0e1116;
+  --graph-node-accent-fill: #0d2f3e;
+  --graph-amber: #fbbf24;
+  --graph-amber-fill: #1c1408;
+  --graph-focus: #38bdf8;
+  --graph-label: #71717a;
+  --graph-label-strong: #e6e8eb;
+  --scrollbar: #2a2f36;
 }
 
 @theme inline {
@@ -77,25 +105,15 @@ html[data-theme="dark"] {
 body {
   background: var(--canvas);
   color: var(--ink);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans), var(--font-ui), sans-serif;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-html[data-theme="dark"] body {
-  background-image:
-    radial-gradient(
-      ellipse 900px 500px at 15% -10%,
-      rgba(86, 225, 201, 0.06),
-      transparent 60%
-    ),
-    radial-gradient(
-      ellipse 700px 500px at 90% 10%,
-      rgba(242, 166, 90, 0.05),
-      transparent 60%
-    );
-  background-attachment: fixed;
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar) transparent;
 }
 
 ::selection {
@@ -149,6 +167,14 @@ a {
   fill: var(--graph-label-strong);
   font-weight: 600;
 }
+
+/* Same five token kinds as the dashboard source pane. Colors live in --tok-*. */
+
+.tok-plain { color: var(--tok-plain); }
+.tok-comment { color: var(--tok-comment); font-style: italic; }
+.tok-string { color: var(--tok-string); }
+.tok-number { color: var(--tok-number); }
+.tok-keyword { color: var(--tok-keyword); }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-graph-pulse {

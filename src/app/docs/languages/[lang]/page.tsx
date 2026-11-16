@@ -12,6 +12,7 @@ import {
   loadTagsScm,
   semanticCoverage,
 } from "@/lib/languages";
+import { HighlightedCode } from "@/components/highlighted-code";
 import { GITHUB_REPO } from "@/lib/utils";
 
 type Props = { params: Promise<{ lang: string }> };
@@ -582,8 +583,10 @@ export default async function LanguageSupportPage({ params }: Props) {
       <h2 className="mt-10 text-xl font-medium text-[var(--ink)]">
         Query source (<code className="text-base">{tagsPath}</code>)
       </h2>
-      <pre className="mt-3 overflow-x-auto rounded-[4px] border border-[var(--hairline)] bg-[var(--surface)] p-4 font-mono text-xs leading-6 text-[var(--ink)]">
-        <code>{tagsScm}</code>
+      <pre className="mt-3 overflow-x-auto rounded-lg border border-[var(--hairline)] bg-[var(--code-bg)] p-4 font-[family-name:var(--font-mono)] text-[13px] leading-[1.55] text-[var(--tok-plain)]">
+        <code>
+          <HighlightedCode source={tagsScm ?? ""} language="scheme" />
+        </code>
       </pre>
 
       <p className="mt-12 text-sm text-[var(--mute)]">

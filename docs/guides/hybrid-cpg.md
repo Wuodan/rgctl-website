@@ -2,23 +2,23 @@
 
 ## Introduction
 
-The `cpg` command provides a **Hybrid Code Property Graph (CPG)** -- a unified facade that bridges the repository-level call graph (L_repo) with per-function CFG/PDG analysis (L_proc). It gives you a single interface for function lookups, call neighborhoods, field mutation tracking, data flow analysis, PDG inspection, program slicing, and CPG export.
+The cpg command provides a **Hybrid Code Property Graph (CPG)** -- a unified facade that bridges the repository-level call graph (L_repo) with per-function CFG/PDG analysis (L_proc). It gives you a single interface for function lookups, call neighborhoods, field mutation tracking, data flow analysis, PDG inspection, program slicing, and CPG export.
 
 The "hybrid" in the name refers to the two-resolution architecture: the coarse-grained repository graph provides call and containment relationships across the entire codebase, while the fine-grained per-function analysis provides control flow, data dependencies, and statement-level detail within each function.
 
 ## Use Cases
 
-- **DTO safety analysis.** Use `cpg mutations` to find every place a data transfer object is modified, ensuring encapsulation.
-- **Data flow tracing.** Use `cpg flows` to trace a variable through a function without needing to understand PDG internals.
-- **Call neighborhood exploration.** Use `cpg calls` to see all incoming and outgoing calls for a function.
-- **Function resolution.** Use `cpg function` to look up a function by name and check if deep analysis data is available.
+- **DTO safety analysis.** Use cpg mutations to find every place a data transfer object is modified, ensuring encapsulation.
+- **Data flow tracing.** Use cpg flows to trace a variable through a function without needing to understand PDG internals.
+- **Call neighborhood exploration.** Use cpg calls to see all incoming and outgoing calls for a function.
+- **Function resolution.** Use cpg function to look up a function by name and check if deep analysis data is available.
 - **CPG export.** Export the hybrid graph in GraphSON or GraphML format for external tools.
 
 ## Example Project
 
-This guide uses the **CoolStore** (`example/coolstore`). Start with a structural index; pre-build the whole-repo CFG archive when you need `mutations`, rich `inspect`, or batch L_proc coverage:
+This guide uses the **CoolStore** (example/coolstore). Start with a structural index; pre-build the whole-repo CFG archive when you need mutations, rich inspect, or batch L_proc coverage:
 
-CoolStore examples use `-l java` to index the Java backend only (skip Angular/bower).
+CoolStore examples use -l java to index the Java backend only (skip Angular/bower).
 
 ```bash
 rgctl -r example/coolstore discover . -l java
@@ -26,7 +26,7 @@ rgctl -r example/coolstore discover . -l java
 rgctl -r example/coolstore discover . -l java --with-cfg
 ```
 
-**Lazy vs whole-repo:** `cpg flows` (and top-level `slice`) build a **single function** CFG/PDG into the v3 archive on demand — no upfront `--with-cfg`. `cpg mutations` still requires `discover --with-cfg` (field-write index). `--function` is **optional** on `flows` / `slice` (auto from `file:line`).
+**Lazy vs whole-repo:** cpg flows (and top-level slice) build a **single function** CFG/PDG into the v3 archive on demand — no upfront --with-cfg. cpg mutations still requires discover --with-cfg (field-write index). --function is **optional** on flows / slice (auto from file:line).
 
 ## Step-by-Step
 
@@ -38,7 +38,7 @@ First, verify that the CPG archive is available:
 rgctl -r example/coolstore -f json cpg status
 ```
 
-**Output** (after `discover --with-cfg`):
+**Output** (after discover --with-cfg):
 
 ```json
 {
@@ -56,11 +56,11 @@ rgctl -r example/coolstore -f json cpg status
 
 **What this tells you:**
 
-- **`archive_present: true`** -- the v3 CFG/PDG archive exists (whole-repo `--with-cfg`, and/or prior lazy `slice` / `cpg flows` appends).
-- **`function_count: 150`** -- 150 functions have L_proc records in the archive.
-- **`field_write_count: 41`** -- 41 field-write sites are indexed for mutation tracking.
-- **`field_write_index_present: true`** -- the `cpg mutations` command is available (needs `--with-cfg`).
-- **`ast_skeleton_present: false`** -- the AST skeleton archive is not present (requires `discover --with-ast-skeleton`).
+- **archive_present: true** -- the v3 CFG/PDG archive exists (whole-repo --with-cfg, and/or prior lazy slice / cpg flows appends).
+- **function_count: 150** -- 150 functions have L_proc records in the archive.
+- **field_write_count: 41** -- 41 field-write sites are indexed for mutation tracking.
+- **field_write_index_present: true** -- the cpg mutations command is available (needs --with-cfg).
+- **ast_skeleton_present: false** -- the AST skeleton archive is not present (requires discover --with-ast-skeleton).
 
 ### 2. Resolve a Function
 
@@ -87,13 +87,13 @@ rgctl -r example/coolstore -f json cpg function priceShoppingCart
 
 **What this tells you:**
 
-- **`has_l_proc: true`** -- this function has CFG/PDG data available for deep analysis.
-- **`start_line: 54`** -- the function starts at line 54, useful for `slice` and `flows` commands.
-- **`qualified_name`** -- the fully qualified name for unambiguous reference.
+- **has_l_proc: true** -- this function has CFG/PDG data available for deep analysis.
+- **start_line: 54** -- the function starts at line 54, useful for slice and flows commands.
+- **qualified_name** -- the fully qualified name for unambiguous reference.
 
 ### 3. Call Neighborhood
 
-See all functions called by (and calling) `priceShoppingCart`:
+See all functions called by (and calling) priceShoppingCart:
 
 ```bash
 rgctl -r example/coolstore -f json cpg calls priceShoppingCart
@@ -121,21 +121,21 @@ rgctl -r example/coolstore -f json cpg calls priceShoppingCart
 
 **What this tells you:**
 
-- Top-level keys are `edges`, `function_id`, `function_name`, and `schema_version` (there is no `edges_sample` / `returned` wrapper).
-- On clean CoolStore, `priceShoppingCart` has **17** neighborhood edges (incoming + outgoing).
-- **`direction: "out"`** -- outgoing calls (callees). Incoming callers use `"in"`.
-- The function calls setters/getters on `ShoppingCart`, `initShoppingCartForPricing`, promotion helpers, and shipping lookup.
+- Top-level keys are edges, function_id, function_name, and schema_version (there is no edges_sample / returned wrapper).
+- On clean CoolStore, priceShoppingCart has **17** neighborhood edges (incoming + outgoing).
+- **direction: "out"** -- outgoing calls (callees). Incoming callers use "in".
+- The function calls setters/getters on ShoppingCart, initShoppingCartForPricing, promotion helpers, and shipping lookup.
 
 ### 4. Field Mutations
 
-The `cpg mutations` command finds every place a type's fields are modified -- critical for DTO safety and encapsulation analysis:
+The cpg mutations command finds every place a type's fields are modified -- critical for DTO safety and encapsulation analysis:
 
 ```bash
 rgctl -r example/coolstore -f json cpg mutations \
   --type ShoppingCart --exclude-ctors
 ```
 
-**Output (live CoolStore `-l java --with-cfg`):**
+**Output (live CoolStore -l java --with-cfg):**
 
 ```json
 {
@@ -150,12 +150,12 @@ rgctl -r example/coolstore -f json cpg mutations \
 
 **What this tells you:**
 
-- The JSON envelope always includes `mutations`, `type_name`, `exclude_ctors`, `include_unresolved`, `member`, and `schema_version`.
-- `cpg status` still reports `field_write_count: 41` for this corpus; type-filtered hits require a resolved `receiver_type` match. When the index rows are unresolved / unmatched, `mutations` is an empty array (use `--include-unresolved` only when you intentionally want the unresolved bucket).
+- The JSON envelope always includes mutations, type_name, exclude_ctors, include_unresolved, member, and schema_version.
+- cpg status still reports field_write_count: 41 for this corpus; type-filtered hits require a resolved receiver_type match. When the index rows are unresolved / unmatched, mutations is an empty array (use --include-unresolved only when you intentionally want the unresolved bucket).
 
 ### 5. Data Flows
 
-Trace how a variable flows through a function. `--function` is optional (auto from line); `--with-alias` expands may-aliases. Lazy single-function CFG/PDG build if the archive entry is missing:
+Trace how a variable flows through a function. --function is optional (auto from line); --with-alias expands may-aliases. Lazy single-function CFG/PDG build if the archive entry is missing:
 
 ```bash
 rgctl -r example/coolstore -f json cpg flows \
@@ -184,7 +184,7 @@ rgctl -r example/coolstore -f json cpg flows \
 }
 ```
 
-The `flows` subcommand wraps `slice` with a simpler interface, showing the step-by-step data flow path through the function.
+The flows subcommand wraps slice with a simpler interface, showing the step-by-step data flow path through the function.
 
 ### 6. PDG Overlay
 
@@ -211,34 +211,34 @@ rgctl -r example/coolstore -f json cpg pdg priceShoppingCart
 }
 ```
 
-This shows **19** control dependencies and **5** data dependencies in `priceShoppingCart`, with the full edge list for graph analysis.
+This shows **19** control dependencies and **5** data dependencies in priceShoppingCart, with the full edge list for graph analysis.
 
 ## CPG Subcommands Reference
 
 | Subcommand | Purpose | Requires |
 |------------|---------|----------|
-| `status` | Check archive readiness | `discover` |
-| `function` | Resolve a function by name | `discover` |
-| `calls` | Call neighborhood (in/out) | `discover` |
-| `mutations` | Field mutations for a type | `discover --with-cfg` (field-write index) |
-| `flows` | Data/control flow tracing | Lazy single-fn CFG/PDG (optional `--function`, `--with-alias`) |
-| `pdg` | PDG overlay | Archive entry or rebuild; prefer `--with-cfg` for batch |
-| `slice` | Line-level slice (wraps `slice`) | Lazy (same as top-level `rgctl slice`) |
-| `ast` | AST skeleton | `discover --with-ast-skeleton` |
-| `export` | Export CPG view | Prefer `--with-cfg` for L_proc edges |
+| status | Check archive readiness | discover |
+| function | Resolve a function by name | discover |
+| calls | Call neighborhood (in/out) | discover |
+| mutations | Field mutations for a type | discover --with-cfg (field-write index) |
+| flows | Data/control flow tracing | Lazy single-fn CFG/PDG (optional --function, --with-alias) |
+| pdg | PDG overlay | Archive entry or rebuild; prefer --with-cfg for batch |
+| slice | Line-level slice (wraps slice) | Lazy (same as top-level rgctl slice) |
+| ast | AST skeleton | discover --with-ast-skeleton |
+| export | Export CPG view | Prefer --with-cfg for L_proc edges |
 
 ## Benefits
 
 - **Unified interface.** One command family for both repository-level and function-level analysis.
-- **DTO safety.** `mutations` gives you a complete audit of where a type's fields are changed.
-- **Readable data flows.** `flows` presents data dependencies as a step-by-step narrative.
+- **DTO safety.** mutations gives you a complete audit of where a type's fields are changed.
+- **Readable data flows.** flows presents data dependencies as a step-by-step narrative.
 - **No source code reading.** Get call neighborhoods, mutations, and flows without loading files.
 - **Exportable.** Export the hybrid CPG to GraphSON or GraphML for external analysis tools.
 
 ## Related Guides
 
-- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- structural discover + optional `--with-cfg` pre-warm
-- [Program Slicing](program-slicing.md) -- the underlying technique that `cpg flows` and `cpg slice` use
+- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- structural discover + optional --with-cfg pre-warm
+- [Program Slicing](program-slicing.md) -- the underlying technique that cpg flows and cpg slice use
 - [Inspecting CFG, PDG, and Dominance](inspecting-cfg-pdg-dominance.md) -- lower-level inspection of the same data
 - [Blast Radius Analysis](blast-radius-analysis.md) -- function-level impact analysis from the same graph
-- [CLI Command Reference](cli-command-reference.md) -- canonical `slice` / `cpg` / `taint` map
+- [CLI Command Reference](cli-command-reference.md) -- canonical slice / cpg / taint map

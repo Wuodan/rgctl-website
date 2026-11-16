@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The `blast-radius` command measures the **upstream impact** of changing a function. It answers the question: "If I modify this function, what other parts of the codebase could be affected?" It does this by walking the call graph backwards from the target function, collecting every direct caller and the full transitive impact zone.
+The blast-radius command measures the **upstream impact** of changing a function. It answers the question: "If I modify this function, what other parts of the codebase could be affected?" It does this by walking the call graph backwards from the target function, collecting every direct caller and the full transitive impact zone.
 
 The result is a **blast-radius score** (0--100), a list of direct callers, and the complete impact zone -- everything you need to make an informed decision about the risk of a code change.
 
@@ -12,13 +12,13 @@ The result is a **blast-radius score** (0--100), a list of direct callers, and t
 - **Code review prioritization.** Focus review effort on changes to high-blast-radius functions.
 - **Refactoring safety.** Identify all the code paths that exercise a function before extracting, renaming, or modifying it.
 - **Migration planning.** Understand which functions are safe to extract into microservices (low blast radius) versus those that are deeply coupled (high blast radius).
-- **CI guardrails.** Combine with `--policy-file` to fail builds when changes affect too many downstream consumers.
+- **CI guardrails.** Combine with --policy-file to fail builds when changes affect too many downstream consumers.
 
 ## Example Project
 
-This guide uses the **CoolStore** (`example/coolstore`). Make sure you have run `discover` first:
+This guide uses the **CoolStore** (example/coolstore). Make sure you have run discover first:
 
-CoolStore examples use `-l java` to index the Java backend only (skip Angular/bower).
+CoolStore examples use -l java to index the Java backend only (skip Angular/bower).
 
 ```bash
 rgctl -r example/coolstore discover -l java
@@ -28,7 +28,7 @@ rgctl -r example/coolstore discover -l java
 
 ### 1. Basic Blast Radius (Text)
 
-Check the impact of the `priceShoppingCart` method:
+Check the impact of the priceShoppingCart method:
 
 ```bash
 rgctl -r example/coolstore blast-radius priceShoppingCart
@@ -48,13 +48,13 @@ Blast radius for 'priceShoppingCart'
 **What this tells you:**
 
 - **Score: 40.6/100** -- a moderate impact score. This function is called by several REST endpoints and the checkout flow.
-- **6 direct callers** -- six functions call `priceShoppingCart` directly.
+- **6 direct callers** -- six functions call priceShoppingCart directly.
 - **Impact zone: 12** -- the full transitive closure affects 12 functions, meaning a change here could ripple through 12 code paths.
-- The callers span `ShoppingCartService`, `CartEndpoint` (REST), and `ShoppingCart` (model), showing that this function bridges service, API, and domain layers.
+- The callers span ShoppingCartService, CartEndpoint (REST), and ShoppingCart (model), showing that this function bridges service, API, and domain layers.
 
 ### 2. JSON Output
 
-For machine consumption or scripting, use `-f json`:
+For machine consumption or scripting, use -f json:
 
 ```bash
 rgctl -r example/coolstore -f json blast-radius priceShoppingCart
@@ -144,7 +144,7 @@ Blast radius for 'getShoppingCart'
            com.redhat.coolstore.service.ShoppingCartService.checkOutShoppingCart
 ```
 
-The `--depth 3` flag limits the impact zone to at most 3 levels of callers, useful for large graphs where the full closure is too expensive or noisy.
+The --depth 3 flag limits the impact zone to at most 3 levels of callers, useful for large graphs where the full closure is too expensive or noisy.
 
 ### 4. Low Blast Radius Example
 
@@ -167,7 +167,7 @@ A score of 0 means this function (the constructor) has no upstream callers in th
 
 ### 5. Boundary classification and slice hand-off
 
-Blast radius uses the **SCC + dense bitset** engine (`blast_engine.bin`). Label impact nodes with architectural boundaries, or hand off to statement-level PDG slices:
+Blast radius uses the **SCC + dense bitset** engine (blast_engine.bin). Label impact nodes with architectural boundaries, or hand off to statement-level PDG slices:
 
 ```bash
 rgctl -r example/coolstore -f json blast-radius priceShoppingCart \
@@ -177,11 +177,11 @@ rgctl -r example/coolstore -f json blast-radius priceShoppingCart \
   --depth 3 --with-slices
 ```
 
-`--with-slices` runs statement-level slice hand-off on impacted functions (slower on large graphs; uses lazy CFG/PDG where needed).
+--with-slices runs statement-level slice hand-off on impacted functions (slower on large graphs; uses lazy CFG/PDG where needed).
 
 ### 6. Blast Radius with Policy
 
-Use `--policy-file` to enforce thresholds:
+Use --policy-file to enforce thresholds:
 
 ```bash
 cat > /tmp/coolstore-ci-policy.json <<'EOF'
@@ -191,7 +191,7 @@ rgctl -r example/coolstore -f json blast-radius priceShoppingCart \
   --policy-file /tmp/coolstore-ci-policy.json
 ```
 
-The policy file defines rules like maximum impact zone size. If `priceShoppingCart` violates any rule, the `violations` array in the output will be populated and the exit code will be non-zero. (CoolStore does not ship a `policy.json` in-tree.) For PR gates prefer **`rgctl review check`** ([CI Policy Checks](ci-policy-checks.md)).
+The policy file defines rules like maximum impact zone size. If priceShoppingCart violates any rule, the violations array in the output will be populated and the exit code will be non-zero. (CoolStore does not ship a policy.json in-tree.) For PR gates prefer **rgctl review check** ([CI Policy Checks](ci-policy-checks.md)).
 
 ## Understanding the Score
 
@@ -209,12 +209,12 @@ A score of 0 means the function is isolated. Scores above 50 indicate high-impac
 - **Full topology.** See not just who calls a function, but the entire upstream ripple effect.
 - **Multi-format output.** Text for quick checks, JSON for CI pipelines and agent workflows.
 - **Depth limiting.** Control the analysis scope for large codebases.
-- **Policy integration.** Combine with `check` to enforce blast-radius thresholds in CI.
+- **Policy integration.** Combine with check to enforce blast-radius thresholds in CI.
 
 ## Related Guides
 
-- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- must run `discover` before blast-radius
+- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- must run discover before blast-radius
 - [CI Policy Checks](ci-policy-checks.md) -- enforce blast-radius policies in CI
-- [Structured graph queries](structured-query.md) -- `callers`, `callees`, and `relations --edge calls`
+- [Structured graph queries](structured-query.md) -- callers, callees, and relations --edge calls
 - [Hybrid CPG](hybrid-cpg.md) -- combine blast-radius with per-function CPG analysis
 - [Migration Planning](migration-planning.md) -- blast-radius scores feed into migration ordering

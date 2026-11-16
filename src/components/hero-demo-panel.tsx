@@ -5,6 +5,7 @@ import {
   CapabilityGraph,
   type GraphSceneId,
 } from "@/components/blast-radius-graph";
+import { highlightLine, highlightRgctlInvocation } from "@/lib/code-highlight";
 import { cn } from "@/lib/utils";
 
 type Demo = {
@@ -200,9 +201,9 @@ export function HeroDemoPanel({ className }: { className?: string }) {
               type="button"
               onClick={() => setActive(d.id)}
               className={cn(
-                "rounded-full border px-3 py-1 font-[family-name:var(--font-mono)] text-[12px] font-medium transition-colors",
+                "rounded-md border px-3 py-1 font-[family-name:var(--font-mono)] text-[12px] font-medium transition-colors",
                 d.id === active
-                  ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--on-primary)]"
+                  ? "border-[var(--chip-border)] bg-[var(--chip)] text-[var(--chip-fg)]"
                   : "border-[var(--hairline)] bg-[var(--canvas-soft)] text-[var(--body)] hover:border-[var(--mute)] hover:text-[var(--ink)]",
               )}
             >
@@ -225,27 +226,24 @@ export function HeroDemoPanel({ className }: { className?: string }) {
               if (line.kind === "cmd") {
                 return (
                   <div key={i}>
-                    <span className="font-semibold text-[var(--primary)]">
-                      rgctl ›{" "}
-                    </span>
-                    <span className="font-semibold text-[var(--ink)]">
-                      {line.text}
-                    </span>
+                    <span className="tok-keyword">rgctl</span>
+                    <span className="tok-plain"> › </span>
+                    {highlightRgctlInvocation(line.text ?? "").map((tok, j) => (
+                      <span key={j} className={`tok-${tok.kind}`}>
+                        {tok.text}
+                      </span>
+                    ))}
                   </div>
                 );
               }
               if (line.kind === "json") {
                 return (
-                  <div key={i} className="text-[var(--body)]">
-                    {line.text?.split(/("(?:\\.|[^"])*")/g).map((part, j) =>
-                      part.startsWith('"') ? (
-                        <span key={j} className="text-[var(--primary)]">
-                          {part}
-                        </span>
-                      ) : (
-                        <span key={j}>{part}</span>
-                      ),
-                    )}
+                  <div key={i}>
+                    {highlightLine(line.text ?? "", "json").map((tok, j) => (
+                      <span key={j} className={`tok-${tok.kind}`}>
+                        {tok.text}
+                      </span>
+                    ))}
                   </div>
                 );
               }
@@ -259,7 +257,7 @@ export function HeroDemoPanel({ className }: { className?: string }) {
           <button
             type="button"
             onClick={onCopy}
-            className="mt-5 rounded-full border border-[var(--ink)] bg-[var(--canvas-soft)] px-3 py-1.5 font-[family-name:var(--font-mono)] text-[11px] font-bold text-[var(--ink)] transition-colors hover:bg-[var(--primary)] hover:text-[var(--on-primary)] hover:border-[var(--primary)]"
+            className="mt-5 rounded-md border border-[var(--hairline)] bg-[var(--canvas-soft)] px-3 py-1.5 font-[family-name:var(--font-mono)] text-[11px] font-medium text-[var(--ink)] transition-colors hover:border-[var(--chip-border)] hover:bg-[var(--chip)] hover:text-[var(--chip-fg)]"
           >
             {copied ? "Copied" : "Copy commands"}
           </button>

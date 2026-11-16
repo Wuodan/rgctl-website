@@ -2,9 +2,9 @@
 
 ## Introduction
 
-The `inspect` command lets you examine the raw **Control-Flow Graph (CFG)**, **Program Dependence Graph (PDG)**, and **Dominator Tree** for any function in your codebase. These are the foundational data structures of program analysis -- the CFG shows how execution flows through a function, the PDG shows data and control dependencies between statements, and the dominator tree shows which basic blocks dominate others.
+The inspect command lets you examine the raw **Control-Flow Graph (CFG)**, **Program Dependence Graph (PDG)**, and **Dominator Tree** for any function in your codebase. These are the foundational data structures of program analysis -- the CFG shows how execution flows through a function, the PDG shows data and control dependencies between statements, and the dominator tree shows which basic blocks dominate others.
 
-While higher-level commands like `slice` and `cpg flows` build on these structures, `inspect` gives you direct access to the raw graphs when you need to understand the internal structure of a function at the deepest level.
+While higher-level commands like slice and cpg flows build on these structures, inspect gives you direct access to the raw graphs when you need to understand the internal structure of a function at the deepest level.
 
 ## Use Cases
 
@@ -16,21 +16,21 @@ While higher-level commands like `slice` and `cpg flows` build on these structur
 
 ## Example Project
 
-This guide uses the **CoolStore** (`example/coolstore`). Prefer a whole-repo CFG/PDG archive for `inspect` (batch L_proc records). `slice` / `cpg flows` can populate single-function entries lazily, but `inspect` is happiest after `--with-cfg`:
+This guide uses the **CoolStore** (example/coolstore). Prefer a whole-repo CFG/PDG archive for inspect (batch L_proc records). slice / cpg flows can populate single-function entries lazily, but inspect is happiest after --with-cfg:
 
-CoolStore examples use `-l java` to index the Java backend only (skip Angular/bower).
+CoolStore examples use -l java to index the Java backend only (skip Angular/bower).
 
 ```bash
 rgctl -r example/coolstore discover . -l java --with-cfg
 ```
 
-Dominance uses Cooper–Harvey–Kennedy / Lengauer–Tarjan constructions over the CFG (`inspect <SYM> dom`).
+Dominance uses Cooper–Harvey–Kennedy / Lengauer–Tarjan constructions over the CFG (inspect \<SYM\> dom).
 
 ## Step-by-Step
 
 ### 1. Control-Flow Graph (CFG)
 
-Inspect the CFG for `priceShoppingCart`:
+Inspect the CFG for priceShoppingCart:
 
 ```bash
 rgctl -r example/coolstore -f json inspect priceShoppingCart cfg
@@ -61,9 +61,9 @@ rgctl -r example/coolstore -f json inspect priceShoppingCart cfg
 
 **What this tells you:**
 
-- Top-level keys are `nodes`, `edges`, `layer`, `symbol`, `pruned`, and `schema_version` (there is no `node_count` / `nodes_sample` summary field — count the arrays).
-- On clean CoolStore (`-l java --with-cfg`), `priceShoppingCart` has **12** CFG blocks and **16** edges.
-- Edge kinds such as `iftrue` / `iffalse` / `next` / `jump` describe branch and fall-through control flow.
+- Top-level keys are nodes, edges, layer, symbol, pruned, and schema_version (there is no node_count / nodes_sample summary field — count the arrays).
+- On clean CoolStore (-l java --with-cfg), priceShoppingCart has **12** CFG blocks and **16** edges.
+- Edge kinds such as iftrue / iffalse / next / jump describe branch and fall-through control flow.
 
 ### 2. Program Dependence Graph (PDG)
 
@@ -96,9 +96,9 @@ rgctl -r example/coolstore -f json inspect priceShoppingCart pdg
 
 **What this tells you:**
 
-- **`data_deps` / `control_deps`** summarize dependence counts (here **5** data and **19** control).
-- Data edges carry a `variable` name (e.g. `sc`, `sci`); control edges link statement nodes that gate execution.
-- The PDG is the substrate for `slice` and `cpg flows`.
+- **data_deps / control_deps** summarize dependence counts (here **5** data and **19** control).
+- Data edges carry a variable name (e.g. sc, sci); control edges link statement nodes that gate execution.
+- The PDG is the substrate for slice and cpg flows.
 
 ### 3. Dominator Tree
 
@@ -133,8 +133,8 @@ rgctl -r example/coolstore -f json inspect priceShoppingCart dom
 
 **What this tells you:**
 
-- **`idom`** -- the immediate dominator for each basic block. Block `1` dominates many successors (entry-side control).
-- **`frontiers`** -- dominance frontiers (empty unless you request them with `--frontiers`).
+- **idom** -- the immediate dominator for each basic block. Block 1 dominates many successors (entry-side control).
+- **frontiers** -- dominance frontiers (empty unless you request them with --frontiers).
 - The dominator tree is rooted at the entry block; each block's immediate dominator is the closest block that must execute before it on every path.
 
 ### 4. Dominance Frontiers
@@ -169,27 +169,27 @@ This shows only data-dependency edges, filtering out control dependencies for a 
 rgctl -r example/coolstore -f json inspect priceShoppingCart pdg --def-use
 ```
 
-The `--def-use` flag adds def-use chain information to the edges.
+The --def-use flag adds def-use chain information to the edges.
 
 ## Inspect Subcommands
 
 | Subcommand | Description | Key Options |
 |------------|-------------|-------------|
-| `cfg` | Control-flow graph | `--prune` (remove unreachable blocks) |
-| `pdg` | Program dependence graph | `--edge-layer` (filter by data/control), `--def-use` |
-| `dom` | Dominator tree | `--frontiers` (show dominance frontiers) |
+| cfg | Control-flow graph | --prune (remove unreachable blocks) |
+| pdg | Program dependence graph | --edge-layer (filter by data/control), --def-use |
+| dom | Dominator tree | --frontiers (show dominance frontiers) |
 
 ## Benefits
 
 - **Full transparency.** See exactly the data structures that power slicing, flow analysis, and the CPG.
 - **Standard representations.** CFG, PDG, and dominator trees are well-understood program analysis structures with extensive academic literature.
 - **Debugging aid.** When higher-level commands produce unexpected results, inspect the underlying graphs to understand why.
-- **Multi-format output.** Use `-f json` for programmatic access or `-f graphviz` for visualization.
+- **Multi-format output.** Use -f json for programmatic access or -f graphviz for visualization.
 - **Function-level precision.** Each graph is scoped to a single function, keeping the output manageable.
 
 ## Related Guides
 
-- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- prefer `discover --with-cfg` for batch `inspect`
-- [Program Slicing](program-slicing.md) -- slicing operates on the PDG that `inspect` exposes
+- [Discovering and Indexing a Codebase](discovering-and-indexing.md) -- prefer discover --with-cfg for batch inspect
+- [Program Slicing](program-slicing.md) -- slicing operates on the PDG that inspect exposes
 - [Hybrid CPG](hybrid-cpg.md) -- the CPG facade that combines these graphs with the call graph
 - [Blast Radius Analysis](blast-radius-analysis.md) -- function-level analysis that complements statement-level inspection
