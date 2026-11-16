@@ -1,0 +1,14 @@
+1
+00:00:00,000 --> 00:00:05,898
+Reachability, Not Grep (dead-code)
+BFS from main · framework annotations · ExposesRoute roots
+
+2
+00:00:05,978 --> 00:00:13,992
+Safe-Delete Queue (--confidence high)
+Unreferenced functions & fields — root-only findings
+
+3
+00:00:14,072 --> 00:00:20,808
+Teach It Your Entry Points (--entry-point)
+Container roots drop out of the report

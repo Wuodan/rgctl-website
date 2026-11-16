@@ -45,6 +45,7 @@ Install: `curl -fsSL https://rgctl.io/install.sh | sh`
 - https://rgctl.io/docs/guides/hybrid-cpg/
 - https://rgctl.io/docs/guides/program-slicing/
 - https://rgctl.io/docs/guides/clone-detection/
+- https://rgctl.io/docs/guides/dead-code-detection/
 - https://rgctl.io/docs/guides/community-detection/
 - https://rgctl.io/docs/guides/vulnerability-reachability/
 - https://rgctl.io/docs/guides/vulnerability-and-osv-analysis/

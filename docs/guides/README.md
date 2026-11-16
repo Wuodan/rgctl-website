@@ -31,6 +31,7 @@ Most CLI how-tos embed a short **VHS walkthrough** (captioned) at the top of the
 | [Watch mode and incremental update](watch-mode.md) | update, watch, serve --watch | Keep the graph fresh without full rediscover |
 | [Migration Planning](migration-planning.md) | discover --export-migration-hints | Generate a dependency-aware migration roadmap |
 | [Clone Detection](clone-detection.md) | clones | Detect exact (Type-1), bloom, and sub-function fragment clones |
+| [Dead Code Detection](dead-code-detection.md) | dead-code | Graph-reachability dead-code roots with high/medium/low confidence tiers |
 | [Vulnerability Reachability, OSV Fetch & OpenVEX/SARIF](vulnerability-reachability.md) | vuln fetch, vuln scan, vuln analyze, -f sarif | Network OSV feed + offline/Trivy/SBOM overrides, --strict-reachability, --with-dep-stubs, Tier-1 lockfile matrix, OpenVEX PURLs & SARIF 2.1.0 |
 | [Vulnerability and OSV Supply-Chain Analysis](vulnerability-and-osv-analysis.md) | vuln, deps, taint, security | Step-by-step CoolStore walkthrough of OSV triage, manifest scanning, call-path reachability, and OpenVEX generation |
 | [Agent pack](agent-skill.md) | CoolStore install walkthrough | NL → rgctl + /rgctl:review · /rgctl:vuln · /rgctl:migrate → CLI |
