@@ -36,12 +36,12 @@ Every finding carries a confidence tier so you can act on **high** immediately a
 `rgctl dead-code` runs `DeadCodeAnalyzer` over the mmap'd columnar snapshot (`PetGraphView` / `StructuralTopology` CSR) in three passes:
 
 ```mermaid
-flowchart TD
-  P1["Pass 1 — Columnar Scan<br/>symbols · roots · annotations"] --> FW["Framework Entry Points<br/>controllers · services · scheduled · tests"]
-  FW --> ROOTS["Root Set<br/>main · __init__ · routes · custom roots"]
-  ROOTS --> BFS["BFS Reachability<br/>calls · references · inheritance · containment"]
-  BFS --> P3["Pass 3 — Root Classification<br/>CSR edge checks before node materialization"]
-  P3 --> OUT["Findings<br/>high → medium → low · schema v1"]
+flowchart LR
+  P1["Pass 1: scan<br/>symbols + roots"] --> FW["Framework roots<br/>controllers + services"]
+  FW --> ROOTS["Root set<br/>main + routes"]
+  ROOTS --> BFS["Reachability<br/>calls + references"]
+  BFS --> P3["Classify roots<br/>CSR edge checks"]
+  P3 --> OUT["Findings<br/>high → low"]
 ```
 
 1. **Pass 1 — single columnar scan:** One zero-cold-touch pass over hot `NodeRow` columns collects analyzable symbols, language-level root candidates, and framework annotation indices. Test symbols are excluded by default (`--include-tests` re-adds them); external stubs (`file_path == "<external>"`) never produce findings.
