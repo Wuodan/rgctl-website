@@ -37,6 +37,10 @@ export const DOCS_NAV: NavSection[] = [
     title: "Security & Supply-Chain",
     links: [
       {
+        href: "/docs/guides/vulnerability-reachability/",
+        label: "Vulnerability reachability & SARIF",
+      },
+      {
         href: "/docs/guides/vulnerability-and-osv-analysis/",
         label: "Vulnerability and OSV analysis",
       },

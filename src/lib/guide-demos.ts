@@ -15,14 +15,17 @@ type Manifest = {
 let cached: Manifest | null = null;
 
 function loadManifest(): Manifest {
-  if (cached) return cached;
+  const isProd = process.env.NODE_ENV === "production";
+  if (isProd && cached) return cached;
   const path = join(process.cwd(), "docs/videos/guides/manifest.json");
   if (!existsSync(path)) {
-    cached = { guides: [] };
-    return cached;
+    const empty: Manifest = { guides: [] };
+    if (isProd) cached = empty;
+    return empty;
   }
-  cached = JSON.parse(readFileSync(path, "utf8")) as Manifest;
-  return cached;
+  const parsed = JSON.parse(readFileSync(path, "utf8")) as Manifest;
+  if (isProd) cached = parsed;
+  return parsed;
 }
 
 /** Guide slugs that have a VHS demo defined (may not be recorded yet). */

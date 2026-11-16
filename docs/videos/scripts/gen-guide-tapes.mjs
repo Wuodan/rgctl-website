@@ -518,6 +518,49 @@ const tapes = {
     ],
   },
 
+  "vulnerability-reachability": {
+    slug: "vulnerability-reachability",
+    workdir: "docs/videos/.work/coolstore",
+    prompt: "coolstore",
+    scenes: [
+      {
+        comment: "# 1. Batch reachability scan + transitive JAR stubs → canonical PURL OpenVEX",
+        cmds: [
+          "rgctl -f json vuln scan --osv ../osv --include-jars lib --with-dep-stubs | jq '{counts, vex: [.openvex.statements[] | {vulnerability, products, status, justification}]}'",
+        ],
+        sleep: "3.5s",
+      },
+      {
+        comment: "# 2. Fail-closed CI gate (--strict-reachability) + upstream caller chains",
+        cmds: [
+          "rgctl -f json vuln analyze --osv ../osv/jackson-CVE-2022-42004.json --include-jars lib --strict-reachability | jq '{exploitability, vex_status: .openvex.statements[0].status, products: .openvex.statements[0].products, caller_chains: .sink_taint.caller_chains[:2]}'",
+        ],
+        sleep: "3.5s",
+      },
+      {
+        comment: "# 3. SARIF 2.1.0 codeFlows / threadFlows for GitHub Code Scanning (-f sarif)",
+        cmds: [
+          "rgctl -f sarif vuln scan --osv ../osv --include-jars lib --strict-reachability | jq '{version, driver: .runs[0].tool.driver.name, results: [.runs[0].results[] | {ruleId, level, uri: .locations[0].physicalLocation.artifactLocation.uri, threadFlowSteps: (.codeFlows[0].threadFlows[0].locations | length)}]}'",
+        ],
+        sleep: "3.5s",
+      },
+    ],
+    captions: [
+      [
+        "Single-Mmap Batch Scan + Canonical PURL OpenVEX (vuln scan)",
+        "Rayon parallel triage · --with-dep-stubs · pkg:maven/... PURLs",
+      ],
+      [
+        "Fail-Closed CI Reachability Gate (--strict-reachability)",
+        "Escalates under_investigation → exploitable with OrderServiceMDB → readValue chain",
+      ],
+      [
+        "SARIF 2.1.0 codeFlows for GitHub Code Scanning (-f sarif)",
+        "Multi-hop file:line threadFlows ready for upload-sarif@v3",
+      ],
+    ],
+  },
+
   "community-detection": {
     slug: "community-detection",
     workdir: "docs/videos/.work/coolstore",

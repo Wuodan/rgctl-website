@@ -121,8 +121,15 @@ const paths: Path[] = [
   },
   {
     title: "Security & Supply-Chain Reachability",
-    blurb: "OSV triage, deps scanning, and call-path exploitability.",
+    blurb: "OSV feed hydration, 20-language Tier-1 reachability, canonical PURL OpenVEX, and SARIF 2.1.0.",
     guides: [
+      {
+        title: "Vulnerability reachability, OSV fetch & OpenVEX/SARIF",
+        feature: "vuln fetch · vuln scan · --strict-reachability · -f sarif",
+        blurb:
+          "Live OSV hydration, air-gapped overrides, transitive JAR stubs, and SARIF 2.1.0 codeFlows across 20 Tier-1 languages.",
+        href: "/docs/guides/vulnerability-reachability/",
+      },
       {
         title: "Vulnerability and OSV supply-chain analysis",
         feature: "vuln, deps, taint, security",

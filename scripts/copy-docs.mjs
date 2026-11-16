@@ -162,7 +162,7 @@ Install: \`curl -fsSL https://rgctl.io/install.sh | sh\`
 - Cross-language MRO (\`relations -e overrides\`), SCIP overlay (\`discover --scip\`), frameworks / DI routes
 - Lossless Red-Green CST streams (\`discover --lossless\` → \`source.rgcs.bin\` + \`trivia.rgct.bin\`) and byte-exact \`rgctl writeback\` (\`verify\`, \`export\`, \`patch\`)
 - Semantic search over functions and docs
-- OSV / vuln reachability and OpenVEX (\`rgctl vuln\`, \`rgctl deps\`)
+- OSV / vuln reachability, OpenVEX PURLs, and SARIF 2.1.0 (\`rgctl vuln fetch|scan|analyze|triage\`, \`rgctl deps check\`, \`-f sarif\`)
 - Agent pack via \`rgctl install --skill\` (core \`rgctl\` + \`/rgctl:review\` · \`/rgctl:vuln\` · \`/rgctl:migrate\`)
 
 ## CLI (JSON-first)
@@ -192,6 +192,7 @@ Install: \`curl -fsSL https://rgctl.io/install.sh | sh\`
 - https://rgctl.io/docs/guides/program-slicing/
 - https://rgctl.io/docs/guides/clone-detection/
 - https://rgctl.io/docs/guides/community-detection/
+- https://rgctl.io/docs/guides/vulnerability-reachability/
 - https://rgctl.io/docs/guides/vulnerability-and-osv-analysis/
 - https://rgctl.io/docs/guides/migration-planning/
 

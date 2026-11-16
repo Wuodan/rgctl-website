@@ -82,6 +82,12 @@
       "needs": ["coolstore", "osv"]
     },
     {
+      "slug": "vulnerability-reachability",
+      "title": "Vulnerability reachability, OSV fetch & SARIF",
+      "blurb": "vuln scan --with-dep-stubs · --strict-reachability · canonical PURL OpenVEX & SARIF 2.1.0.",
+      "needs": ["coolstore", "osv"]
+    },
+    {
       "slug": "community-detection",
       "title": "Community detection",
       "blurb": "Fast-Leiden communities list and inventory.",
