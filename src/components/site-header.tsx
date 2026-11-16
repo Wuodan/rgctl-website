@@ -25,12 +25,12 @@ export function SiteHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[var(--hairline)] bg-[var(--canvas)]/92 font-[family-name:var(--font-ui)] backdrop-blur">
+    <header className="sticky top-0 z-40 border-b border-[var(--hairline)] bg-[var(--canvas)]/92 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-6">
           <Link href="/" className="flex items-center gap-2 text-[var(--ink)]">
             <Terminal className="h-4 w-4 text-[var(--primary)]" aria-hidden />
-            <span className="text-[15px] font-medium tracking-wide">
+            <span className="font-[family-name:var(--font-serif)] text-[15px] font-semibold tracking-wide">
               rgctl
             </span>
           </Link>

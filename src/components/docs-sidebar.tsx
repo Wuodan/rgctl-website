@@ -101,7 +101,7 @@ export function DocsSidebar({ currentPath }: { currentPath?: string }) {
       aria-label="Documentation"
       className="space-y-6 text-sm lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto"
     >
-      <p className="font-[family-name:var(--font-ui)] text-[13px] font-medium uppercase tracking-wider text-[var(--mute)]">
+      <p className="text-[13px] font-medium uppercase tracking-wider text-[var(--mute)]">
         Docs
       </p>
       {DOCS_NAV.map((section) => (

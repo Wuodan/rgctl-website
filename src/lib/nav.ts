@@ -1,3 +1,5 @@
+import { DISCORD_INVITE } from "@/lib/utils";
+
 export const primaryNav = [
   { href: "/docs/guides/", label: "Guides" },
   { href: "/docs/languages/", label: "Languages" },
@@ -20,6 +22,11 @@ export const footerAgents = [
 ] as const;
 
 export const footerContribute = [
+  {
+    href: DISCORD_INVITE,
+    label: "Discord",
+    external: true,
+  },
   {
     href: "https://github.com/rgctl/rgctl/blob/main/CONTRIBUTING.md",
     label: "Contributing",

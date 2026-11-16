@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { DemoMedia } from "@/components/demo-media";
 import { HeroDemoPanel } from "@/components/hero-demo-panel";
 import { TerminalBlock } from "@/components/terminal";
-import { GITHUB_REPO } from "@/lib/utils";
+import { DISCORD_INVITE, GITHUB_REPO } from "@/lib/utils";
 
 /** 3×3 capability matrix — rows = depth, cells = differentiators vs grep-only tooling. */
 const capabilityRows = [
@@ -308,12 +308,17 @@ export default function HomePage() {
               Help grow the project
             </h2>
             <p className="max-w-lg text-sm text-[var(--body)]">
-              Star the repo, try the ecommerce-java fixture, open issues, and
-              share agent recipes. Adoption is the product.
+              Questions and ideas are welcome on Discord. Star the repo, try
+              the ecommerce-java fixture, and share what you build.
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button asChild>
+              <a href={DISCORD_INVITE} target="_blank" rel="noreferrer">
+                Join Discord
+              </a>
+            </Button>
+            <Button variant="ghost" asChild>
               <a href={GITHUB_REPO} target="_blank" rel="noreferrer">
                 <Star className="h-4 w-4" /> Star
               </a>

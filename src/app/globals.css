@@ -12,7 +12,6 @@
  */
 :root,
 [data-theme="light"] {
-  --font-ui: ui-sans-serif, -apple-system, "SF Pro Text", system-ui, sans-serif;
   --primary: #0369a1;
   --on-primary: #ffffff;
   --ink: #18181b;
@@ -105,10 +104,27 @@ html[data-theme="dark"] {
 body {
   background: var(--canvas);
   color: var(--ink);
-  font-family: var(--font-sans), var(--font-ui), sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Three faces, one job each: Inter for UI, Source Serif for titles, IBM Plex Mono for code. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif), Georgia, serif;
+}
+
+footer h3 {
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+code,
+kbd,
+samp {
+  font-family: var(--font-mono), ui-monospace, monospace;
 }
 
 * {

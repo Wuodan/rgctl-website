@@ -15,3 +15,4 @@ export function withBase(path: string): string {
 export const GITHUB_REPO = "https://github.com/rgctl/rgctl";
 export const GITHUB_RELEASES = `${GITHUB_REPO}/releases/latest`;
 export const GITHUB_DISCUSSIONS = `${GITHUB_REPO}/discussions`;
+export const DISCORD_INVITE = "https://discord.gg/FVMcqbe4U";
