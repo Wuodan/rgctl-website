@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { DemoMedia } from "@/components/demo-media";
 import { DemoPlayground } from "@/components/demo-playground";
+import { socialMetadata } from "@/lib/seo";
 import { GITHUB_REPO } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Demo",
+  description:
+    "Watch rgctl index a real repository, trace blast radius, slice CFG/PDG, and query compact JSON in recorded and interactive demos.",
+  alternates: { canonical: "/demo/" },
+  ...socialMetadata({
+    title: "See rgctl in action — graph queries in a real terminal",
+    description:
+      "A 77-second terminal walkthrough plus interactive agent scenarios: discovery, blast radius, CPG slices, and JSON queries.",
+    path: "/demo/",
+  }),
 };
 
 export default function DemoPage() {

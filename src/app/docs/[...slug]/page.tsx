@@ -9,6 +9,7 @@ import {
   guideDemoMp4Exists,
 } from "@/lib/guide-demos";
 import { extractDocMeta, listDocSlugs, readDoc, rewriteDocLinks } from "@/lib/docs";
+import { socialMetadata } from "@/lib/seo";
 import { GITHUB_REPO } from "@/lib/utils";
 
 type Props = { params: Promise<{ slug: string[] }> };
@@ -29,12 +30,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${meta.title} · Docs`,
     description: meta.description,
     alternates: { canonical: canonicalPath },
-    openGraph: {
+    ...socialMetadata({
       title: meta.title,
       description: meta.description,
+      path: canonicalPath,
       type: "article",
-      url: canonicalPath,
-    },
+    }),
   };
 }
 

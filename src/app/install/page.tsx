@@ -3,10 +3,20 @@ import Link from "next/link";
 import { TerminalBlock } from "@/components/terminal";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { socialMetadata } from "@/lib/seo";
 import { GITHUB_RELEASES, GITHUB_REPO } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Install",
+  description:
+    "Install rgctl from a release binary or build from source. One-line installer for macOS and Linux.",
+  alternates: { canonical: "/install/" },
+  ...socialMetadata({
+    title: "Install rgctl — a code knowledge graph in one command",
+    description:
+      "Download a release binary for macOS or Linux, or build from source. Start indexing your repository in seconds.",
+    path: "/install/",
+  }),
 };
 
 export default function InstallPage() {

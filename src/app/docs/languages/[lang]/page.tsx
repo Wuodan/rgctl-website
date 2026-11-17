@@ -13,6 +13,7 @@ import {
   semanticCoverage,
 } from "@/lib/languages";
 import { HighlightedCode } from "@/components/highlighted-code";
+import { socialMetadata } from "@/lib/seo";
 import { GITHUB_REPO } from "@/lib/utils";
 
 type Props = { params: Promise<{ lang: string }> };
@@ -42,12 +43,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title,
     description,
     alternates: { canonical },
-    openGraph: {
+    ...socialMetadata({
       title,
       description,
+      path: canonical,
       type: "article",
-      url: canonical,
-    },
+    }),
   };
 }
 

@@ -110,7 +110,12 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Three faces, one job each: Inter for UI, Source Serif for titles, IBM Plex Mono for code. */
+/*
+ * Three faces, one job each: Inter for UI, Source Serif for titles,
+ * JetBrains Mono for code. JetBrains Mono is the upstream of
+ * JetBrainsMono Nerd Font, so terminal output reads like a developer's shell
+ * without shipping a patched icon font.
+ */
 h1,
 h2,
 h3 {
@@ -123,8 +128,14 @@ footer h3 {
 
 code,
 kbd,
-samp {
-  font-family: var(--font-mono), ui-monospace, monospace;
+samp,
+pre {
+  /* Keep a locally installed Nerd Font as a progressive enhancement. */
+  font-family: var(--font-mono), "JetBrainsMono Nerd Font", ui-monospace,
+    SFMono-Regular, Menlo, monospace;
+  /* Developer-native coding features: contextual ligatures and a slashed zero. */
+  font-feature-settings: "calt" 1, "liga" 1, "zero" 1;
+  font-variant-ligatures: contextual common-ligatures;
 }
 
 * {

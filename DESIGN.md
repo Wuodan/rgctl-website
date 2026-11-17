@@ -348,6 +348,20 @@ All three faces are open or freely-loadable:
 - **DM Mono** — open-source on Google Fonts.
 - **Instrument Serif** — open-source on Google Fonts.
 
+### Implemented Stack (rgctl.io)
+The live Next.js site loads **Inter**, **Source Serif 4**, and **JetBrains Mono**
+through `next/font/google`. JetBrains Mono is the upstream face of
+**JetBrainsMono Nerd Font**; the site intentionally ships the upstream variable
+font instead of a multi-megabyte patched icon font, and keeps the Nerd Font name
+in the local fallback stack. Code and terminal surfaces enable contextual
+ligatures (`calt`/`liga`) and the slashed-zero feature.
+
+### Social Card
+`public/og/default.png` is the 1200×630 dark social card (brand mark, terminal
+graph, install command, and `rgctl.io` URL). Page-level Open Graph and Twitter
+metadata is composed in `src/lib/seo.ts`; docs and guide pages use their own
+titles and descriptions while sharing the card.
+
 ## Layout
 
 ### Spacing System

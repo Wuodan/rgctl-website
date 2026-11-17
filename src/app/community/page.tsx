@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { socialMetadata } from "@/lib/seo";
 import {
   DISCORD_INVITE,
   GITHUB_DISCUSSIONS,
@@ -14,6 +15,12 @@ export const metadata: Metadata = {
   description:
     "Join the rgctl Discord to ask questions, share what you're building, and meet other people using the project.",
   alternates: { canonical: "/community/" },
+  ...socialMetadata({
+    title: "Join the rgctl community",
+    description:
+      "Ask questions, share what you're building, and meet other developers using rgctl's code knowledge graph.",
+    path: "/community/",
+  }),
 };
 
 function DiscordIcon({ className }: { className?: string }) {

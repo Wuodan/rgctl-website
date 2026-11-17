@@ -7,10 +7,21 @@ import {
   listLanguages,
   semanticCoverage,
 } from "@/lib/languages";
+import { socialMetadata } from "@/lib/seo";
 import { GITHUB_REPO } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Languages · Docs",
+  description:
+    "Explore rgctl language support: Tier-1 AST plugins, Tier-2 tags.scm packs, and Mainframe COBOL/PL-I/JCL coverage.",
+  alternates: { canonical: "/docs/languages/" },
+  ...socialMetadata({
+    title: "rgctl language support — 69 languages, one graph",
+    description:
+      "Tier-1 AST plugins, Tier-2 tags.scm packs, and Mainframe COBOL/PL-I/JCL coverage for code knowledge graphs.",
+    path: "/docs/languages/",
+    type: "article",
+  }),
 };
 
 export default function LanguagesIndexPage() {
