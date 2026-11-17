@@ -11,55 +11,55 @@ import { DISCORD_INVITE, GITHUB_REPO } from "@/lib/utils";
 const capabilityRows = [
   {
     label: "Index & ask",
-    blurb: "Agent-ready facts without dumping trees into context.",
+    blurb: "Give your agent a map of the repo instead of making it read every file.",
     cells: [
       {
         title: "discover",
-        body: "One Rust indexing pass builds the graph plus reachability caches. Later questions are lookups — not greps.",
+        body: "Index once, query later. A single Rust pass builds the graph and reachability caches, so follow-up questions are lookups, not fresh greps.",
       },
       {
         title: "find · callers",
-        body: "Exact inventory and typed edges (find, callers, relations, inventory). Stable -f json with schema_version.",
+        body: "Exact relationships, no guesswork. Get callers and typed symbol references in stable -f json with schema_version.",
       },
       {
         title: "semantic",
-        body: 'Opt-in intent search ("checkout flow") over functions or communities — offline hash/vocab or ONNX, not a substitute for structure.',
+        body: "Search by intent when you don’t know the name. Opt-in offline embeddings over functions or communities, paired with structural facts so similar names aren’t mistaken for real dependencies.",
       },
     ],
   },
   {
     label: "Program analysis",
-    blurb: "Beyond call lists — CFG, PDG, flows, and security paths.",
+    blurb: "Trace what breaks, what changes state, and where untrusted data goes.",
     cells: [
       {
         title: "blast-radius",
-        body: "Deterministic upstream impact for a symbol at any depth — compact JSON agents can gate edits on.",
+        body: "Know what a refactor will break. Deterministic upstream impact at any depth — the call sites an agent must update, in compact JSON it can gate edits on.",
       },
       {
         title: "cpg · slice · inspect",
-        body: "Hybrid CALL + CFG/PDG façade: statement slices, field mutations, dominance. slice builds CFG/PDG lazily on demand; discover --with-cfg prebuilds the full archive.",
+        body: "See which lines actually touch a value. Statement slices, field mutations, and branch dominance without reading the whole file; slice builds CFG/PDG lazily, discover --with-cfg prebuilds the archive.",
       },
       {
         title: "taint · security",
-        body: "Source→sink and CVE-oriented paths when you discover with --with-taint / --with-security — not just “who calls whom.”",
+        body: "Follow untrusted input to the sink. Source→sink paths with --with-taint / --with-security; pair with vuln for OSV/CVE reachability — not just “who calls whom.”",
       },
     ],
   },
   {
     label: "Architecture & change",
-    blurb: "Where complexity concentrates — and what to migrate first.",
+    blurb: "Help your agent see the big picture — and keep risky PRs in check.",
     cells: [
       {
         title: "communities",
-        body: "Fast-Leiden clusters (hub-stripped) so agents reason about subsystems, not a flat bag of functions.",
+        body: "Automatic subsystem boundaries. Hub-stripped Fast-Leiden clustering groups tightly coupled code so agents reason about modules, not a flat bag of functions.",
       },
       {
         title: "metrics",
-        body: "FastPageRank, betweenness, harmonic centrality, git churn hotspots — ranked facts, not LLM guesses about importance.",
+        body: "Rank load-bearing code with centrality, not guesses. FastPageRank, betweenness, harmonic centrality, and git churn identify the files most likely to hurt when changed.",
       },
       {
         title: "migration · review",
-        body: "Export a prioritized migration_plan.json; gate PRs with review check / check --policy-file.",
+        body: "Plan the refactor, then guard it. Export a dependency-ordered migration_plan.json, or gate PRs with review check / check --policy-file.",
       },
     ],
   },
@@ -75,8 +75,9 @@ export default function HomePage() {
             A code knowledge graph built for agents
           </h1>
           <p className="mt-5 max-w-[58ch] text-[17.5px] leading-relaxed text-[var(--body)]">
-            rgctl indexes your repository once, then answers reachability
-            and structure questions in compact JSON — so coding agents use{" "}
+            Stop making your coding agent grep in the dark. rgctl indexes call
+            paths and dependencies once, then answers impact questions in
+            compact JSON — so Cursor, Claude Code, and Codex use{" "}
             <b className="font-semibold text-[var(--ink)]">fewer tokens</b> and
             make{" "}
             <b className="font-semibold text-[var(--ink)]">
@@ -92,6 +93,13 @@ export default function HomePage() {
               "rgctl install --skill --tools cursor,claude,codex,antigravity,agents",
             ]}
           />
+          <p className="mt-2 text-xs text-[var(--mute)]">
+            Prefer a release tarball or a source build?{" "}
+            <Link href="/install/" className="underline hover:text-[var(--ink)]">
+              See install options
+            </Link>
+            .
+          </p>
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <Button size="lg" asChild>
               <Link href="/install/">
@@ -144,39 +152,54 @@ export default function HomePage() {
             Why rgctl instead of grep?
           </h2>
           <p className="mb-8 max-w-[62ch] text-[var(--body)]">
-            Agents that scrape the tree burn tokens and still miss transitive
-            callers. Index once; answer with compact JSON.
+            Text search shows where a string appears — not what breaks when you
+            change it. Give your agent precomputed structure instead of raw file
+            dumps.
           </p>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[32rem] border-collapse text-left text-sm">
               <thead>
                 <tr className="border-b border-[var(--hairline)] text-[var(--mute)]">
                   <th className="py-2 pr-4 font-medium"> </th>
-                  <th className="py-2 pr-4 font-medium">Without rgctl</th>
-                  <th className="py-2 font-medium">With rgctl</th>
+                  <th className="py-2 pr-4 font-medium">Typical agent</th>
+                  <th className="py-2 font-medium">Agent with rgctl</th>
                 </tr>
               </thead>
               <tbody className="text-[var(--body)]">
                 <tr className="border-b border-[var(--hairline)]">
                   <td className="py-3 pr-4 font-medium text-[var(--ink)]">
-                    Tool calls
+                    Finding dependencies
                   </td>
-                  <td className="py-3 pr-4">Many greps + file dumps</td>
-                  <td className="py-3">1–2 (`discover` once, then query)</td>
+                  <td className="py-3 pr-4">Repeated grep + file reads</td>
+                  <td className="py-3">
+                    1–2 graph lookups (
+                    <code className="font-mono text-xs">discover</code> once,
+                    then query)
+                  </td>
                 </tr>
                 <tr className="border-b border-[var(--hairline)]">
                   <td className="py-3 pr-4 font-medium text-[var(--ink)]">
-                    Context tokens
+                    Context window cost
                   </td>
                   <td className="py-3 pr-4">Whole files into the prompt</td>
-                  <td className="py-3">Compact `-f json` rows</td>
+                  <td className="py-3">
+                    Compact <code className="font-mono text-xs">-f json</code>{" "}
+                    rows
+                  </td>
+                </tr>
+                <tr className="border-b border-[var(--hairline)]">
+                  <td className="py-3 pr-4 font-medium text-[var(--ink)]">
+                    Refactoring safety
+                  </td>
+                  <td className="py-3 pr-4">Indirect callers missed or guessed</td>
+                  <td className="py-3">Exact upstream blast radius at any depth</td>
                 </tr>
                 <tr>
                   <td className="py-3 pr-4 font-medium text-[var(--ink)]">
-                    Reachability
+                    Answer reliability
                   </td>
-                  <td className="py-3 pr-4">Easy to miss / invent</td>
-                  <td className="py-3">Deterministic typed graph + blast-radius</td>
+                  <td className="py-3 pr-4">Relationships inferred from names</td>
+                  <td className="py-3">Deterministic facts from the typed graph</td>
                 </tr>
               </tbody>
             </table>
@@ -223,13 +246,13 @@ export default function HomePage() {
           </h2>
           <p className="mb-10 max-w-[62ch] text-[var(--body)]">
             Most code graphs stop at symbols, callers, and impact. rgctl adds
-            precomputed reachability, lazy hybrid CPG depth, FastPageRank,
-            Fast-Leiden communities, fragment clones, MRO/SCIP/git-churn overlays,
-            and migration/CI outputs — always as deterministic{" "}
+            precomputed reachability, on-demand CFG/PDG slicing, subsystem
+            clustering, centrality and churn rankings, and migration/CI
+            artifacts — served as deterministic{" "}
             <code className="font-[family-name:var(--font-mono)] text-[0.9em] text-[var(--ink)]">
               -f json
             </code>{" "}
-            for agents.
+            so your agent gets a verified answer instead of reading the tree.
           </p>
           <div className="space-y-10">
             {capabilityRows.map((row) => (
