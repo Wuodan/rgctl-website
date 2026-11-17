@@ -363,6 +363,12 @@ its navy/near-black strokes can lift to `--ink` on the dark canvas; the
 “ctl” wordmark and the icon's inner arch use the same button blue as
 `--primary` in each theme.
 
+The favicon set (`src/app/icon.svg`, `src/app/favicon.ico`,
+`src/app/apple-icon.png`) puts the mark on a navy `#2B2D63` tile with a white
+stroke and the `#0EA5E9` arc. The twin vertical stems collapse to one so the
+mark stays legible at 16–32 px; the Apple touch icon is an opaque square so iOS
+can apply its own mask. Download copies live in `public/brand/`.
+
 ### Social Card
 `public/og/default.png` is the 1200×630 dark social card (brand mark, terminal
 graph, install command, and `rgctl.io` URL). Page-level Open Graph and Twitter
