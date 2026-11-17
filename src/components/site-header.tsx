@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Terminal } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Logo } from "@/components/logo";
 import { Button } from "@/components/ui/button";
 import { primaryNav } from "@/lib/nav";
 import { cn, GITHUB_REPO } from "@/lib/utils";
@@ -28,11 +28,11 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-[var(--hairline)] bg-[var(--canvas)]/92 backdrop-blur">
       <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 text-[var(--ink)]">
-            <Terminal className="h-4 w-4 text-[var(--primary)]" aria-hidden />
-            <span className="font-[family-name:var(--font-serif)] text-[15px] font-semibold tracking-wide">
-              rgctl
-            </span>
+          <Link
+            href="/"
+            className="flex shrink-0 items-center text-[var(--ink)]"
+          >
+            <Logo className="h-8 w-auto" />
           </Link>
           <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
             {primaryNav.map((item) => {

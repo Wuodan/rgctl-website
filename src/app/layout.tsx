@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
-import { Inter, JetBrains_Mono, Source_Serif_4 } from "next/font/google";
+import { Inter, JetBrains_Mono, Poppins, Source_Serif_4 } from "next/font/google";
 import { Analytics } from "@/components/analytics";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -20,6 +20,18 @@ const inter = Inter({
 const sourceSerif = Source_Serif_4({
   subsets: ["latin"],
   variable: "--font-serif",
+  display: "swap",
+});
+
+/**
+ * The brand lockup's wordmark is drawn in Poppins 600. Loading just that
+ * weight keeps the supplied SVG's letterforms and fixed lockup width intact
+ * without pulling a second family into body copy.
+ */
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: "600",
+  variable: "--font-logo",
   display: "swap",
 });
 
@@ -71,7 +83,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} h-full`}
+      className={`${inter.variable} ${sourceSerif.variable} ${jetbrainsMono.variable} ${poppins.variable} h-full`}
       suppressHydrationWarning
     >
       <body className="flex min-h-full flex-col antialiased">

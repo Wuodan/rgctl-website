@@ -356,6 +356,13 @@ font instead of a multi-megabyte patched icon font, and keeps the Nerd Font name
 in the local fallback stack. Code and terminal surfaces enable contextual
 ligatures (`calt`/`liga`) and the slashed-zero feature.
 
+The header brand lockup (`src/components/logo.tsx`) adds **Poppins 600** as
+`--font-logo` so the supplied icon-and-wordmark SVG keeps its drawn letterforms
+and fixed lockup width. The mark is inlined instead of served as an image so
+its navy/near-black strokes can lift to `--ink` on the dark canvas; the
+“ctl” wordmark and the icon's inner arch use the same button blue as
+`--primary` in each theme.
+
 ### Social Card
 `public/og/default.png` is the 1200×630 dark social card (brand mark, terminal
 graph, install command, and `rgctl.io` URL). Page-level Open Graph and Twitter

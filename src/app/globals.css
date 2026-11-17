@@ -46,6 +46,10 @@
   --graph-label: #71717a;
   --graph-label-strong: #18181b;
   --scrollbar: #d4d4d8;
+
+  /* Brand lockup: navy mark and near-black wordmark; accent follows --primary. */
+  --logo-mark: #2b2d63;
+  --logo-word: #26292e;
 }
 
 /* Dark — copied dashboard canvas, sky selection, amber path */
@@ -85,6 +89,10 @@
   --graph-label: #71717a;
   --graph-label-strong: #e6e8eb;
   --scrollbar: #2a2f36;
+
+  /* The supplied lockup's navy/near-black disappear on the dark canvas. */
+  --logo-mark: var(--ink);
+  --logo-word: var(--ink);
 }
 
 @theme inline {
