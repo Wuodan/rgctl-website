@@ -43,7 +43,7 @@ export function SiteHeader() {
                   key={item.href}
                   href={item.href}
                   className={cn(
-                    "rounded-md px-2.5 py-1.5 text-[13px] font-medium transition-colors",
+                    "rounded-md px-2 py-1.5 text-[13px] font-medium transition-colors lg:px-2.5",
                     active
                       ? "border border-[var(--chip-border)] bg-[var(--chip)] text-[var(--chip-fg)]"
                       : "border border-transparent text-[var(--body)] hover:text-[var(--ink)]",
@@ -60,7 +60,7 @@ export function SiteHeader() {
           <Button variant="ghost" size="sm" asChild>
             <a href={GITHUB_REPO} target="_blank" rel="noreferrer">
               <GitHubIcon className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">GitHub</span>
+              <span className="hidden lg:inline">GitHub</span>
             </a>
           </Button>
           <Button size="sm" asChild>

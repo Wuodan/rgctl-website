@@ -11,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/",
     "/install/",
     "/agents/",
+    "/projects/",
     "/demo/",
     "/community/",
     "/docs/guides/",
