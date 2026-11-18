@@ -82,7 +82,11 @@ function titleCaseSlug(slug: string): string {
 }
 
 /**
- * Extract `# H1` title and lead paragraph for SEO metadata.
+ * Extract `# H1` title and the first real paragraph for SEO/social metadata.
+ *
+ * Many docs open with `# Title` followed by `## Introduction` before any prose.
+ * Skipping subheadings (rather than stopping at the first one) keeps social
+ * descriptions useful instead of falling back to "Title — rgctl documentation."
  * Falls back to a title-cased slug segment when no H1 is present.
  */
 export function extractDocMeta(md: string, fallbackSlug: string): DocMeta {
@@ -90,6 +94,7 @@ export function extractDocMeta(md: string, fallbackSlug: string): DocMeta {
   let title: string | null = null;
   let description = "";
   let pastTitle = false;
+  let scanned = 0;
   for (const line of lines) {
     const h1 = line.match(/^#\s+(.+)$/);
     if (!pastTitle && h1) {
@@ -103,14 +108,14 @@ export function extractDocMeta(md: string, fallbackSlug: string): DocMeta {
       if (description) break;
       continue;
     }
-    if (/^#{1,6}\s/.test(trimmed)) break;
-    if (/^[-*_|`]/.test(trimmed) && !/^[A-Za-z]/.test(trimmed)) {
-      // skip table/list/code fences as lead
-      if (trimmed.startsWith("```") || trimmed.startsWith("|")) continue;
-    }
-    if (/^```/.test(trimmed)) continue;
+    if (++scanned > 120) break;
+    // Subheadings are navigation, not the lead.
+    if (/^#{1,6}\s/.test(trimmed)) continue;
+    // Skip fences, images, tables, lists, HTML, and horizontal rules.
+    if (/^(```|~~~|<!--|!\[|\||[-*+] |\d+\. )/.test(trimmed)) continue;
+    if (/^[-*_]{3,}$/.test(trimmed)) continue;
     description = stripMdInline(trimmed);
-    break;
+    if (description) break;
   }
   if (!title) {
     title = titleCaseSlug(fallbackSlug || "docs");

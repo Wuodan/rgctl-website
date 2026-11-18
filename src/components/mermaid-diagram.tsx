@@ -5,13 +5,15 @@ import { useTheme } from "@/components/theme-provider";
 
 type Props = {
   chart: string;
+  /** Minimum SVG width in px; the wrapper scrolls horizontally below it. */
+  minWidth?: number;
 };
 
 /**
  * Client-only Mermaid renderer. Mermaid needs DOM APIs (getBBox), so we
  * dynamic-import inside useEffect and re-render when the site theme flips.
  */
-export function MermaidDiagram({ chart }: Props) {
+export function MermaidDiagram({ chart, minWidth }: Props) {
   const { theme } = useTheme();
   const reactId = useId().replace(/:/g, "");
   const [svg, setSvg] = useState<string | null>(null);
@@ -20,11 +22,7 @@ export function MermaidDiagram({ chart }: Props) {
   useEffect(() => {
     let cancelled = false;
     const source = chart.trim();
-    if (!source) {
-      setSvg(null);
-      setError(null);
-      return;
-    }
+    if (!source) return;
 
     (async () => {
       try {
@@ -72,6 +70,8 @@ export function MermaidDiagram({ chart }: Props) {
     };
   }, [chart, theme, reactId]);
 
+  if (!chart.trim()) return null;
+
   if (error) {
     return (
       <pre className="overflow-x-auto rounded-lg border border-[var(--hairline)] bg-[var(--canvas-soft)] p-3 text-sm text-[var(--mute)]">
@@ -92,9 +92,12 @@ export function MermaidDiagram({ chart }: Props) {
   }
 
   return (
-    <div
-      className="my-4 overflow-x-auto rounded-lg border border-[var(--hairline)] bg-[var(--canvas-soft)] p-4 [&_svg]:mx-auto [&_svg]:max-w-full"
-      dangerouslySetInnerHTML={{ __html: svg }}
-    />
+    <div className="my-4 overflow-x-auto rounded-lg border border-[var(--hairline)] bg-[var(--canvas-soft)]">
+      <div
+        className="p-4 [&_svg]:mx-auto [&_svg]:max-w-full"
+        style={minWidth ? { minWidth } : undefined}
+        dangerouslySetInnerHTML={{ __html: svg }}
+      />
+    </div>
   );
 }

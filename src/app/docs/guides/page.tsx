@@ -1,12 +1,20 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { socialMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Guides",
   description:
     "Task-oriented rgctl learning paths — discover, impact analysis, CFG/PDG, OSV reachability, and migration — with ecommerce-java and CoolStore fixtures.",
   alternates: { canonical: "/docs/guides/" },
+  ...socialMetadata({
+    title: "rgctl guides — code knowledge graph workflows",
+    description:
+      "Task-oriented rgctl learning paths: discovery, blast radius, CFG/PDG, OSV reachability, and migration with real fixtures.",
+    path: "/docs/guides/",
+    type: "article",
+  }),
 };
 
 type Guide = {

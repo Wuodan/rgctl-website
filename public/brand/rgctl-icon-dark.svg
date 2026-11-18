@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="160 370 250 250" width="250" height="250" role="img">
+  <title>rgctl</title>
+  <g fill="none" stroke-width="10" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="180" y="390" width="210" height="210" rx="42" stroke="#E6E8EB"/>
+    <path d="M296 390V466 M296 516V600 M312 390V466 M312 516V600" stroke="#E6E8EB"/>
+    <circle cx="303" cy="491" r="25" stroke="#E6E8EB"/>
+    <path d="M213 438 L276 491 L213 544" stroke="#E6E8EB"/>
+    <path d="M323 447.5 A48 48 0 0 1 323 534.5" stroke="#0EA5E9"/>
+  </g>
+</svg>

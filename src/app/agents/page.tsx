@@ -3,10 +3,20 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { TerminalBlock } from "@/components/terminal";
+import { socialMetadata } from "@/lib/seo";
 import { GITHUB_REPO } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "Agents",
+  description:
+    "Install the rgctl agent pack for Cursor, Claude Code, Codex, and other coding agents — one skill, structured JSON answers.",
+  alternates: { canonical: "/agents/" },
+  ...socialMetadata({
+    title: "rgctl for coding agents — fewer tokens, fewer mistakes",
+    description:
+      "Give Cursor, Claude Code, Codex, and other agents a code knowledge graph they can query as compact JSON.",
+    path: "/agents/",
+  }),
 };
 
 const steps = [

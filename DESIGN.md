@@ -348,6 +348,33 @@ All three faces are open or freely-loadable:
 - **DM Mono** — open-source on Google Fonts.
 - **Instrument Serif** — open-source on Google Fonts.
 
+### Implemented Stack (rgctl.io)
+The live Next.js site loads **Inter**, **Source Serif 4**, and **JetBrains Mono**
+through `next/font/google`. JetBrains Mono is the upstream face of
+**JetBrainsMono Nerd Font**; the site intentionally ships the upstream variable
+font instead of a multi-megabyte patched icon font, and keeps the Nerd Font name
+in the local fallback stack. Code and terminal surfaces enable contextual
+ligatures (`calt`/`liga`) and the slashed-zero feature.
+
+The header brand lockup (`src/components/logo.tsx`) adds **Poppins 600** as
+`--font-logo` so the supplied icon-and-wordmark SVG keeps its drawn letterforms
+and fixed lockup width. The mark is inlined instead of served as an image so
+its navy/near-black strokes can lift to `--ink` on the dark canvas; the
+“ctl” wordmark and the icon's inner arch use the same button blue as
+`--primary` in each theme.
+
+The favicon set (`src/app/icon.svg`, `src/app/favicon.ico`,
+`src/app/apple-icon.png`) puts the mark on a navy `#2B2D63` tile with a white
+stroke and the `#0EA5E9` arc. The twin vertical stems collapse to one so the
+mark stays legible at 16–32 px; the Apple touch icon is an opaque square so iOS
+can apply its own mask. Download copies live in `public/brand/`.
+
+### Social Card
+`public/og/default.png` is the 1200×630 dark social card (brand mark, terminal
+graph, install command, and `rgctl.io` URL). Page-level Open Graph and Twitter
+metadata is composed in `src/lib/seo.ts`; docs and guide pages use their own
+titles and descriptions while sharing the card.
+
 ## Layout
 
 ### Spacing System
