@@ -512,8 +512,8 @@ const tapes = {
         "Finds jackson-databind 2.13.5 shaded inside lib/*.jar → affected_candidate",
       ],
       [
-        "Link OSV Sinks to Your Code Coordinates (vuln analyze)",
-        "Transformers.jsonToOrder (Transformers.java:79) ← OrderServiceMDB.onMessage",
+        "Shaded JAR, No First-Party Call Site (vuln analyze)",
+        "jackson-databind is bundled; no ObjectMapper call site → not_exploitable",
       ],
     ],
   },
@@ -533,7 +533,7 @@ const tapes = {
       {
         comment: "# 2. Fail-closed CI gate (--strict-reachability) + upstream caller chains",
         cmds: [
-          "rgctl -f json vuln analyze --osv ../osv/jackson-CVE-2022-42004.json --include-jars lib --strict-reachability | jq '{exploitability, vex_status: .openvex.statements[0].status, products: .openvex.statements[0].products, caller_chains: .sink_taint.caller_chains[:2]}'",
+          "rgctl -f json vuln scan --osv ../osv --include-jars lib --with-dep-stubs --strict-reachability | jq '{counts, verdicts: [.results[] | {osv_id, exploitability}]}'",
         ],
         sleep: "3.5s",
       },
@@ -552,11 +552,11 @@ const tapes = {
       ],
       [
         "Fail-Closed CI Reachability Gate (--strict-reachability)",
-        "Escalates under_investigation → exploitable with OrderServiceMDB → readValue chain",
+        "Escalates inconclusive reachable sinks; not_exploitable stays not_exploitable",
       ],
       [
-        "SARIF 2.1.0 codeFlows for GitHub Code Scanning (-f sarif)",
-        "Multi-hop file:line threadFlows ready for upload-sarif@v3",
+        "SARIF 2.1.0 for GitHub Code Scanning (-f sarif)",
+        "CodeFlows appear when a call path is reachable; output is upload-sarif@v3-ready",
       ],
     ],
   },

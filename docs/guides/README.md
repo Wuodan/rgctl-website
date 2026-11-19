@@ -6,7 +6,7 @@ Most CLI how-tos embed a short **VHS walkthrough** (captioned) at the top of the
 
 > **Which fixture?**  
 > - **In-tree quickstart:** rgctl-tests/ecommerce-java (ships with the product repo — no extra clone). Best for first discover / find / blast-radius runs and the [User Guide](../user-guide.md).  
-> - **Full feature guides + demos:** **CoolStore** (example/coolstore or [konveyor-ecosystem/coolstore](https://github.com/konveyor-ecosystem/coolstore)) — larger Java EE app used in the how-tos below.
+> - **Full feature guides + demos:** **CoolStore** — `scripts/fetch-profile-repos.sh` clones it to `example/coolstore-weblogic` (from [konveyor-ecosystem/coolstore](https://github.com/konveyor-ecosystem/coolstore)); older guides may show `example/coolstore`, so use the clone you have.
 
 ## Guides
 
@@ -31,8 +31,8 @@ Most CLI how-tos embed a short **VHS walkthrough** (captioned) at the top of the
 | [Watch mode and incremental update](watch-mode.md) | update, watch, serve --watch | Keep the graph fresh without full rediscover |
 | [Migration Planning](migration-planning.md) | discover --export-migration-hints | Generate a dependency-aware migration roadmap |
 | [Clone Detection](clone-detection.md) | clones | Detect exact (Type-1), bloom, and sub-function fragment clones |
-| [Vulnerability Reachability, OSV Fetch & OpenVEX/SARIF](vulnerability-reachability.md) | vuln fetch, vuln scan, vuln analyze, -f sarif | Network OSV feed + offline/Trivy/SBOM overrides, --strict-reachability, --with-dep-stubs, Tier-1 lockfile matrix, OpenVEX PURLs & SARIF 2.1.0 |
-| [Vulnerability and OSV Supply-Chain Analysis](vulnerability-and-osv-analysis.md) | vuln, deps, taint, security | Step-by-step CoolStore walkthrough of OSV triage, manifest scanning, call-path reachability, and OpenVEX generation |
+| [Single-Advisory Vulnerability Reachability](vulnerability-and-osv-analysis.md) | vuln triage, deps check, taint, vuln analyze | One advisory end to end: range normalization, dependency match, call-site/boundary analysis, taint, and OpenVEX. |
+| [Batch Vulnerability Scanning, OSV Fetch & SARIF](vulnerability-reachability.md) | vuln fetch, vuln scan, -f sarif | Whole-repo OSV hydration, parallel scan, --strict-reachability, dependency stubs, conditional CVE rules, and SARIF 2.1.0/OpenVEX. |
 | [Agent pack](agent-skill.md) | CoolStore install walkthrough | NL → rgctl + /rgctl:review · /rgctl:vuln · /rgctl:migrate → CLI |
 
 ## Prerequisites

@@ -129,21 +129,21 @@ const paths: Path[] = [
   },
   {
     title: "Security & Supply-Chain Reachability",
-    blurb: "OSV feed hydration, 20-language Tier-1 reachability, canonical PURL OpenVEX, and SARIF 2.1.0.",
+    blurb: "Single-advisory evidence and whole-repo OSV scanning, with canonical PURL OpenVEX and SARIF 2.1.0.",
     guides: [
       {
-        title: "Vulnerability reachability, OSV fetch & OpenVEX/SARIF",
-        feature: "vuln fetch · vuln scan · --strict-reachability · -f sarif",
+        title: "Single-advisory vulnerability reachability",
+        feature: "vuln triage · deps check · taint · vuln analyze",
         blurb:
-          "Live OSV hydration, air-gapped overrides, transitive JAR stubs, and SARIF 2.1.0 codeFlows across 20 Tier-1 languages.",
-        href: "/docs/guides/vulnerability-reachability/",
+          "Investigate one advisory end to end: dependency matching, call-site and boundary analysis, taint, and OpenVEX.",
+        href: "/docs/guides/vulnerability-and-osv-analysis/",
       },
       {
-        title: "Vulnerability and OSV supply-chain analysis",
-        feature: "vuln, deps, taint, security",
+        title: "Batch vulnerability scanning & SARIF",
+        feature: "vuln fetch · vuln scan · --strict-reachability · -f sarif",
         blurb:
-          "OSV advisory triage, manifest scanning, call-path reachability, and OpenVEX.",
-        href: "/docs/guides/vulnerability-and-osv-analysis/",
+          "Hydrate OSV, scan the whole repository, stitch JAR/vendor calls, and emit SARIF 2.1.0 and OpenVEX for CI.",
+        href: "/docs/guides/vulnerability-reachability/",
       },
     ],
   },
@@ -226,7 +226,9 @@ export default function GuidesIndexPage() {
           </li>
           <li>
             <strong className="text-[var(--ink)]">Full feature guides:</strong>{" "}
-            <code className="text-xs">example/coolstore</code> (or{" "}
+            <code className="text-xs">example/coolstore-weblogic</code> —
+            cloned by <code className="text-xs">scripts/fetch-profile-repos.sh</code>{" "}
+            from{" "}
             <a
               href="https://github.com/konveyor-ecosystem/coolstore"
               className="underline"
@@ -235,7 +237,8 @@ export default function GuidesIndexPage() {
             >
               konveyor-ecosystem/coolstore
             </a>
-            ) — larger Java EE app used in the step-by-step guides below.
+            . Older guides may show <code className="text-xs">example/coolstore</code>;
+            use the clone you have.
           </li>
           <li>
             <strong className="text-[var(--ink)]">Large-scale corpus:</strong>{" "}
