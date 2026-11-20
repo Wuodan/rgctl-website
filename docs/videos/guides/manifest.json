@@ -83,14 +83,14 @@
     },
     {
       "slug": "vulnerability-and-osv-analysis",
-      "title": "Vulnerability and OSV analysis",
+      "title": "Single-advisory vulnerability reachability",
       "blurb": "vuln triage → deps check → vuln analyze (offline OSV fixture).",
       "needs": ["coolstore", "osv"]
     },
     {
       "slug": "vulnerability-reachability",
-      "title": "Vulnerability reachability, OSV fetch & SARIF",
-      "blurb": "vuln scan --with-dep-stubs · --strict-reachability · canonical PURL OpenVEX & SARIF 2.1.0.",
+      "title": "Batch vulnerability scanning & SARIF",
+      "blurb": "vuln scan --with-dep-stubs · --strict-reachability · OpenVEX & SARIF 2.1.0.",
       "needs": ["coolstore", "osv"]
     },
     {

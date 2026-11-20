@@ -5,8 +5,11 @@ export const SOCIAL_IMAGE_PATH = "/og/default.png";
 export const SOCIAL_IMAGE_ALT =
   "rgctl — a code knowledge graph for AI agents. Open source, MIT, Rust.";
 
+const absoluteSocialImageUrl = new URL(SOCIAL_IMAGE_PATH, SITE_URL).toString();
+
 export const socialImage = {
   url: SOCIAL_IMAGE_PATH,
+  secureUrl: absoluteSocialImageUrl,
   width: 1200,
   height: 630,
   type: "image/png",
@@ -30,7 +33,7 @@ export function socialMetadata({
   description,
   path = "/",
   type = "website",
-}: SocialOptions): Pick<Metadata, "openGraph" | "twitter"> {
+}: SocialOptions): Pick<Metadata, "openGraph" | "twitter" | "other"> {
   return {
     openGraph: {
       title,
@@ -45,6 +48,10 @@ export function socialMetadata({
       title,
       description,
       images: [{ url: socialImage.url, alt: socialImage.alt }],
+    },
+    other: {
+      "og:image:url": absoluteSocialImageUrl,
+      "twitter:image:src": absoluteSocialImageUrl,
     },
   };
 }

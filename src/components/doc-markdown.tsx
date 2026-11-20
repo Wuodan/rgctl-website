@@ -45,6 +45,13 @@ export function DocMarkdown({ children }: { children: string }) {
           }
           return <code>{codeChildren}</code>;
         },
+        table({ children: tableChildren }) {
+          return (
+            <div className="my-4 overflow-x-auto">
+              <table>{tableChildren}</table>
+            </div>
+          );
+        },
         pre({ children: preChildren }) {
           const only = Children.toArray(preChildren)[0];
           if (isMermaidCode(only)) {

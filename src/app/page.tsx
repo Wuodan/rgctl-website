@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, GitFork, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,10 @@ import { DemoMedia } from "@/components/demo-media";
 import { HeroDemoPanel } from "@/components/hero-demo-panel";
 import { TerminalBlock } from "@/components/terminal";
 import { DISCORD_INVITE, GITHUB_REPO } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 /** 3×3 capability matrix — rows = depth, cells = differentiators vs grep-only tooling. */
 const capabilityRows = [
