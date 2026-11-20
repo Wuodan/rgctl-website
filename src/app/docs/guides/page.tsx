@@ -125,6 +125,12 @@ const paths: Path[] = [
         blurb: "Type 1–4 clones including SESE + 1-WL fragment mode.",
         href: "/docs/guides/clone-detection/",
       },
+      {
+        title: "Dead code detection",
+        feature: "dead-code",
+        blurb: "Graph-reachability dead-code roots with confidence tiers.",
+        href: "/docs/guides/dead-code-detection/",
+      },
     ],
   },
   {

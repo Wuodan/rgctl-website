@@ -475,6 +475,49 @@ const tapes = {
     ],
   },
 
+  "dead-code-detection": {
+    slug: "dead-code-detection",
+    workdir: "docs/videos/.work/coolstore",
+    prompt: "coolstore",
+    scenes: [
+      {
+        comment: "# 1. Whole-graph reachability from every entry point",
+        cmds: [
+          "rgctl -f json dead-code | jq '.summary'",
+        ],
+        sleep: "2.5s",
+      },
+      {
+        comment: "# 2. Safe-delete queue — high-confidence roots only",
+        cmds: [
+          "rgctl -f json dead-code --confidence high --limit 4 | jq '.findings | map({symbol_name, kind, loc: \"\\(.file_path):\\(.start_line)\"})'",
+        ],
+        sleep: "3s",
+      },
+      {
+        comment: "# 3. Teach it entry points — root a whole REST subtree",
+        cmds: [
+          "rgctl -f json dead-code --entry-point rest | jq '.summary'",
+        ],
+        sleep: "3s",
+      },
+    ],
+    captions: [
+      [
+        "Reachability, Not Grep (dead-code)",
+        "BFS from main · framework annotations · ExposesRoute roots",
+      ],
+      [
+        "Safe-Delete Queue (--confidence high)",
+        "Unreferenced functions & fields — root-only findings",
+      ],
+      [
+        "Teach It Your Entry Points (--entry-point)",
+        "Container roots drop out of the report",
+      ],
+    ],
+  },
+
   "vulnerability-and-osv-analysis": {
     slug: "vulnerability-and-osv-analysis",
     workdir: "docs/videos/.work/coolstore",

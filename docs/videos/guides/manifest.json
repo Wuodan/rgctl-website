@@ -76,6 +76,12 @@
       "needs": ["coolstore"]
     },
     {
+      "slug": "dead-code-detection",
+      "title": "Dead code detection",
+      "blurb": "Graph-reachability dead-code roots with confidence tiers.",
+      "needs": ["coolstore"]
+    },
+    {
       "slug": "vulnerability-and-osv-analysis",
       "title": "Single-advisory vulnerability reachability",
       "blurb": "vuln triage → deps check → vuln analyze (offline OSV fixture).",
