@@ -370,10 +370,13 @@ mark stays legible at 16–32 px; the Apple touch icon is an opaque square so iO
 can apply its own mask. Download copies live in `public/brand/`.
 
 ### Social Card
-`public/og/default.png` is the 1200×630 dark social card (brand mark, terminal
-graph, install command, and `rgctl.io` URL). Page-level Open Graph and Twitter
-metadata is composed in `src/lib/seo.ts`; docs and guide pages use their own
-titles and descriptions while sharing the card.
+`public/og/default.png` is the 1200×630 dark social card built around the current
+icon-and-wordmark lockup, the blast-radius graph, the install command, and the
+`rgctl.io` URL. `public/og/linkedin-banner.png` (1128×191) applies the same visual
+system to the LinkedIn Page cover; `public/og/linkedin-banner-2x.png` is the
+2256×382 high-DPI version. Page-level Open Graph and Twitter metadata is composed
+in `src/lib/seo.ts`; docs and guide pages use their own titles and descriptions
+while sharing the card.
 
 ## Layout
 
