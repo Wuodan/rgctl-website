@@ -370,6 +370,23 @@
       "recordedAt": "2026-11-23T20:19:29.960Z"
     },
     {
+      "slug": "dead-code-detection",
+      "title": "Dead Code Detection",
+      "guide": "/docs/guides/dead-code-detection/",
+      "script": "scripts/dead-code-detection.md",
+      "fixture": "example/metasfresh-4.9.8b",
+      "questions": 4,
+      "status": "recorded",
+      "video": "recordings/dead-code-detection.mp4",
+      "transcript": "transcripts/dead-code-detection.json",
+      "durationSec": 118.5,
+      "recordedWith": "claude",
+      "model": "deepseek-flash",
+      "rgctlVersion": "rgctl v0.4.29 (https://github.com/rgctl/rgctl)",
+      "fixtureCommit": "eb0cff25",
+      "recordedAt": "2026-11-23T21:25:05.424Z"
+    },
+    {
       "slug": "full-demo",
       "title": "Full agent demo",
       "guide": "/demo/",
