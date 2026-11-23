@@ -58,6 +58,9 @@ yarn-error.log*
 .env
 .env.*
 !.env.example
+# Agent video credentials: keep the real file local, commit only the template.
+.env.demo.agent
+!.env.demo.agent.example
 
 # vercel
 .vercel

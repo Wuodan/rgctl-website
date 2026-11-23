@@ -1,0 +1,180 @@
+{
+  "slug": "ci-policy-checks",
+  "title": "CI Policy Checks",
+  "fixture": "example/coolstore-weblogic",
+  "questions": [
+    {
+      "index": 1,
+      "label": "Opening",
+      "text": "This branch changes `ShoppingCartService`. Did it introduce new policy violations compared with main?"
+    },
+    {
+      "index": 2,
+      "label": "Triage",
+      "text": "Which findings are new, which were already on main, and which were resolved?"
+    },
+    {
+      "index": 3,
+      "label": "Scoping",
+      "text": "If I only want to block new violations, how should we scope the gate?"
+    },
+    {
+      "index": 4,
+      "label": "Fix",
+      "text": "Explain the failing rule and the exact symbol/file that triggered it so I can fix it."
+    }
+  ],
+  "events": [
+    {
+      "type": "user",
+      "text": "This branch changes `ShoppingCartService`. Did it introduce new policy violations compared with main?"
+    },
+    {
+      "type": "tool",
+      "id": "call_00_SHCIzeSJ8djTMkf9riER6761",
+      "name": "Skill",
+      "input": {
+        "skill": "rgctl-review",
+        "args": "Review current branch changes to ShoppingCartService against main for new policy violations"
+      },
+      "output": "Launching skill: rgctl-review",
+      "status": "ok",
+      "caption": {
+        "key": "review",
+        "priority": 60,
+        "title": "Graph deltas, not just a diff",
+        "body": "Compares base and head call paths for retargeted calls and new policy violations."
+      }
+    },
+    {
+      "type": "assistant",
+      "text": "I'll start by inspecting the repo state and existing rgctl artifacts.",
+      "html": "<p>I'll start by inspecting the repo state and existing rgctl artifacts.</p>"
+    },
+    {
+      "type": "tool",
+      "id": "call_00_TiSTr2CNwFm1G2N753Hj1293",
+      "name": "Bash",
+      "input": {
+        "command": "git status --porcelain && echo \"---BRANCH---\" && git branch --show-current && echo \"---DIFFSTAT vs main---\" && git diff --stat main -- . | tail -20",
+        "description": "Check git status, branch, diff stat"
+      },
+      "output": "?? .claude/\n---BRANCH---\nmain\n---DIFFSTAT vs main---",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_01_BXUTUt2Ldn9iXQyl2LL60289",
+      "name": "Bash",
+      "input": {
+        "command": "ls -la .rgctl 2>/dev/null; echo \"---BASE---\"; ls -la .rgctl-base 2>/dev/null; echo \"---POLICY---\"; ls -la policy.json .rgctl/policy.json 2>/dev/null; echo \"---RGCTL---\"; which rgctl && rgctl --version 2>/dev/null",
+        "description": "Check rgctl artifacts and policy files"
+      },
+      "output": "total 1164\ndrwxr-xr-x. 1 sysh sysh    610 Nov 23 19:55 .\ndrwxr-xr-x. 1 sysh sysh    198 Nov 23 19:53 ..\ndrwxr-xr-x. 1 sysh sysh    216 Nov 23 19:55 analysis\n-rw-r--r--. 1 sysh sysh 144998 Nov 23 19:55 analysis_results.bin\n-rw-r--r--. 1 sysh sysh   7793 Nov 23 19:53 annotation_args.json\n-rw-r--r--. 1 sysh sysh  99830 Nov 23 19:55 blast_engine.snapshot.bin\ndrwxr-xr-x. 1 sysh sysh     18 Nov 23 19:53 cache\n-rw-r--r--. 1 sysh sysh 176950 Nov 23 19:53 callable_resolution.json\n-rw-r--r--. 1 sysh sysh      8 Nov 23 19:53 content_store.bin\ndrwxr-xr-x. 1 sysh sysh     32 Nov 23 19:53 dashboard\ndrwxr-xr-x. 1 sysh sysh    502 Nov 23 19:53 dashboard-data\n-rw-r--r--. 1 sysh sysh     14 Nov 23 19:53 extraction_semantics.json\n-rw-r--r--. 1 sysh sysh  60448 Nov 23 19:55 file_hashes.json\n-rw-r--r--. 1 sysh sysh 503293 Nov 23 19:53 graph.snapshot.bin\n-rw-r--r--. 1 sysh sysh    137 Nov 23 19:55 macro_call_index.bin\n-rw-r--r--. 1 sysh sysh  28672 Nov 23 19:55 macro_call_index.db\n-rw-r--r--. 1 sysh sysh     64 Nov 23 19:53 materialized_fields.digest\n-rw-r--r--. 1 sysh sysh   3154 Nov 23 19:55 migration_plan.json\n-rw-r--r--. 1 sysh sysh 139190 Nov 23 19:53 parked_relations.bin\n---BASE---\n---POLICY---\n---RGCTL---\n../target/release/rgctl\nrgctl v0.4.29 (https://github.com/rgctl/rgctl)",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_cChSUDqbRRm8h3gSFQmw9724",
+      "name": "Bash",
+      "input": {
+        "command": "git log --oneline -5 && echo \"---AHEAD---\" && git rev-list --count main..HEAD 2>/dev/null; echo \"---BRANCHES---\" && git branch -a --format='%(refname:short) %(upstream:short)' | head -20; echo \"---STASH---\" && git stash list | head",
+        "description": "Check commits ahead, branches, stashes"
+      },
+      "output": "b5752b9 :ghost: Add extensions.json entries for java and core extensions\n---AHEAD---\n0\n---BRANCHES---\nmain origin/main\norigin \norigin/main \n---STASH---",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_01_YlBbkyhuNTwSRdm1qqWg9798",
+      "name": "Glob",
+      "input": {
+        "pattern": "**/*ShoppingCartService*"
+      },
+      "output": "example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartService.java",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_rEMqst63ozm5mhBK5YnP2395",
+      "name": "Bash",
+      "input": {
+        "command": "git status --porcelain --untracked-files=no; echo \"---DIFF origin/main---\"; git diff --stat origin/main..HEAD; echo \"---FILE TRACKED---\"; git ls-files --error-unmatch src/main/java/com/redhat/coolstore/service/ShoppingCartService.java >/dev/null 2>&1 && echo tracked || echo untracked; echo \"---POLICY FILES---\"; find . -maxdepth 3 -name 'policy.json' -not -path './target/*' 2>/dev/null",
+        "description": "Confirm no tracked changes and locate policy files"
+      },
+      "output": "---DIFF origin/main---\n---FILE TRACKED---\ntracked\n---POLICY FILES---",
+      "status": "ok",
+      "caption": {
+        "key": "structured-query",
+        "priority": 30,
+        "title": "Typed symbols and edges, not text matches",
+        "body": "Results are graph entities with stable JSON, not lines that happen to contain a string."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_91Z4ceoOqzCrR4hb6YDv5273",
+      "name": "Glob",
+      "input": {
+        "pattern": "**/policy*.json"
+      },
+      "output": "No files found",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_01_V44mVxZmrwaVwTdXn2Ih1676",
+      "name": "Bash",
+      "input": {
+        "command": "git reflog -8 --oneline 2>/dev/null; echo \"---REMOTE DIFF---\"; git diff --stat HEAD origin/main 2>/dev/null; echo \"(empty means identical)\"",
+        "description": "Check reflog and remote diff"
+      },
+      "output": "b5752b9 HEAD@{0}: clone: from https://github.com/konveyor-ecosystem/coolstore.git\n---REMOTE DIFF---\n(empty means identical)",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "assistant",
+      "text": "No new policy violations are detectable, because there are no changes to review on this checkout.\n\nEvidence:\n- Current branch is `main` and is 0 commits ahead of `origin/main`; `git diff --stat origin/main..HEAD` is empty, and `HEAD` == `origin/main` at `b5752b9` (a fresh clone, per reflog).\n- The only working-tree entries are untracked `.claude/`; `ShoppingCartService.java` is tracked and unmodified (`git status --porcelain --untracked-files=no` is empty). Its path: `src/main/java/com/redhat/coolstore/service/ShoppingCartService.java`.\n- No policy file exists anywhere (`policy.json`/`.rgctl/policy.json` not found), so `rgctl review check` would report \"No policy configured\" regardless.\n\nSo a red/green verdict cannot be assigned — there is an empty change set and no policy baseline. If you intended a change, it may be in another branch, a stash, or an uncommitted file that isn't present here. Point me at the ref (or commit the change) and I'll run `rgctl review paths` + `review check` against `main` and produce `REVIEW_REPORT.md`.",
+      "html": "<p>No new policy violations are detectable, because there are no changes to review on this checkout.</p>\n<p>Evidence:</p>\n<ul><li>Current branch is <code>main</code> and is 0 commits ahead of <code>origin/main</code>; <code>git diff --stat origin/main..HEAD</code> is empty, and <code>HEAD</code> == <code>origin/main</code> at <code>b5752b9</code> (a fresh clone, per reflog).</li><li>The only working-tree entries are untracked <code>.claude/</code>; <code>ShoppingCartService.java</code> is tracked and unmodified (<code>git status --porcelain --untracked-files=no</code> is empty). Its path: <code>src/main/java/com/redhat/coolstore/service/ShoppingCartService.java</code>.</li><li>No policy file exists anywhere (<code>policy.json</code>/<code>.rgctl/policy.json</code> not found), so <code>rgctl review check</code> would report &quot;No policy configured&quot; regardless.</li></ul>\n<p>So a red/green verdict cannot be assigned — there is an empty change set and no policy baseline. If you intended a change, it may be in another branch, a stash, or an uncommitted file that isn't present here. Point me at the ref (or commit the change) and I'll run <code>rgctl review paths</code> + <code>review check</code> against <code>main</code> and produce <code>REVIEW_REPORT.md</code>.</p>"
+    },
+    {
+      "type": "user",
+      "text": "Which findings are new, which were already on main, and which were resolved?"
+    },
+    {
+      "type": "assistant",
+      "text": "There is nothing to classify — the fork point and HEAD are identical, so the three sets are trivially empty.\n\n- New findings: none. `HEAD` == `origin/main` (0 commits ahead, empty `git diff --stat`), and `ShoppingCartService.java` is unmodified, so no finding can be attributable to \"this branch.\"\n- Already on main: none enumerable. Classification requires a policy baseline, and no `policy.json` or `.rgctl/policy.json` exists in the repo, so `rgctl review check` has nothing to evaluate against.\n- Resolved: none, for the same reason — a resolution is a delta between two finding sets, and neither set exists.\n\nPut differently, new ∪ pre-existing ∪ resolved = ∅. This isn't a \"clean branch\" result; it's a \"no branch\" result. To get the breakdown you're after, either point me to the ref/commit that actually changes `ShoppingCartService` (check other branches or the stash) or apply the edits locally, and supply a policy file so `review check --bisect` can produce new vs. pre-existing vs. resolved buckets.",
+      "html": "<p>There is nothing to classify — the fork point and HEAD are identical, so the three sets are trivially empty.</p>\n<ul><li>New findings: none. <code>HEAD</code> == <code>origin/main</code> (0 commits ahead, empty <code>git diff --stat</code>), and <code>ShoppingCartService.java</code> is unmodified, so no finding can be attributable to &quot;this branch.&quot;</li><li>Already on main: none enumerable. Classification requires a policy baseline, and no <code>policy.json</code> or <code>.rgctl/policy.json</code> exists in the repo, so <code>rgctl review check</code> has nothing to evaluate against.</li><li>Resolved: none, for the same reason — a resolution is a delta between two finding sets, and neither set exists.</li></ul>\n<p>Put differently, new ∪ pre-existing ∪ resolved = ∅. This isn't a &quot;clean branch&quot; result; it's a &quot;no branch&quot; result. To get the breakdown you're after, either point me to the ref/commit that actually changes <code>ShoppingCartService</code> (check other branches or the stash) or apply the edits locally, and supply a policy file so <code>review check --bisect</code> can produce new vs. pre-existing vs. resolved buckets.</p>"
+    },
+    {
+      "type": "user",
+      "text": "If I only want to block new violations, how should we scope the gate?"
+    },
+    {
+      "type": "assistant",
+      "text": "Scope the gate to a diff-based ratchet, not a whole-repo scan:\n\n- Baseline at the merge-base, not moving `main`: build the base artifact at `git merge-base origin/main HEAD` so unrelated main drift doesn't inflate or mask results.\n- Gate only the `new`/`regression` buckets from `rgctl review check --bisect` (equivalently `review paths`), which already classifies new vs pre-existing vs resolved against the base graph. Fail CI only when `new + regression > 0`; treat `pre-existing` as grandfathered and `resolved` as informational.\n- Require a committed policy file (`.rgctl/policy.json` or repo-root `policy.json`) so the ruleset is versioned and reproducible; currently none exists, so nothing can be evaluated.\n- Compare two committed refs (`--base-ref`, `--head-ref`) rather than `--synthetic-head worktree` for CI parity; reserve worktree mode for local pre-commit checks.\n- Constrain cost with `--with-limits`, bounded `--upstream-depth/--downstream-depth/--fanout`, and optionally restrict to changed files/symbols.\n\nCaveat: a pure merge-base gate won't block a violation introduced earlier on the branch but not in the latest diff — that's the intended \"new vs main\" semantics.",
+      "html": "<p>Scope the gate to a diff-based ratchet, not a whole-repo scan:</p>\n<ul><li>Baseline at the merge-base, not moving <code>main</code>: build the base artifact at <code>git merge-base origin/main HEAD</code> so unrelated main drift doesn't inflate or mask results.</li><li>Gate only the <code>new</code>/<code>regression</code> buckets from <code>rgctl review check --bisect</code> (equivalently <code>review paths</code>), which already classifies new vs pre-existing vs resolved against the base graph. Fail CI only when <code>new + regression &gt; 0</code>; treat <code>pre-existing</code> as grandfathered and <code>resolved</code> as informational.</li><li>Require a committed policy file (<code>.rgctl/policy.json</code> or repo-root <code>policy.json</code>) so the ruleset is versioned and reproducible; currently none exists, so nothing can be evaluated.</li><li>Compare two committed refs (<code>--base-ref</code>, <code>--head-ref</code>) rather than <code>--synthetic-head worktree</code> for CI parity; reserve worktree mode for local pre-commit checks.</li><li>Constrain cost with <code>--with-limits</code>, bounded <code>--upstream-depth/--downstream-depth/--fanout</code>, and optionally restrict to changed files/symbols.</li></ul>\n<p>Caveat: a pure merge-base gate won't block a violation introduced earlier on the branch but not in the latest diff — that's the intended &quot;new vs main&quot; semantics.</p>"
+    },
+    {
+      "type": "user",
+      "text": "Explain the failing rule and the exact symbol/file that triggered it so I can fix it."
+    },
+    {
+      "type": "assistant",
+      "text": "There is no failing rule or triggering symbol to explain — nothing in this checkout produced a finding.\n\n- No policy was evaluated: neither `policy.json` nor `.rgctl/policy.json` exists, so `rgctl review check` has no ruleset and would emit \"No policy configured.\"\n- No changed symbols: `HEAD` == `origin/main` (empty diff), and `ShoppingCartService.java` is unmodified, so even with a policy there'd be no delta to attribute a violation to.\n\nSo any rule name, severity, or `file:line` I gave you would be invented. I won't do that.\n\nTo get the actual fix target, provide one of: the ref/commit that changes `ShoppingCartService` (e.g., a feature branch or stash), or apply the edits locally so I can run `rgctl -f json review check --policy-file ... --bisect` / `review paths --synthetic-head worktree`. With a policy present, I'll return the exact rule id, severity, symbol, and `src/main/java/com/redhat/coolstore/service/ShoppingCartService.java:<line>` that tripped it.",
+      "html": "<p>There is no failing rule or triggering symbol to explain — nothing in this checkout produced a finding.</p>\n<ul><li>No policy was evaluated: neither <code>policy.json</code> nor <code>.rgctl/policy.json</code> exists, so <code>rgctl review check</code> has no ruleset and would emit &quot;No policy configured.&quot;</li><li>No changed symbols: <code>HEAD</code> == <code>origin/main</code> (empty diff), and <code>ShoppingCartService.java</code> is unmodified, so even with a policy there'd be no delta to attribute a violation to.</li></ul>\n<p>So any rule name, severity, or <code>file:line</code> I gave you would be invented. I won't do that.</p>\n<p>To get the actual fix target, provide one of: the ref/commit that changes <code>ShoppingCartService</code> (e.g., a feature branch or stash), or apply the edits locally so I can run <code>rgctl -f json review check --policy-file ... --bisect</code> / <code>review paths --synthetic-head worktree</code>. With a policy present, I'll return the exact rule id, severity, symbol, and <code>src/main/java/com/redhat/coolstore/service/ShoppingCartService.java:&lt;line&gt;</code> that tripped it.</p>"
+    }
+  ],
+  "meta": {
+    "agent": "claude",
+    "model": "deepseek-flash",
+    "sessionId": "e294da49-0b91-4c2d-80f3-66daf304498e",
+    "durationMs": 44897
+  }
+}

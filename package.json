@@ -13,7 +13,10 @@
     "copy-demos": "node scripts/copy-demos.mjs",
     "copy-docs": "node scripts/copy-docs.mjs",
     "copy-lang-coverage": "node scripts/copy-lang-coverage.mjs",
-    "test:firefox-hero": "node scripts/firefox-hero-graph.mjs"
+    "test:firefox-hero": "node scripts/firefox-hero-graph.mjs",
+    "check:agent-videos": "node docs/videos/agent/check.mjs",
+    "agent:record": "node docs/videos/agent/automation/record.mjs",
+    "agent:record:all": "node docs/videos/agent/automation/record-all.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.11",

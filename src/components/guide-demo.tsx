@@ -17,7 +17,7 @@ export function GuideDemo({ meta, className }: GuideDemoProps) {
           <span className="h-2.5 w-2.5 rounded-full bg-[var(--mute)]/40" aria-hidden />
           <span className="h-2.5 w-2.5 rounded-full bg-[var(--mute)]/40" aria-hidden />
           <span className="ml-2 font-[family-name:var(--font-mono)] text-[11px] text-[var(--mute)]">
-            {meta.title} · CLI walkthrough (VHS)
+            {meta.title} · {meta.slug === "cli-command-reference" ? "CLI walkthrough (VHS)" : "Agent walkthrough"}
           </span>
         </div>
         <video

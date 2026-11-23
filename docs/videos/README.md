@@ -1,7 +1,8 @@
-# Guide CLI demos (VHS)
+# Guide demos (agent walkthroughs)
 
-Per-guide Charm VHS tapes for every **CLI-friendly** how-to under `docs/guides/`.
-Deliverables live in this website repo and are copied into `public/demos/` at build time.
+This directory is the historical Charm VHS source. The current guide videos are the
+coding-agent recordings under `docs/videos/agent/`; `scripts/copy-demos.mjs` copies those
+into `public/demos/` at build time. The old VHS MP4s have been removed.
 
 **Excluded (by design):**
 

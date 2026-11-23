@@ -1,0 +1,382 @@
+{
+  "slug": "migration-planning",
+  "title": "Migration Planning",
+  "fixture": "example/coolstore-weblogic",
+  "questions": [
+    {
+      "index": 1,
+      "label": "Opening",
+      "text": "Generate a migration plan for this monolith. What should we extract first?"
+    },
+    {
+      "index": 2,
+      "label": "Why",
+      "text": "Why is that package first? Show the dependency and risk evidence."
+    },
+    {
+      "index": 3,
+      "label": "Sprints",
+      "text": "Group the plan into phases we can fit into sprints."
+    },
+    {
+      "index": 4,
+      "label": "Risk",
+      "text": "Which extraction is highest risk, and what should we do before it?"
+    }
+  ],
+  "events": [
+    {
+      "type": "user",
+      "text": "Generate a migration plan for this monolith. What should we extract first?"
+    },
+    {
+      "type": "tool",
+      "id": "call_00_c9yyLn5jqZQ4yiH21o2K3194",
+      "name": "Skill",
+      "input": {
+        "skill": "rgctl-migrate",
+        "args": "Generate a migration plan for the monolith at example/coolstore-weblogic; identify what to extract first (Strangler-Fig)"
+      },
+      "output": "Launching skill: rgctl-migrate",
+      "status": "ok",
+      "caption": {
+        "key": "migration-metrics",
+        "priority": 40,
+        "title": "Dependency order from graph signals",
+        "body": "Coupling, centrality, and blast radius replace guesswork about what to extract first."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_w8zbcrcq4XiE9Vcj499R0277",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json status",
+        "description": "Check rgctl status"
+      },
+      "output": "{\n  \"schema_version\": 3,\n  \"command\": \"status\",\n  \"status\": \"ok\",\n  \"repo\": \"example/coolstore-weblogic\",\n  \"snapshot\": \"example/coolstore-weblogic/.rgctl/graph.snapshot.bin\",\n  \"digest\": \"3c09c6f45502971edbe61506c22f6d657c9f25e2d1c373b97c668102d6156ff5\",\n  \"nodes\": 1055,\n  \"edges\": 2688,\n  \"index_current\": true,\n  \"dirty_files\": 0,\n  \"files_added\": 0,\n  \"files_changed\": 0,\n  \"files_deleted\": 0,\n  \"watcher_alive\": false,\n  \"update_queue_pending\": 0,\n  \"capabilities\": {\n    \"structural_graph\": {\n      \"ready\": true,\n      \"path\": \"example/coolstore-weblogic/.rgctl/graph.snapshot.bin\",\n      \"unlock_command\": \"rgctl discover\"\n    },\n    \"cfg_cpg\": {\n      \"ready\": true,\n      \"cpg_overlay\": true,\n      \"ast_skeleton\": false,\n      \"path\": \"example/coolstore-weblogic/.rgctl/analysis/cfg_pdg.archive.bin\",\n      \"unlock_command\": \"rgctl discover --with-cfg\"\n    },\n    \"semantic_index\": {\n      \"ready\": true,\n      \"scope\": \"function\",\n      \"path\": \"example/coolstore-weblogic/.rgctl/semantic_index.bin\",\n      \"unlock_command\": \"rgctl semantic index\"\n    },\n    \"agent_skills\": {\n      \"installed_hosts\": [\n        \"claude\"\n      ],\n      \"unlock_command\": \"rgctl install --skill\"\n    }\n  }\n}",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_xtfBpyPoEC2vmaaBlMRU8202",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl discover . --export-migration-hints --with-harmonic 2>&1 | tail -20",
+        "description": "Export migration hints"
+      },
+      "output": "[>] rgctl discover\n==> Analyzing: example/coolstore-weblogic\n[✓] Loaded 62 files from snapshot -> 1055 nodes, 2688 edges (0.0s)\n[✓] Analyzed 259 functions (avg complexity: 1.3, 1 high, 4 medium)\n[✓] Detected 816 communities (modularity: 0.61)\n[*] Top hotspot: logout (PageRank: 0.0095)\n[!] Found 10 circular dependencies\n[✓] Analysis complete\n[✓] Migration plan (Hybrid Default): 14 steps → example/coolstore-weblogic/.rgctl/migration_plan.json\n[✓] Saved to .rgctl/ (0.1 MB total)\n[✓] Completed in 0.0s (peak 24 MB; ingest 20 MB, analysis 24 MB)\n\n[i] Next steps:\n   rgctl -f json find --type function --limit 20\n   rgctl -f json inventory --by type\n   rgctl -f json relations --edge calls --limit 20\n   rgctl slice <file> --line <N> --variable <VAR>\n[✓] rgctl discover finished in 40ms",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_ET_8qbkLdke7Ft6G2AsNwc63870",
+      "name": "Bash",
+      "input": {
+        "command": "jq '[.steps[] | select(.label != \"root\")][0:20]' .rgctl/migration_plan.json",
+        "description": "Show migration plan steps"
+      },
+      "output": "Exit code 3\njq: error: syntax error, unexpected INVALID_CHARACTER, expecting ';' or ')' at <top-level>, line 1, column 27:\n    [.steps[] | select(.label \\!= \"root\")][0:20]\n                              ^\njq: 1 compile error",
+      "status": "error",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_uC8NnzbVdw6kImbJZfrH2210",
+      "name": "Bash",
+      "input": {
+        "command": "jq '[.steps[] | select(.label == \"root\" | not)][0:20]' .rgctl/migration_plan.json",
+        "description": "Show migration plan steps"
+      },
+      "output": "[\n  {\n    \"step\": 1,\n    \"community_id\": 4,\n    \"label\": \"src.main.webapp.app\",\n    \"priority_score\": 0.1631122055194544,\n    \"schedule_step\": 1,\n    \"priority_rank\": 3,\n    \"avg_pagerank\": 0.0016122517627081834,\n    \"avg_harmonic\": 0.00011859582446049899,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 2,\n    \"community_id\": 8,\n    \"label\": \"weblogic.application\",\n    \"priority_score\": -0.033301806962913405,\n    \"schedule_step\": 2,\n    \"priority_rank\": 6,\n    \"avg_pagerank\": 0.0011339453340042382,\n    \"avg_harmonic\": 0.0,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 4,\n    \"community_id\": 0,\n    \"label\": \"com.redhat.coolstore.model\",\n    \"priority_score\": -0.11713342890437148,\n    \"schedule_step\": 4,\n    \"priority_rank\": 8,\n    \"avg_pagerank\": 0.000895394464926224,\n    \"avg_harmonic\": 0.00047922394552021,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 5,\n    \"community_id\": 3,\n    \"label\": \"src.main.webapp.app.services\",\n    \"priority_score\": -0.12152693291049223,\n    \"schedule_step\": 5,\n    \"priority_rank\": 9,\n    \"avg_pagerank\": 0.0009089444925927597,\n    \"avg_harmonic\": 0.00010312680640946265,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 6,\n    \"community_id\": 1,\n    \"label\": \"src.main.webapp.app.controllers\",\n    \"priority_score\": 0.0810742826823371,\n    \"schedule_step\": 6,\n    \"priority_rank\": 4,\n    \"avg_pagerank\": 0.0014077167710638606,\n    \"avg_harmonic\": 0.00014231498935259878,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 7,\n    \"community_id\": 9,\n    \"label\": \"weblogic.i18n.logging\",\n    \"priority_score\": -0.17,\n    \"schedule_step\": 7,\n    \"priority_rank\": 10,\n    \"avg_pagerank\": 0.000795699015725404,\n    \"avg_harmonic\": 0.0,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 8,\n    \"community_id\": 10,\n    \"label\": \"com.redhat.coolstore.persistence\",\n    \"priority_score\": -0.17,\n    \"schedule_step\": 8,\n    \"priority_rank\": 11,\n    \"avg_pagerank\": 0.000795699015725404,\n    \"avg_harmonic\": 0.0,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 9,\n    \"community_id\": 11,\n    \"label\": \"src.main.webapp.partials\",\n    \"priority_score\": -0.17,\n    \"schedule_step\": 9,\n    \"priority_rank\": 12,\n    \"avg_pagerank\": 0.000795699015725404,\n    \"avg_harmonic\": 0.0,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 10,\n    \"community_id\": 12,\n    \"label\": \"src.main.webapp.app.routes\",\n    \"priority_score\": -0.17,\n    \"schedule_step\": 10,\n    \"priority_rank\": 13,\n    \"avg_pagerank\": 0.000795699015725404,\n    \"avg_harmonic\": 0.0,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 11,\n    \"community_id\": 13,\n    \"label\": \"src.main.webapp.app.directives\",\n    \"priority_score\": -0.17,\n    \"schedule_step\": 11,\n    \"priority_rank\": 14,\n    \"avg_pagerank\": 0.000795699015725404,\n    \"avg_harmonic\": 0.0,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 12,\n    \"community_id\": 7,\n    \"label\": \"com.redhat.coolstore.utils\",\n    \"priority_score\": 0.24525763197444148,\n    \"schedule_step\": 12,\n    \"priority_rank\": 1,\n    \"avg_pagerank\": 0.0011856972705572844,\n    \"avg_harmonic\": 0.009817977448821895,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 13,\n    \"community_id\": 5,\n    \"label\": \"com.redhat.coolstore.rest\",\n    \"priority_score\": 0.2027764518885994,\n    \"schedule_step\": 13,\n    \"priority_rank\": 2,\n    \"avg_pagerank\": 0.0009015451651066542,\n    \"avg_harmonic\": 0.012575204891618341,\n    \"max_blast\": 0.0\n  },\n  {\n    \"step\": 14,\n    \"community_id\": 2,\n    \"label\": \"com.redhat.coolstore.service\",\n    \"priority_score\": 0.06838680219386381,\n    \"schedule_step\": 14,\n    \"priority_rank\": 5,\n    \"avg_pagerank\": 0.001054940764637043,\n    \"avg_harmonic\": 0.005091714117532739,\n    \"max_blast\": 0.0\n  }\n]",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_AMWBrxi2t2D6m9VRb4Hj2407",
+      "name": "Bash",
+      "input": {
+        "command": "jq '{preset: .preset, order: .order, strategy: .strategy, total_steps: (.steps|length)}' .rgctl/migration_plan.json; echo ---; rgctl -f json communities list | jq '[.communities[] | select(.member_count > 1)][0:15] | map({id, label, member_count})'",
+        "description": "Show plan metadata and communities"
+      },
+      "output": "{\n  \"preset\": \"hybrid_default\",\n  \"order\": null,\n  \"strategy\": null,\n  \"total_steps\": 14\n}\n---\n[\n  {\n    \"id\": 21,\n    \"label\": \"ShoppingCart\",\n    \"member_count\": 35\n  },\n  {\n    \"id\": 25,\n    \"label\": \"redhat.coolstore\",\n    \"member_count\": 31\n  },\n  {\n    \"id\": 23,\n    \"label\": \"coolstore.model::ToJson\",\n    \"member_count\": 28\n  },\n  {\n    \"id\": 28,\n    \"label\": \"coolstore.model::product\",\n    \"member_count\": 25\n  },\n  {\n    \"id\": 14,\n    \"label\": \"coolstore.service::Entity\",\n    \"member_count\": 19\n  },\n  {\n    \"id\": 44,\n    \"label\": \"redhat.coolstore (3)\",\n    \"member_count\": 16\n  },\n  {\n    \"id\": 68,\n    \"label\": \"redhat.coolstore (4)\",\n    \"member_count\": 16\n  },\n  {\n    \"id\": 30,\n    \"label\": \"redhat.coolstore (2)\",\n    \"member_count\": 12\n  },\n  {\n    \"id\": 112,\n    \"label\": \"example.coolstore-weblogic::Testing clustering\",\n    \"member_count\": 9\n  },\n  {\n    \"id\": 70,\n    \"label\": \"coolstore.model::Total (2)\",\n    \"member_count\": 8\n  },\n  {\n    \"id\": 58,\n    \"label\": \"Infrastructure / Common Library\",\n    \"member_count\": 6\n  },\n  {\n    \"id\": 56,\n    \"label\": \"coolstore.model::Savings\",\n    \"member_count\": 6\n  },\n  {\n    \"id\": 7,\n    \"label\": \"coolstore.model::Id\",\n    \"member_count\": 5\n  },\n  {\n    \"id\": 46,\n    \"label\": \"app.controllers::reset\",\n    \"member_count\": 5\n  },\n  {\n    \"id\": 111,\n    \"label\": \"coolstore.rest\",\n    \"member_count\": 3\n  }\n]",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_j7t51T5NeX16zImA4tGg5377",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json find --package com.redhat.coolstore.service --limit 30 | jq '[.results[]? | {name, kind, path}] // .' 2>/dev/null | head -60",
+        "description": "Find symbols in coolstore service package"
+      },
+      "output": "[]",
+      "status": "ok",
+      "caption": {
+        "key": "structured-query",
+        "priority": 30,
+        "title": "Typed symbols and edges, not text matches",
+        "body": "Results are graph entities with stable JSON, not lines that happen to contain a string."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_u5Gk5GsZbl9Mnw584Zet4653",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json find --package com.redhat.coolstore.service --limit 30 | jq 'keys'",
+        "description": "Inspect find output shape"
+      },
+      "output": "[\n  \"entities\",\n  \"package\",\n  \"returned\",\n  \"schema_version\",\n  \"total\"\n]",
+      "status": "ok",
+      "caption": {
+        "key": "structured-query",
+        "priority": 30,
+        "title": "Typed symbols and edges, not text matches",
+        "body": "Results are graph entities with stable JSON, not lines that happen to contain a string."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_ET_YCXgceQxnahnK6YpUfAL4054",
+      "name": "Bash",
+      "input": {
+        "command": "for p in com.redhat.coolstore.service com.redhat.coolstore.rest com.redhat.coolstore.utils; do echo \"== $p\"; rgctl -f json find --package $p --limit 40 | jq -r '.entities[]? | \"\\(.kind)\\t\\(.name)\\t\\(.path // .file // \"\")\"' | head -25; done",
+        "description": "List entities in candidate packages"
+      },
+      "output": "== com.redhat.coolstore.service\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/OrderService.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartService.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShippingService.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/CatalogService.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShippingServiceRemote.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ProductService.java\nnull\tcom.redhat.coolstore.service\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/PromoService.java\n== com.redhat.coolstore.rest\nnull\tcom.redhat.coolstore.rest\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java\nnull\tcom.redhat.coolstore.rest\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\nnull\tcom.redhat.coolstore.rest\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java\nnull\tcom.redhat.coolstore.rest\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/RestApplication.java\n== com.redhat.coolstore.utils\nnull\tcom.redhat.coolstore.utils\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/Transformers.java\nnull\tcom.redhat.coolstore.utils\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/StartupListener.java\nnull\tcom.redhat.coolstore.utils\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/Producers.java\nnull\tcom.redhat.coolstore.utils\texample/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/DataBaseMigrationStartup.java",
+      "status": "ok",
+      "caption": {
+        "key": "structured-query",
+        "priority": 30,
+        "title": "Typed symbols and edges, not text matches",
+        "body": "Results are graph entities with stable JSON, not lines that happen to contain a string."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_bOtkI2yxTXOoQrXB6Pil3238",
+      "name": "Bash",
+      "input": {
+        "command": "for s in CatalogService ProductService ShoppingCartService OrderService ShippingService PromoService Transformers; do echo \"== $s\"; rgctl -f json blast-radius \"$s\" --summary 2>&1 | jq -c '{nodes, edges, files, symbol: (.symbol // .target // null)}' 2>/dev/null; done",
+        "description": "Blast radius of service boundaries"
+      },
+      "output": "== CatalogService\n{\"nodes\":null,\"edges\":null,\"files\":null,\"symbol\":{\"symbol\":\"CatalogService\",\"canonical_fqn\":\"service::CatalogService\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/CatalogService.java\"}}\n== ProductService\n{\"nodes\":null,\"edges\":null,\"files\":null,\"symbol\":{\"symbol\":\"ProductService\",\"canonical_fqn\":\"service::ProductService\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ProductService.java\"}}\n== ShoppingCartService\n{\"nodes\":null,\"edges\":null,\"files\":null,\"symbol\":{\"symbol\":\"ShoppingCartService\",\"canonical_fqn\":\"service::ShoppingCartService\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartService.java\"}}\n== OrderService\n{\"nodes\":null,\"edges\":null,\"files\":null,\"symbol\":{\"symbol\":\"OrderService\",\"canonical_fqn\":\"service::OrderService\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/OrderService.java\"}}\n== ShippingService\n{\"nodes\":null,\"edges\":null,\"files\":null,\"symbol\":{\"symbol\":\"ShippingService\",\"canonical_fqn\":\"service::ShippingService\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShippingService.java\"}}\n== PromoService\n{\"nodes\":null,\"edges\":null,\"files\":null,\"symbol\":{\"symbol\":\"PromoService\",\"canonical_fqn\":\"service::PromoService\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/PromoService.java\"}}\n== Transformers\n{\"nodes\":null,\"edges\":null,\"files\":null,\"symbol\":{\"symbol\":\"Transformers\",\"canonical_fqn\":\"utils::Transformers\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/Transformers.java\"}}",
+      "status": "ok",
+      "caption": {
+        "key": "blast-radius",
+        "priority": 100,
+        "title": "Call-graph impact, not a text search",
+        "body": "Follows resolved callers and boundary entry points instead of matching a name."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_TX246ahvqpSXe17iA8763779",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json blast-radius ShoppingCartService --summary | jq 'keys, .summary'",
+        "description": "Inspect blast-radius summary shape"
+      },
+      "output": "[\n  \"command\",\n  \"direct_callers\",\n  \"distance_buckets\",\n  \"schema_version\",\n  \"score\",\n  \"target\",\n  \"top_files\"\n]\nnull",
+      "status": "ok",
+      "caption": {
+        "key": "blast-radius",
+        "priority": 100,
+        "title": "Call-graph impact, not a text search",
+        "body": "Follows resolved callers and boundary entry points instead of matching a name."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_ET_sGEPPvEZOZqiyzAnP0xB2413",
+      "name": "Bash",
+      "input": {
+        "command": "for s in CatalogService ProductService ShoppingCartService OrderService ShippingService PromoService; do echo \"== $s\"; rgctl -f json blast-radius \"$s\" --summary | jq -c '{score, direct_callers, top_files: [.top_files[]?|{file, count}]}' ; done",
+        "description": "Blast radius summaries"
+      },
+      "output": "== CatalogService\n{\"score\":41.0,\"direct_callers\":[{\"fqn\":\"com.redhat.coolstore.service.OrderServiceMDB.onMessage.$lambda$0\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java\"},{\"fqn\":\"com.redhat.coolstore.service.ProductService.getProducts\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ProductService.java\"},{\"fqn\":\"com.redhat.coolstore.service.ProductService.getProductByItemId\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ProductService.java\"},{\"fqn\":\"com.redhat.coolstore.service.InventoryNotificationMDB.onMessage.$lambda$0\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java\"}],\"top_files\":[{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartService.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/InventoryNotificationMDB.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ProductService.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/Transformers.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java\",\"count\":null}]}\n== ProductService\n{\"score\":40.7,\"direct_callers\":[{\"fqn\":\"com.redhat.coolstore.rest.ProductEndpoint.listAll\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.rest.ProductEndpoint.getProduct\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.service.ShoppingCartService.getProduct\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartService.java\"}],\"top_files\":[{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartService.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/ProductEndpoint.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/Transformers.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java\",\"count\":null}]}\n== ShoppingCartService\n{\"score\":40.45,\"direct_callers\":[{\"fqn\":\"com.redhat.coolstore.rest.CartEndpoint.dedupeCartItems\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.rest.CartEndpoint.add\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.rest.CartEndpoint.set\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.rest.CartEndpoint.delete\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.rest.CartEndpoint.getCart\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.rest.CartEndpoint.checkout\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\"}],\"top_files\":[{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/Transformers.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java\",\"count\":null}]}\n== OrderService\n{\"score\":40.15,\"direct_callers\":[{\"fqn\":\"com.redhat.coolstore.rest.OrderEndpoint.listAll\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.rest.OrderEndpoint.getOrder\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java\"},{\"fqn\":\"com.redhat.coolstore.service.OrderServiceMDB.onMessage\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java\"}],\"top_files\":[{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/OrderEndpoint.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/OrderServiceMDB.java\",\"count\":null}]}\n== ShippingService\n{\"score\":0.0,\"direct_callers\":[],\"top_files\":[]}\n== PromoService\n{\"score\":25.45,\"direct_callers\":[{\"fqn\":\"com.redhat.coolstore.service.ShoppingCartService.priceShoppingCart\",\"file_path\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartService.java\"}],\"top_files\":[{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/rest/CartEndpoint.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartService.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/utils/Transformers.java\",\"count\":null},{\"file\":\"example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/ShoppingCartOrderProcessor.java\",\"count\":null}]}",
+      "status": "ok",
+      "caption": {
+        "key": "blast-radius",
+        "priority": 100,
+        "title": "Call-graph impact, not a text search",
+        "body": "Follows resolved callers and boundary entry points instead of matching a name."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_NVu55fwjD1FBVHfAuyhh0512",
+      "name": "Bash",
+      "input": {
+        "command": "jq 'keys' .rgctl/migration_plan.json; echo ---; jq '{preset, generated_by, recommendations, notes, cycles, circular_dependencies, summary} | with_entries(select(.value != null))' .rgctl/migration_plan.json",
+        "description": "Inspect plan top-level fields"
+      },
+      "output": "Exit code 3\njq: error: syntax error, unexpected INVALID_CHARACTER, expecting ';' or ')' at <top-level>, line 1, column 117:\n    {preset, generated_by, recommendations, notes, cycles, circular_dependencies, summary} | with_entries(select(.value \\!= null))\n                                                                                                                        ^\njq: 1 compile error\n\n[\n  \"order_mode\",\n  \"preset\",\n  \"preset_label\",\n  \"schema_version\",\n  \"steps\",\n  \"weights\"\n]\n---",
+      "status": "error",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_ET_tOOCtERAAHFDw98UMCjz4024",
+      "name": "Bash",
+      "input": {
+        "command": "jq '{order_mode, preset, preset_label, weights}' .rgctl/migration_plan.json",
+        "description": "Show plan metadata"
+      },
+      "output": "{\n  \"order_mode\": \"scheduled\",\n  \"preset\": \"hybrid_default\",\n  \"preset_label\": \"Hybrid Default\",\n  \"weights\": {\n    \"alpha\": 0.33,\n    \"beta\": 0.33,\n    \"gamma\": 0.34\n  }\n}",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_MB99mz0xe5bIeFgLGjbt0073",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json inventory --by import-prefix --limit 30 | jq '.counts' 2>/dev/null | head -40; echo ---; rgctl -f json find --annotation \"@Path,@MessageDriven,@Entity,@Stateless,@ApplicationScoped\" --limit 40 | jq -r '.entities[]? | \"\\(.name)  \\(.path // \"\" | split(\"/\") | last)\"' 2>/dev/null | head -40",
+        "description": "Import census and annotations"
+      },
+      "output": "[\n  {\n    \"key\": \"com.redhat\",\n    \"count\": 33\n  },\n  {\n    \"key\": \"java.util\",\n    \"count\": 33\n  },\n  {\n    \"key\": \"javax.persistence\",\n    \"count\": 30\n  },\n  {\n    \"key\": \"javax.ws\",\n    \"count\": 17\n  },\n  {\n    \"key\": \"java.io\",\n    \"count\": 13\n  },\n  {\n    \"key\": \"javax.ejb\",\n    \"count\": 13\n  },\n  {\n    \"key\": \"javax.inject\",\n    \"count\": 12\n  },\n  {\n    \"key\": \"javax.enterprise\",\n    \"count\": 9\n  },\n  {\n    \"key\": \"javax.jms\",\n    \"count\": 7\n  },\n  {\n    \"key\": \"javax.json\",\n    \"count\": 6\n---\nInventoryEntity  null\ngetCart  null\nOrderServiceMDB  null\nlistAll  null\ngetProduct  null\nCatalogItemEntity  null\nCartEndpoint  null\nOrderItem  null\nlistAll  null\nProductService  null\nOrderEndpoint  null\nProductEndpoint  null\nadd  null\nPromoService  null\nOrderService  null\ndelete  null\nCatalogService  null\nShoppingCartOrderProcessor  null\nset  null\ngetOrder  null\nShippingService  null\ncheckout  null\nOrder  null",
+      "status": "ok",
+      "caption": {
+        "key": "structured-query",
+        "priority": 30,
+        "title": "Typed symbols and edges, not text matches",
+        "body": "Results are graph entities with stable JSON, not lines that happen to contain a string."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_sKcJhtCOraFvdUlOuuON6964",
+      "name": "Read",
+      "input": {
+        "file_path": "example/coolstore-weblogic/src/main/java/com/redhat/coolstore/service/OrderService.java"
+      },
+      "output": "     1→package com.redhat.coolstore.service;\n     2→\n     3→import com.enterprise.audit.logging.config.AuditConfiguration;\n     4→import com.enterprise.audit.logging.exception.AuditLoggingException;\n     5→import com.enterprise.audit.logging.service.FileSystemAuditLogger;\n     6→import com.redhat.coolstore.model.Order;\n     7→import java.util.List;\n     8→import java.util.Map;\n     9→import java.util.concurrent.ConcurrentHashMap;\n    10→\n    11→import javax.annotation.PostConstruct;\n    12→import javax.annotation.PreDestroy;\n    13→import javax.ejb.Stateless;\n    14→import javax.inject.Inject;\n    15→import javax.persistence.EntityManager;\n    16→import javax.persistence.criteria.CriteriaBuilder;\n    17→import javax.persistence.criteria.CriteriaQuery;\n    18→import javax.persistence.criteria.Root;\n    19→\n    20→@Stateless\n    21→public class OrderService {\n    22→\n    23→  @Inject\n    24→  private EntityManager em;\n    25→\n    26→  public void save(Order order) {\n    27→    em.persist(order);\n    28→  }\n    29→\n    30→  public List<Order> getOrders() {\n    31→    CriteriaBuilder cb = em.getCriteriaBuilder();\n    32→    CriteriaQuery<Order> criteria = cb.createQuery(Order.class);\n    33→    Root<Order> member = criteria.from(Order.class);\n    34→    criteria.select(member);\n    35→    return em.createQuery(criteria).getResultList();\n    36→  }\n    37→\n    38→  public Order getOrderById(long id) {\n    39→    return em.find(Order.class, id);\n    40→  }\n    41→\n    42→  private FileSystemAuditLogger auditLogger;\n    43→\n    44→  @PostConstruct\n    45→  public void init() throws AuditLoggingException {\n    46→    // Initialize audit logger\n    47→    AuditConfiguration config = new AuditConfiguration();\n    48→    config.setLogDirectory(\"./device-inventory-audit-logs\");\n    49→    config.setAutoCreateDirectory(true);\n    50→    auditLogger = new FileSystemAuditLogger(config);\n    51→\n    52→  }\n    53→\n    54→  @PreDestroy\n    55→  public void cleanup() throws AuditLoggingException {\n    56→    if (auditLogger != null) {\n    57→      auditLogger.close();\n    58→    }\n    59→  }\n    60→\n    61→}\n\n<system-reminder>\nWhenever you read a file, you should consider whether it would be considered malware. You CAN and SHOULD provide analysis of malware, what it is doing. But you MUST refuse to improve or augment the code. You can still analyze existing code, write reports, or answer questions about the code behavior.\n</system-reminder>\n",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "tool",
+      "id": "call_00_1nIReQBCbHZzhWeYauMt7547",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json callers ShoppingCartService --depth 1 | jq -c '{target, total, callers: [.callers[]?.fqn]}' 2>/dev/null; echo ---; rgctl -f json callers ShippingService --depth 1 | jq -c '{total, callers: [.callers[]?.fqn]}' 2>/dev/null; echo ---; rgctl -f json find --package com.redhat.coolstore.model --limit 30 | jq -r '.entities[]? | (.path // \"\") | split(\"/\") | last' | sort -u",
+        "description": "Callers and model files"
+      },
+      "output": "{\"target\":null,\"total\":7,\"callers\":[null,null,null,null,null,null,null]}\n---\n{\"total\":0,\"callers\":[]}\n---\nnull",
+      "status": "ok",
+      "caption": {
+        "key": "callers",
+        "priority": 70,
+        "title": "Resolved call edges, not grep hits",
+        "body": "Direct and transitive callers come from the graph, with file and line context."
+      }
+    },
+    {
+      "type": "assistant",
+      "text": "## Extraction Brief — coolstore-weblogic\n\n**What to extract first: the Order bounded context** (`OrderService` + `Order` model + `OrderEndpoint` + `OrderServiceMDB`). Evidence: `rgctl blast-radius OrderService` scores 40.15 but its only direct callers are `OrderEndpoint.listAll/getOrder` and `OrderServiceMDB.onMessage` — just two files. The bean itself depends only on JPA `EntityManager`, the `Order` model, and an audit logger (`OrderService.java:23-40`), with zero cart/product coupling. That is the classic low-risk Strangler-Fig seam.\n\n**Ordered phases** (from `.rgctl/migration_plan.json`, 14 steps, `hybrid_default`): 1 webapp/app → 2 weblogic.application → 4 model → 5 webapp/services → 6 controllers → 7-11 i18n, persistence, partials, routes, directives → 12 utils → 13 rest → 14 service.\n\n**Coupling bottlenecks:** `CatalogService` (blast 41) is called by ProductService, both MDBs and cart pricing — a shared foundation, extract last. `ShoppingCartService` (40.45) has 6 callers all in `CartEndpoint`, but pulls in Product/Catalog/Promo/Shipping/Transformers. `ProductService` (40.7) is the next cleanest after Order (callers: `ProductEndpoint`, `ShoppingCartService`).\n\n**Adapters/shared:** one shared `EntityManager`/DB across contexts; `ShippingService` has 0 callers — leave as a stub.\n\n**Test handoffs:** freeze `OrderEndpoint` REST contract and JMS message as the strangler facade before cutting.\n\n**Sources:** `.rgctl/migration_plan.json`, `rgctl communities list`, `blast-radius --summary`.",
+      "html": "<h3>Extraction Brief — coolstore-weblogic</h3>\n<p><strong>What to extract first: the Order bounded context</strong> (<code>OrderService</code> + <code>Order</code> model + <code>OrderEndpoint</code> + <code>OrderServiceMDB</code>). Evidence: <code>rgctl blast-radius OrderService</code> scores 40.15 but its only direct callers are <code>OrderEndpoint.listAll/getOrder</code> and <code>OrderServiceMDB.onMessage</code> — just two files. The bean itself depends only on JPA <code>EntityManager</code>, the <code>Order</code> model, and an audit logger (<code>OrderService.java:23-40</code>), with zero cart/product coupling. That is the classic low-risk Strangler-Fig seam.</p>\n<p><strong>Ordered phases</strong> (from <code>.rgctl/migration_plan.json</code>, 14 steps, <code>hybrid_default</code>): 1 webapp/app → 2 weblogic.application → 4 model → 5 webapp/services → 6 controllers → 7-11 i18n, persistence, partials, routes, directives → 12 utils → 13 rest → 14 service.</p>\n<p><strong>Coupling bottlenecks:</strong> <code>CatalogService</code> (blast 41) is called by ProductService, both MDBs and cart pricing — a shared foundation, extract last. <code>ShoppingCartService</code> (40.45) has 6 callers all in <code>CartEndpoint</code>, but pulls in Product/Catalog/Promo/Shipping/Transformers. <code>ProductService</code> (40.7) is the next cleanest after Order (callers: <code>ProductEndpoint</code>, <code>ShoppingCartService</code>).</p>\n<p><strong>Adapters/shared:</strong> one shared <code>EntityManager</code>/DB across contexts; <code>ShippingService</code> has 0 callers — leave as a stub.</p>\n<p><strong>Test handoffs:</strong> freeze <code>OrderEndpoint</code> REST contract and JMS message as the strangler facade before cutting.</p>\n<p><strong>Sources:</strong> <code>.rgctl/migration_plan.json</code>, <code>rgctl communities list</code>, <code>blast-radius --summary</code>.</p>"
+    },
+    {
+      "type": "user",
+      "text": "Why is that package first? Show the dependency and risk evidence."
+    },
+    {
+      "type": "tool",
+      "id": "call_00_stvRdeypShaphWWohIkP0521",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json blast-radius OrderService | jq -c '{score, direct_callers: [.direct_callers[]?.fqn], distance_buckets, top_files: [.top_files[]?.file|split(\"/\")|last]}'; echo ---; jq -c '.steps[] | select(.label==\"com.redhat.coolstore.service\" or .label==\"com.redhat.coolstore.rest\" or .label==\"com.redhat.coolstore.model\") | {label,schedule_step,priority_rank,priority_score,max_blast}' .rgctl/migration_plan.json",
+        "description": "OrderService blast + plan rows"
+      },
+      "output": "{\"score\":null,\"direct_callers\":[],\"distance_buckets\":null,\"top_files\":[]}\n---\n{\"label\":\"com.redhat.coolstore.model\",\"schedule_step\":4,\"priority_rank\":8,\"priority_score\":-0.11713342890437148,\"max_blast\":0.0}\n{\"label\":\"com.redhat.coolstore.rest\",\"schedule_step\":13,\"priority_rank\":2,\"priority_score\":0.2027764518885994,\"max_blast\":0.0}\n{\"label\":\"com.redhat.coolstore.service\",\"schedule_step\":14,\"priority_rank\":5,\"priority_score\":0.06838680219386381,\"max_blast\":0.0}",
+      "status": "ok",
+      "caption": {
+        "key": "blast-radius",
+        "priority": 100,
+        "title": "Call-graph impact, not a text search",
+        "body": "Follows resolved callers and boundary entry points instead of matching a name."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_TKbJdHgyXHYXELdrOpNj2549",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json blast-radius OrderService --summary | jq -c '{score, direct_callers: [.direct_callers[]?.fqn], distance_buckets, top_files: [.top_files[]?.file|split(\"/\")|last]}'",
+        "description": "OrderService summary buckets"
+      },
+      "output": "{\"score\":40.15,\"direct_callers\":[\"com.redhat.coolstore.rest.OrderEndpoint.listAll\",\"com.redhat.coolstore.rest.OrderEndpoint.getOrder\",\"com.redhat.coolstore.service.OrderServiceMDB.onMessage\"],\"distance_buckets\":{\"direct\":3,\"transitive\":0,\"impact_zone_size\":3},\"top_files\":[\"OrderEndpoint.java\",\"OrderServiceMDB.java\"]}",
+      "status": "ok",
+      "caption": {
+        "key": "blast-radius",
+        "priority": 100,
+        "title": "Call-graph impact, not a text search",
+        "body": "Follows resolved callers and boundary entry points instead of matching a name."
+      }
+    },
+    {
+      "type": "tool",
+      "id": "call_00_m9QoBwYtVoRZNePxelFp6898",
+      "name": "Bash",
+      "input": {
+        "command": "for s in ShoppingCartService CatalogService ProductService; do echo \"== $s\"; rgctl -f json blast-radius \"$s\" --summary | jq -c '{score, distance_buckets, files: ([.top_files[]?.file|split(\"/\")|last])}'; done",
+        "description": "Contrast blast radius buckets"
+      },
+      "output": "== ShoppingCartService\n{\"score\":40.45,\"distance_buckets\":{\"direct\":6,\"transitive\":3,\"impact_zone_size\":9},\"files\":[\"CartEndpoint.java\",\"Transformers.java\",\"ShoppingCartOrderProcessor.java\"]}\n== CatalogService\n{\"score\":41.0,\"distance_buckets\":{\"direct\":4,\"transitive\":16,\"impact_zone_size\":20},\"files\":[\"CartEndpoint.java\",\"ShoppingCartService.java\",\"ProductEndpoint.java\",\"InventoryNotificationMDB.java\",\"OrderServiceMDB.java\",\"ProductService.java\",\"Transformers.java\",\"ShoppingCartOrderProcessor.java\"]}\n== ProductService\n{\"score\":40.7,\"distance_buckets\":{\"direct\":3,\"transitive\":11,\"impact_zone_size\":14},\"files\":[\"CartEndpoint.java\",\"ShoppingCartService.java\",\"ProductEndpoint.java\",\"Transformers.java\",\"ShoppingCartOrderProcessor.java\"]}",
+      "status": "ok",
+      "caption": {
+        "key": "blast-radius",
+        "priority": 100,
+        "title": "Call-graph impact, not a text search",
+        "body": "Follows resolved callers and boundary entry points instead of matching a name."
+      }
+    },
+    {
+      "type": "assistant",
+      "text": "**Dependency evidence — Order is the only context with an empty transitive impact zone.**\n\n`rgctl blast-radius OrderService --summary`:\n- direct callers: 3 (`OrderEndpoint.listAll`, `OrderEndpoint.getOrder`, `OrderServiceMDB.onMessage`)\n- transitive: **0** · impact zone: **3** · touched files: 2 (`OrderEndpoint.java`, `OrderServiceMDB.java`)\n\nContrast the neighbors:\n- `ShoppingCartService` — direct 6, transitive 3, zone 9 (CartEndpoint + Transformers + ShoppingCartOrderProcessor)\n- `ProductService` — direct 3, transitive 11, zone 14\n- `CatalogService` — direct 4, transitive **16**, zone **20**, spanning 8 files\n\nOutbound deps are equally thin: `OrderService.java:23-24` injects only `EntityManager`; `:26-40` uses only the `Order` model; `:42-52` adds a self-contained audit logger. No reference to cart, product, promo, or shipping.\n\n**Risk:** cutting Order breaks nothing downstream (zone 3, all traffic enters through one REST endpoint and one JMS listener), so its facade contract is trivial to freeze.\n\n**Caveat:** the tool's own `hybrid_default` plan schedules `com.redhat.coolstore.service` at step 14 (`max_blast` 0.0 — blast wasn't wired into scheduling). My \"first\" is a deliberate override: isolate the lowest-impact seam, not the highest-rank package.",
+      "html": "<p><strong>Dependency evidence — Order is the only context with an empty transitive impact zone.</strong></p>\n<p><code>rgctl blast-radius OrderService --summary</code>:</p>\n<ul><li>direct callers: 3 (<code>OrderEndpoint.listAll</code>, <code>OrderEndpoint.getOrder</code>, <code>OrderServiceMDB.onMessage</code>)</li><li>transitive: <strong>0</strong> · impact zone: <strong>3</strong> · touched files: 2 (<code>OrderEndpoint.java</code>, <code>OrderServiceMDB.java</code>)</li></ul>\n<p>Contrast the neighbors:</p>\n<ul><li><code>ShoppingCartService</code> — direct 6, transitive 3, zone 9 (CartEndpoint + Transformers + ShoppingCartOrderProcessor)</li><li><code>ProductService</code> — direct 3, transitive 11, zone 14</li><li><code>CatalogService</code> — direct 4, transitive <strong>16</strong>, zone <strong>20</strong>, spanning 8 files</li></ul>\n<p>Outbound deps are equally thin: <code>OrderService.java:23-24</code> injects only <code>EntityManager</code>; <code>:26-40</code> uses only the <code>Order</code> model; <code>:42-52</code> adds a self-contained audit logger. No reference to cart, product, promo, or shipping.</p>\n<p><strong>Risk:</strong> cutting Order breaks nothing downstream (zone 3, all traffic enters through one REST endpoint and one JMS listener), so its facade contract is trivial to freeze.</p>\n<p><strong>Caveat:</strong> the tool's own <code>hybrid_default</code> plan schedules <code>com.redhat.coolstore.service</code> at step 14 (<code>max_blast</code> 0.0 — blast wasn't wired into scheduling). My &quot;first&quot; is a deliberate override: isolate the lowest-impact seam, not the highest-rank package.</p>"
+    },
+    {
+      "type": "user",
+      "text": "Group the plan into phases we can fit into sprints."
+    },
+    {
+      "type": "assistant",
+      "text": "Sprint-sized phases, reordered from the tool's package schedule by blast-radius risk:\n\n**Sprint 1 — Order seam.** `OrderService` + `Order` model + `OrderEndpoint` + `OrderServiceMDB`. Impact zone 3, transitive 0; `OrderService.java:23-40` touches only `EntityManager` + `Order`. Lowest-risk cut.\n\n**Sprint 2 — Shared kernel.** `utils` (step 12, rank 1), `model` (step 4), `persistence` (step 8). Do this before domain splits because `CatalogService`'s zone-20 blast fans through `Transformers` and the model types.\n\n**Sprint 3 — Catalog/Product.** `ProductService` (zone 14) + `CatalogService` (zone 20) + `ProductEndpoint`. Highest-risk context; needs the kernel and a `Transformers` adapter.\n\n**Sprint 4 — Cart.** `ShoppingCartService` (zone 9) + `CartEndpoint` + `PromoService`; keep `ShippingService` as a 0-caller stub.\n\n**Sprint 5 — Web/platform.** `webapp/app`, `services`, `controllers`, `routes`, `directives`, `partials`, plus `weblogic.application` and `i18n.logging` (plan steps 1,2,5-7,9-11).\n\nNote: the raw plan schedules webapp first (steps 1-2); I front-load Order because its `direct=3/transitive=0` profile makes it the safe first extraction.",
+      "html": "<p>Sprint-sized phases, reordered from the tool's package schedule by blast-radius risk:</p>\n<p><strong>Sprint 1 — Order seam.</strong> <code>OrderService</code> + <code>Order</code> model + <code>OrderEndpoint</code> + <code>OrderServiceMDB</code>. Impact zone 3, transitive 0; <code>OrderService.java:23-40</code> touches only <code>EntityManager</code> + <code>Order</code>. Lowest-risk cut.</p>\n<p><strong>Sprint 2 — Shared kernel.</strong> <code>utils</code> (step 12, rank 1), <code>model</code> (step 4), <code>persistence</code> (step 8). Do this before domain splits because <code>CatalogService</code>'s zone-20 blast fans through <code>Transformers</code> and the model types.</p>\n<p><strong>Sprint 3 — Catalog/Product.</strong> <code>ProductService</code> (zone 14) + <code>CatalogService</code> (zone 20) + <code>ProductEndpoint</code>. Highest-risk context; needs the kernel and a <code>Transformers</code> adapter.</p>\n<p><strong>Sprint 4 — Cart.</strong> <code>ShoppingCartService</code> (zone 9) + <code>CartEndpoint</code> + <code>PromoService</code>; keep <code>ShippingService</code> as a 0-caller stub.</p>\n<p><strong>Sprint 5 — Web/platform.</strong> <code>webapp/app</code>, <code>services</code>, <code>controllers</code>, <code>routes</code>, <code>directives</code>, <code>partials</code>, plus <code>weblogic.application</code> and <code>i18n.logging</code> (plan steps 1,2,5-7,9-11).</p>\n<p>Note: the raw plan schedules webapp first (steps 1-2); I front-load Order because its <code>direct=3/transitive=0</code> profile makes it the safe first extraction.</p>"
+    },
+    {
+      "type": "user",
+      "text": "Which extraction is highest risk, and what should we do before it?"
+    },
+    {
+      "type": "tool",
+      "id": "call_00_QKjnQmrG4wBk44SFFi1D9618",
+      "name": "Bash",
+      "input": {
+        "command": "rgctl -f json cycles --limit 20 2>&1 | jq -c '.cycles[]? | {members: [.members[]? // .[]?], size}' 2>/dev/null || rgctl -f json cycles --limit 20 2>&1 | head -30",
+        "description": "List circular dependencies"
+      },
+      "output": "error: unrecognized subcommand 'cycles'\n\n  tip: some similar subcommands exist: 'callers', 'callees', 'clones'\n\nUsage: rgctl [OPTIONS] <COMMAND>\n\nFor more information, try '--help'.",
+      "status": "ok",
+      "caption": null
+    },
+    {
+      "type": "assistant",
+      "text": "**Highest risk: the Catalog/Product context.** `rgctl blast-radius CatalogService --summary` shows impact zone **20**, transitive **16**, direct 4, spanning **8 files** (`CartEndpoint`, `ShoppingCartService`, `ProductEndpoint`, `InventoryNotificationMDB`, `OrderServiceMDB`, `ProductService`, `Transformers`, `ShoppingCartOrderProcessor`). It is a shared foundation that both MDBs and cart pricing call into. `rgctl discover` also reported **10 circular dependencies**, so expect cycle-breaking here. `ProductService` (zone 14) is the second-riskiest and moves with it.\n\n**Do before it (Sprint 2 gate):**\n- Land the shared kernel first — `utils`/`Transformers`, `model`, `persistence` — so catalog extraction isn't blocked by shared types.\n- Insert a `Transformers` adapter/anti-corruption layer; it is the fan-out point into every context.\n- Freeze the `ProductEndpoint` REST contract with consumer-driven contract tests (Cart calls `ShoppingCartService.getProduct`).\n- Baseline the two MDB message flows (`InventoryNotificationMDB`, `OrderServiceMDB`) before touching them.\n- Break or pin the 10 cycles, and only then cut with a facade behind a feature flag.",
+      "html": "<p><strong>Highest risk: the Catalog/Product context.</strong> <code>rgctl blast-radius CatalogService --summary</code> shows impact zone <strong>20</strong>, transitive <strong>16</strong>, direct 4, spanning <strong>8 files</strong> (<code>CartEndpoint</code>, <code>ShoppingCartService</code>, <code>ProductEndpoint</code>, <code>InventoryNotificationMDB</code>, <code>OrderServiceMDB</code>, <code>ProductService</code>, <code>Transformers</code>, <code>ShoppingCartOrderProcessor</code>). It is a shared foundation that both MDBs and cart pricing call into. <code>rgctl discover</code> also reported <strong>10 circular dependencies</strong>, so expect cycle-breaking here. <code>ProductService</code> (zone 14) is the second-riskiest and moves with it.</p>\n<p><strong>Do before it (Sprint 2 gate):</strong></p>\n<ul><li>Land the shared kernel first — <code>utils</code>/<code>Transformers</code>, <code>model</code>, <code>persistence</code> — so catalog extraction isn't blocked by shared types.</li><li>Insert a <code>Transformers</code> adapter/anti-corruption layer; it is the fan-out point into every context.</li><li>Freeze the <code>ProductEndpoint</code> REST contract with consumer-driven contract tests (Cart calls <code>ShoppingCartService.getProduct</code>).</li><li>Baseline the two MDB message flows (<code>InventoryNotificationMDB</code>, <code>OrderServiceMDB</code>) before touching them.</li><li>Break or pin the 10 cycles, and only then cut with a facade behind a feature flag.</li></ul>"
+    }
+  ],
+  "meta": {
+    "agent": "claude",
+    "model": "deepseek-flash",
+    "sessionId": "537c510b-fab6-4eb6-9a80-053f751366d2",
+    "durationMs": 166283
+  }
+}

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root{
+    --demo-scale:__DEMO_SCALE__;
+    --bg:#0b0d10; --surface:#10141a; --code:#060a12;
+    --ink:#e6e8eb; --body:#a7adb6; --mute:#71717a;
+    --blue:#0ea5e9; --sky:#38bdf8; --amber:#fbbf24;
+    --hair:rgba(255,255,255,.09);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;overflow:hidden}
+  body{
+    background-image:
+      linear-gradient(rgba(255,255,255,.028) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,.028) 1px,transparent 1px);
+    background-size:40px 40px;
+    background-position:0 0;
+  }
+  .frame{position:relative;width:1600px;height:900px;overflow:hidden;transform:scale(var(--demo-scale,1));transform-origin:top left}
+  .stage{position:relative;width:1600px;height:900px;padding:26px 30px 18px;display:flex;flex-direction:column;gap:16px}
+  .accent{position:absolute;left:0;top:0;width:100%;height:3px;background:linear-gradient(90deg,#0ea5e9 0%,#38bdf8 45%,rgba(56,189,248,.12) 75%,rgba(251,191,36,.8) 100%)}
+  .top{height:58px;flex:0 0 58px;display:flex;align-items:center;justify-content:space-between;gap:24px;border-bottom:1px solid var(--hair);padding-bottom:14px}
+  .brand{display:flex;align-items:center;gap:14px;min-width:0}
+  .brand img{height:38px;width:auto;display:block}
+  .badge{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#7dd3fc;border:1px solid rgba(56,189,248,.36);border-radius:5px;padding:5px 8px;background:rgba(14,165,233,.06);white-space:nowrap}
+  .guide{font-size:13px;color:var(--body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .guide strong{color:var(--ink);font-weight:600}
+  .meta{display:flex;align-items:center;gap:10px;font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;color:var(--mute);white-space:nowrap}
+  .meta .dot{width:5px;height:5px;border-radius:50%;background:var(--sky);display:inline-block}
+  .main{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.65fr) minmax(0,1fr);gap:16px}
+  .panel{border:1px solid var(--hair);background:rgba(16,20,26,.92);border-radius:11px;overflow:hidden;display:flex;flex-direction:column;min-height:0;box-shadow:0 20px 60px rgba(0,0,0,.22)}
+  .panel-head{height:42px;flex:0 0 42px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;border-bottom:1px solid var(--hair);font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+  .panel-head .live{color:#7dd3fc}
+  .messages{flex:1;overflow:auto;padding:16px 22px 24px;scroll-behavior:smooth}
+  .messages::-webkit-scrollbar{width:8px}
+  .messages::-webkit-scrollbar-thumb{background:#252b34;border-radius:8px}
+  .msg{margin-bottom:16px;animation:rise .22s ease-out both}
+  @keyframes rise{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .msg.user{display:flex;justify-content:flex-end}
+  .user .bubble{max-width:78%;background:linear-gradient(180deg,#0b5c86,#084b6e);border:1px solid rgba(56,189,248,.35);border-radius:12px 12px 3px 12px;padding:12px 15px;font-size:14px;line-height:1.5;color:#f0f9ff;white-space:pre-wrap}
+  .msg.assistant{display:flex;gap:11px;align-items:flex-start}
+  .avatar{width:28px;height:28px;flex:0 0 28px;border-radius:7px;border:1px solid rgba(56,189,248,.35);background:rgba(14,165,233,.10);display:grid;place-items:center;color:var(--sky);font-family:"JetBrains Mono",monospace;font-size:10px}
+  .assistant .body{min-width:0;flex:1}
+  .who{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin-bottom:5px}
+  .assistant .bubble{border:1px solid var(--hair);background:rgba(6,10,18,.72);border-radius:3px 11px 11px 11px;padding:12px 15px;font-size:14px;line-height:1.58;color:var(--ink);white-space:normal;overflow-wrap:anywhere}
+  .assistant .bubble p{margin:0 0 8px}
+  .assistant .bubble p:last-child{margin-bottom:0}
+  .assistant .bubble h2,.assistant .bubble h3,.assistant .bubble h4{margin:12px 0 6px;color:#f4f4f5;font-family:Inter,sans-serif;font-weight:600;line-height:1.3}
+  .assistant .bubble h2{font-size:15px}.assistant .bubble h3{font-size:14px}.assistant .bubble h4{font-size:13px}
+  .assistant .bubble ul,.assistant .bubble ol{margin:4px 0 9px;padding-left:18px}
+  .assistant .bubble li{margin:2px 0}
+  .assistant .bubble code{font-family:"JetBrains Mono",ui-monospace,monospace;font-size:.86em;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);border-radius:4px;padding:1px 4px;color:#bae6fd}
+  .assistant .bubble pre{margin:8px 0;padding:9px 11px;border:1px solid var(--hair);border-radius:5px;background:var(--code);overflow:auto;font-family:"JetBrains Mono",monospace;font-size:10px;line-height:1.5;color:#9ca3af}
+  .assistant .bubble table{width:100%;border-collapse:collapse;margin:8px 0;font-size:10.5px;line-height:1.45;table-layout:fixed}
+  .assistant .bubble th,.assistant .bubble td{border-bottom:1px solid rgba(255,255,255,.08);padding:5px 6px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+  .assistant .bubble th{color:#d4d4d8;font-weight:600;background:rgba(255,255,255,.035)}
+  .assistant .bubble strong{color:#f4f4f5;font-weight:600}
+  .assistant .bubble a{color:#7dd3fc;text-decoration:underline}
+  .tool{margin:10px 0 14px 39px;border:1px solid rgba(56,189,248,.20);border-radius:8px;background:var(--code);overflow:hidden}
+  .tool-head{display:flex;align-items:center;gap:8px;min-height:32px;padding:6px 11px;border-bottom:1px solid rgba(255,255,255,.06);font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:10.5px;color:#c7cbd1}
+  .tool-head .ok{width:6px;height:6px;border-radius:50%;background:#34d399;flex:0 0 6px}
+  .tool-head .cmd{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#e4e4e7}
+  .tool-head .status{margin-left:auto;color:var(--mute);font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+  .tool pre{margin:0;padding:9px 12px;max-height:112px;overflow:auto;font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:9.5px;line-height:1.55;color:#9ca3af;white-space:pre-wrap}
+  .tool .muted{padding:9px 12px;font-family:"JetBrains Mono",monospace;font-size:9px;color:#5f6670}
+  .side .panel-head{justify-content:flex-start;gap:8px}
+  .evidence{flex:1;overflow:auto;padding:12px 14px 16px;display:flex;flex-direction:column;gap:10px}
+  .evidence::-webkit-scrollbar{width:7px}
+  .evidence::-webkit-scrollbar-thumb{background:#252b34;border-radius:8px}
+  .context{border:1px solid var(--hair);border-radius:9px;background:rgba(6,10,18,.62);padding:12px 13px}
+  .context h3{margin:0 0 8px;font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute);font-weight:500}
+  .kv{display:flex;justify-content:space-between;gap:12px;font-family:"JetBrains Mono",monospace;font-size:10px;line-height:1.7;color:#9ca3af}
+  .kv span:first-child{color:#5f6670}
+  .kv span:last-child{text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:68%}
+  .ev-card{border:1px solid var(--hair);border-left:2px solid var(--sky);border-radius:7px;background:rgba(6,10,18,.62);padding:10px 11px}
+  .ev-card .name{font-family:"JetBrains Mono",monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:#7dd3fc;margin-bottom:5px}
+  .ev-card .cmd{font-family:"JetBrains Mono",monospace;font-size:9.5px;line-height:1.5;color:#d4d4d8;word-break:break-word}
+  .ev-card .out{font-family:"JetBrains Mono",monospace;font-size:8.8px;line-height:1.5;color:var(--mute);margin-top:6px;max-height:90px;overflow:hidden;white-space:pre-wrap}
+  .empty{font-size:12px;line-height:1.6;color:var(--mute);padding:8px 2px}
+  .side-foot{flex:0 0 34px;border-top:1px solid var(--hair);display:flex;align-items:center;gap:8px;padding:0 14px;font-family:"JetBrains Mono",monospace;font-size:9px;color:var(--mute);white-space:nowrap;overflow:hidden}
+  .side-foot code{color:#9ca3af;overflow:hidden;text-overflow:ellipsis}
+  .caption-bar{height:50px;flex:0 0 50px;display:flex;align-items:center;gap:14px;padding:0 16px;border:1px solid rgba(56,189,248,.28);border-left:3px solid var(--sky);border-radius:0 8px 8px 0;background:linear-gradient(90deg,rgba(14,165,233,.16),rgba(14,165,233,.07));box-shadow:0 0 26px rgba(14,165,233,.09);opacity:0;transform:translateY(3px);transition:opacity .28s ease,transform .28s ease;overflow:hidden}
+  .caption-bar.show{opacity:1;transform:none}
+  .caption-kicker{display:inline-flex;align-items:center;gap:8px;font-family:"JetBrains Mono",monospace;font-size:17px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#e0f2fe;white-space:nowrap;text-shadow:0 0 18px rgba(56,189,248,.38)}
+  .caption-kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:#7dd3fc;box-shadow:0 0 10px rgba(56,189,248,.95);animation:capPulse 1.4s ease-in-out infinite}
+  .caption-title{font-size:13px;font-weight:600;color:#f4f4f5;white-space:nowrap}
+  .caption-body{font-size:11.5px;color:#c7cbd1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  @keyframes capPulse{0%,100%{opacity:.45;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+  footer{height:24px;flex:0 0 24px;display:flex;align-items:center;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:9.5px;color:#5f6670;letter-spacing:.02em}
+  footer .right{display:flex;align-items:center;gap:7px}
+  footer .right i{width:5px;height:5px;border-radius:50%;background:var(--sky);display:inline-block}
+
+  /* Intro and outro are part of every recording. */
+  .intro,.outro{position:absolute;inset:0;z-index:30;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+  .intro::before,.outro::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.032) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.032) 1px,transparent 1px);background-size:40px 40px;mask-image:linear-gradient(to bottom,black,transparent 92%)}
+  .intro{padding:38px 48px 30px;transition:opacity .45s ease,visibility .45s ease}
+  .intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+  .intro-top,.outro-top{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:20px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--mute)}
+  .intro-kicker{color:#7dd3fc}
+  .intro-center,.outro-center{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:0 40px}
+  .intro-logo{height:94px;width:auto;display:block;opacity:0;animation:introLogo .7s .12s cubic-bezier(.22,.61,.36,1) forwards}
+  .intro-badge{display:inline-flex;margin-top:22px;padding:6px 10px;border:1px solid rgba(56,189,248,.35);border-radius:5px;background:rgba(14,165,233,.06);color:#7dd3fc;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.13em;text-transform:uppercase;opacity:0;animation:introUp .55s .4s ease-out forwards}
+  .intro h1{margin:22px 0 0;max-width:1050px;font-family:"Source Serif 4",Georgia,serif;font-size:49px;line-height:1.08;letter-spacing:-.03em;color:var(--ink);opacity:0;animation:introUp .65s .55s ease-out forwards}
+  .intro-sub{margin:18px 0 0;max-width:660px;font-size:15px;line-height:1.55;color:var(--body);opacity:0;animation:introUp .55s .8s ease-out forwards}
+  .intro-bottom,.outro-bottom{position:relative;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:20px;font-family:"JetBrains Mono",monospace;font-size:10px;letter-spacing:.03em;color:var(--mute)}
+  .intro-progress{position:absolute;left:0;bottom:0;width:100%;height:2px;background:rgba(255,255,255,.06);z-index:2}
+  .intro-progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#0ea5e9,#38bdf8);animation:introProgress var(--intro-ms,2800ms) linear forwards}
+  .outro{display:none;padding:38px 48px 30px;opacity:0}
+  .outro.show{display:flex;animation:outroIn .55s ease-out forwards}
+  .outro .outro-logo{height:82px;width:auto;display:block;opacity:0;animation:introLogo .6s .1s cubic-bezier(.22,.61,.36,1) forwards}
+  .outro h2{margin:22px 0 0;max-width:1000px;font-family:"Source Serif 4",Georgia,serif;font-size:50px;line-height:1.08;letter-spacing:-.03em;color:var(--ink);opacity:0;animation:introUp .6s .3s ease-out forwards}
+  .outro-sub{margin:14px 0 0;max-width:650px;font-size:15px;line-height:1.55;color:var(--body);opacity:0;animation:introUp .5s .5s ease-out forwards}
+  .outro-command{display:flex;align-items:center;gap:10px;margin-top:24px;padding:12px 15px;border:1px solid var(--hair);border-radius:7px;background:var(--code);font-family:"JetBrains Mono",monospace;font-size:12px;color:#c7cbd1;opacity:0;animation:introUp .5s .65s ease-out forwards}
+  .outro-command .prompt{color:var(--sky)}
+  .outro-link{margin-top:18px;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--mute);opacity:0;animation:introUp .5s .8s ease-out forwards}
+  @keyframes introLogo{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+  @keyframes introUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @keyframes outroIn{from{opacity:0}to{opacity:1}}
+  @keyframes introProgress{from{width:0}to{width:100%}}
+</style>
+</head>
+<body>
+<div class="frame">
+<div class="stage">
+  <div class="accent"></div>
+  <header class="top">
+    <div class="brand">
+      <img src="__LOGO__" alt="rgctl">
+      <span class="badge">agent demo</span>
+      <span class="guide" id="guide"></span>
+    </div>
+    <div class="meta">
+      <span id="agent"></span>
+      <span class="dot"></span>
+      <span id="model"></span>
+    </div>
+  </header>
+  <main class="main">
+    <section class="panel chat">
+      <div class="panel-head"><span><span class="live">●</span> session</span><span id="counter"></span></div>
+      <div class="messages" id="messages"></div>
+    </section>
+    <aside class="panel side">
+      <div class="panel-head"><span>Evidence</span></div>
+      <div class="evidence" id="evidence">
+        <div class="context">
+          <h3>Run context</h3>
+          <div class="kv"><span>fixture</span><span id="fixture"></span></div>
+          <div class="kv"><span>agent</span><span id="ctx-agent"></span></div>
+          <div class="kv"><span>model</span><span id="ctx-model"></span></div>
+          <div class="kv"><span>questions</span><span id="ctx-questions"></span></div>
+        </div>
+        <div class="empty" id="empty">Tool calls and graph evidence appear here as the agent works.</div>
+      </div>
+      <div class="side-foot"><span>cwd</span><code id="cwd"></code></div>
+    </aside>
+  </main>
+  <div class="caption-bar" id="caption-bar">
+    <span class="caption-kicker">Why it matters</span>
+    <span class="caption-title" id="caption-title"></span>
+    <span class="caption-body" id="caption-body"></span>
+  </div>
+  <footer>
+    <span>rgctl.io · agent walkthrough</span>
+    <span class="right"><i></i><span>graph-backed answers, not guesses</span></span>
+  </footer>
+</div>
+
+<div class="intro" id="intro">
+  <div class="accent"></div>
+  <div class="intro-top"><span class="intro-kicker">rgctl · agent demo</span><span>coding-agent walkthrough</span></div>
+  <div class="intro-center">
+    <img class="intro-logo" src="__LOGO__" alt="rgctl">
+    <span class="intro-badge">A question. A graph-backed answer.</span>
+    <h1 id="intro-title"></h1>
+    <p class="intro-sub">One question, answered by a coding agent using the rgctl code knowledge graph.</p>
+  </div>
+  <div class="intro-bottom"><span id="intro-guide"></span><span>rgctl.io</span></div>
+  <div class="intro-progress"><i></i></div>
+</div>
+
+<div class="outro" id="outro">
+  <div class="accent"></div>
+  <div class="outro-top"><span class="intro-kicker">rgctl · agent demo</span><span>open source · MIT · Rust</span></div>
+  <div class="outro-center">
+    <img class="outro-logo" src="__LOGO__" alt="rgctl">
+    <h2>Give your agent the graph.</h2>
+    <p class="outro-sub">Index once. Query compact JSON. Ask better questions about what breaks, what changed, and what is reachable.</p>
+    <div class="outro-command"><span class="prompt">$</span><span>curl -fsSL https://rgctl.io/install.sh | sh</span></div>
+    <p class="outro-link" id="outro-guide"></p>
+  </div>
+  <div class="outro-bottom"><span>github.com/rgctl/rgctl</span><span>rgctl.io</span></div>
+</div>
+</div>
+
+<script>
+  const timeline = __TIMELINE__;
+  const meta = timeline.meta || {};
+  const intro = document.getElementById("intro");
+  const outro = document.getElementById("outro");
+  document.documentElement.style.setProperty("--intro-ms", `${meta.introMs ?? 2800}ms`);
+  document.getElementById("intro-title").textContent = meta.title || "";
+  document.getElementById("intro-guide").textContent = `rgctl.io${meta.guide || ""}`;
+  document.getElementById("outro-guide").textContent = `full guide · rgctl.io${meta.guide || ""}`;
+  const messages = document.getElementById("messages");
+  const evidence = document.getElementById("evidence");
+  const captionBar = document.getElementById("caption-bar");
+  const captionTitle = document.getElementById("caption-title");
+  const captionBody = document.getElementById("caption-body");
+  let captionKey = "";
+  let captionPriority = 0;
+  const empty = document.getElementById("empty");
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  document.getElementById("guide").textContent = meta.title || meta.slug || "";
+  document.getElementById("agent").textContent = meta.agentLabel || meta.agent || "";
+  document.getElementById("model").textContent = meta.model || "";
+  document.getElementById("fixture").textContent = meta.fixture || "";
+  document.getElementById("ctx-agent").textContent = meta.agent || "";
+  document.getElementById("ctx-model").textContent = meta.model || "";
+  document.getElementById("ctx-questions").textContent = String(meta.questionCount || 0);
+  document.getElementById("cwd").textContent = meta.fixture || "";
+  document.getElementById("counter").textContent = meta.questionCount
+    ? `${meta.questionCount} questions`
+    : "";
+
+  function scroll() {
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  function resetCaptionPriority() {
+    captionPriority = 0;
+  }
+
+  function showCaption(caption) {
+    if (!caption || caption.key === captionKey) return;
+    if ((caption.priority ?? 0) < captionPriority) return;
+    captionPriority = caption.priority ?? 0;
+    captionKey = caption.key;
+    captionTitle.textContent = caption.title;
+    captionBody.textContent = caption.body;
+    captionBar.classList.add("show");
+  }
+
+  function addUser(text) {
+    resetCaptionPriority();
+    const wrap = document.createElement("div");
+    wrap.className = "msg user";
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    bubble.textContent = text;
+    wrap.appendChild(bubble);
+    messages.appendChild(wrap);
+    scroll();
+  }
+
+  function addAssistant(text, html) {
+    const wrap = document.createElement("div");
+    wrap.className = "msg assistant";
+    const avatar = document.createElement("div");
+    avatar.className = "avatar";
+    avatar.textContent = "rg";
+    const body = document.createElement("div");
+    body.className = "body";
+    const who = document.createElement("div");
+    who.className = "who";
+    who.textContent = "rgctl agent";
+    const bubble = document.createElement("div");
+    bubble.className = "bubble";
+    if (html) bubble.innerHTML = html;
+    else bubble.textContent = text;
+    body.append(who, bubble);
+    wrap.append(avatar, body);
+    messages.appendChild(wrap);
+    scroll();
+  }
+
+  function commandOf(tool) {
+    const input = tool.input || {};
+    if (typeof input.command === "string") return input.command;
+    if (typeof input.cmd === "string") return input.cmd;
+    if (typeof input === "string") return input;
+    return JSON.stringify(input);
+  }
+
+  function addTool(tool) {
+    const toolCommand = commandOf(tool);
+    // Evidence is graph evidence. Drop exploratory grep/read/ls calls so the
+    // panel shows the rgctl queries, not generic file searching.
+    if (tool.name !== "Bash" || !/(^|\s)rgctl(?:\s|$)/.test(toolCommand)) return;
+    showCaption(tool.caption);
+    // The session pane is for the conversation: questions and answers only.
+    // Commands and tool results belong in the Evidence panel.
+    if (empty) empty.remove();
+
+    const card = document.createElement("div");
+    card.className = "ev-card";
+    const name = document.createElement("div");
+    name.className = "name";
+    name.textContent = tool.name || "tool";
+    const command = document.createElement("div");
+    command.className = "cmd";
+    command.textContent = commandOf(tool);
+    const out = document.createElement("div");
+    out.className = "out";
+    out.textContent = String(tool.output || "").slice(0, 420);
+    card.append(name, command, out);
+    evidence.appendChild(card);
+    evidence.scrollTop = evidence.scrollHeight;
+  }
+
+  async function play() {
+    const introMs = meta.introMs ?? 2800;
+    if (introMs > 0) await sleep(introMs);
+    else intro.remove();
+    if (intro) {
+      intro.classList.add("hide");
+      await sleep(450);
+    }
+
+    for (const event of timeline.events || []) {
+      if (event.type === "user") addUser(event.text);
+      else if (event.type === "assistant") addAssistant(event.text, event.html);
+      else if (event.type === "tool") addTool(event);
+      await sleep(meta.pauseMs ?? 650);
+    }
+    await sleep(meta.endPauseMs ?? 1000);
+
+    const outroMs = meta.outroMs ?? 3000;
+    if (outro && outroMs > 0) {
+      outro.classList.add("show");
+      await sleep(outroMs);
+    }
+    window.__done = true;
+  }
+
+  captionTitle.textContent = "Graph-backed answers, not text matches";
+  captionBody.textContent = "Resolved symbols, callers, and data flow — not lines that happen to contain a string.";
+  captionBar.classList.add("show");
+
+  window.__done = false;
+  play().catch((error) => {
+    console.error(error);
+    window.__error = String(error);
+    window.__done = true;
+  });
+</script>
+</body>
+</html>

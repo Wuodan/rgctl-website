@@ -1,13 +1,13 @@
 /**
  * Copy demo media into public/demos/.
  * Prefer local docs/videos/, then RGCTL_REPO/docs/videos/ for the homepage CLI showcase.
- * Guide tapes live only in this repo under docs/videos/guides/<slug>.mp4.
+ * Guide demos are the agent recordings under docs/videos/agent/recordings/<slug>.mp4.
  */
 import {
   cpSync,
   existsSync,
   mkdirSync,
-  readdirSync,
+  readFileSync,
 } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -58,17 +58,29 @@ for (const [rel, name] of files) {
   console.log(`[copy-demos] ${from} → public/demos/${name}`);
 }
 
-const guidesDir = join(siteRoot, "docs/videos/guides");
-if (existsSync(guidesDir)) {
-  for (const name of readdirSync(guidesDir)) {
-    if (!name.endsWith(".mp4") || name.includes("-no-captions")) continue;
-    const slug = name.replace(/\.mp4$/, "");
-    const from = join(guidesDir, name);
-    const destName = `guide-${slug}.mp4`;
+// Agent recordings are the current guide demos. The old VHS files are no
+// longer copied; docs/videos/ is retained for the historical tape scripts.
+const agentManifestPath = join(siteRoot, "docs/videos/agent/manifest.json");
+const agentRecordings = join(siteRoot, "docs/videos/agent/recordings");
+if (existsSync(agentManifestPath) && existsSync(agentRecordings)) {
+  const manifest = JSON.parse(readFileSync(agentManifestPath, "utf8"));
+  for (const entry of manifest.scripts ?? []) {
+    if (entry.status !== "recorded" || entry.slug === "cli-command-reference") continue;
+    const from = join(agentRecordings, `${entry.slug}.mp4`);
+    if (!existsSync(from)) continue;
+    const destName = `guide-${entry.slug}.mp4`;
     cpSync(from, join(destDir, destName));
     copied += 1;
     console.log(`[copy-demos] ${from} → public/demos/${destName}`);
   }
+}
+
+// The command reference keeps its historical VHS walkthrough.
+const cliVhs = join(siteRoot, "docs/videos/user-guide-cli.mp4");
+if (existsSync(cliVhs)) {
+  cpSync(cliVhs, join(destDir, "guide-cli-command-reference.mp4"));
+  copied += 1;
+  console.log(`[copy-demos] ${cliVhs} → public/demos/guide-cli-command-reference.mp4`);
 }
 
 if (copied === 0) {
