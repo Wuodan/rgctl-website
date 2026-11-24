@@ -12,6 +12,7 @@ Live: [https://rgctl.io/](https://rgctl.io/)
 | `docs/guides/` | **SSOT** for feature guides (also published under `/docs/guides/`) |
 | `docs/videos/` | Homepage CLI demo + per-guide VHS tapes (`docs/videos/README.md`) |
 | `docs/videos/agent/` | Coding-agent question scripts and recording workspace (`docs/videos/agent/README.md`) |
+| `docs/videos/agent/voiceover/` | Voiceover scripts and ElevenLabs audio pipeline |
 | `AGENTS.md` | End-to-end guide for agents/contributors reproducing the guide videos |
 | `scripts/copy-*.mjs` | Prebuild: assemble `content/docs`, language catalog, demos |
 | `vendor/install.sh` | Fallback install script if product repo is unavailable |

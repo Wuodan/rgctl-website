@@ -77,6 +77,10 @@ for (const entry of entries) {
       fail(`${label} full demo page is missing`);
     }
   } else {
+    const voiceoverPath = path.join(base, "voiceover/script", `${entry.slug}.md`);
+    if (!existsSync(voiceoverPath)) {
+      fail(`${label} voiceover script is missing: voiceover/script/${entry.slug}.md`);
+    }
     const guidePath = path.join(websiteRoot, "docs/guides", `${entry.slug}.md`);
     if (!existsSync(guidePath)) {
       fail(`${label} guide does not exist: docs/guides/${entry.slug}.md`);

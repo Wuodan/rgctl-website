@@ -9,6 +9,7 @@ The CLI videos show the commands. These videos should show a user asking an agen
 - **New contributor:** [CONTRIBUTING.md](CONTRIBUTING.md) — setup, agent configuration, script and PR workflow.
 - **Agents:** [AGENTS.md](../../AGENTS.md) — end-to-end reproduction instructions for agents.
 - **Recording a take:** [RECORDING.md](RECORDING.md) — screen layout, capture settings, editing, and export.
+- **Voiceover scripts:** [voiceover/README.md](voiceover/README.md) — one narration script per video, plus the ElevenLabs build pipeline.
 - **Agent setup:** [config/README.md](config/README.md) — one-command fixture setup and per-agent notes.
 - **Script template:** [TEMPLATE.md](TEMPLATE.md).
 - **Automated recorder:** [automation/README.md](automation/README.md) — transcript-first Claude/OpenCode pipeline.

@@ -1,0 +1,125 @@
+{
+  "schemaVersion": 1,
+  "voice": {
+    "id": "",
+    "model": "eleven_multilingual_v2",
+    "outputFormat": "mp3_44100_128"
+  },
+  "scripts": [
+    {
+      "slug": "agent-skill",
+      "script": "script/agent-skill.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "blast-radius-analysis",
+      "script": "script/blast-radius-analysis.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "ci-policy-checks",
+      "script": "script/ci-policy-checks.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "cli-command-reference",
+      "script": "script/cli-command-reference.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "clone-detection",
+      "script": "script/clone-detection.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "community-detection",
+      "script": "script/community-detection.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "dead-code-detection",
+      "script": "script/dead-code-detection.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "dependency-injection-and-frameworks",
+      "script": "script/dependency-injection-and-frameworks.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "discovering-and-indexing",
+      "script": "script/discovering-and-indexing.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "exporting-graphs",
+      "script": "script/exporting-graphs.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "graph-metrics",
+      "script": "script/graph-metrics.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "http-server-and-dashboard",
+      "script": "script/http-server-and-dashboard.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "hybrid-cpg",
+      "script": "script/hybrid-cpg.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "inspecting-cfg-pdg-dominance",
+      "script": "script/inspecting-cfg-pdg-dominance.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "markdown-context-graph",
+      "script": "script/markdown-context-graph.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "migration-planning",
+      "script": "script/migration-planning.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "pr-review",
+      "script": "script/pr-review.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "program-slicing",
+      "script": "script/program-slicing.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "semantic-search",
+      "script": "script/semantic-search.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "structured-query",
+      "script": "script/structured-query.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "vulnerability-and-osv-analysis",
+      "script": "script/vulnerability-and-osv-analysis.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "vulnerability-reachability",
+      "script": "script/vulnerability-reachability.md",
+      "status": "scripted"
+    },
+    {
+      "slug": "watch-mode",
+      "script": "script/watch-mode.md",
+      "status": "scripted"
+    }
+  ]
+}
