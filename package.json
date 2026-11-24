@@ -19,7 +19,11 @@
     "agent:record:all": "node docs/videos/agent/automation/record-all.mjs",
     "voiceover:build": "node docs/videos/agent/voiceover/build.mjs",
     "voiceover:build:all": "node docs/videos/agent/voiceover/build.mjs --all --publish",
-    "voiceover:check": "node docs/videos/agent/voiceover/check.mjs"
+    "voiceover:check": "node docs/videos/agent/voiceover/check.mjs",
+    "voiceover:compose": "node docs/videos/agent/voiceover/compose.mjs",
+    "voiceover:compose:all": "node docs/videos/agent/voiceover/compose.mjs --all --publish",
+    "voiceover:shorts": "node docs/videos/agent/voiceover/shorts.mjs",
+    "voiceover:shorts:all": "node docs/videos/agent/voiceover/shorts.mjs --all --publish"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.11",

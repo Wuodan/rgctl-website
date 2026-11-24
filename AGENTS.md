@@ -24,12 +24,19 @@ docs/videos/agent/
 ├── manifest.json          # guide → script, status, recording metadata
 ├── scripts/<slug>.md      # user-voice questions and expected evidence
 ├── automation/            # recorder, Claude adapter, renderers
-├── recordings/<slug>.mp4  # final agent videos
+├── recordings/<slug>.mp4  # silent guide videos used by the site
+├── recordings/socials/
+│   ├── <slug>.mp4          # 16:9 guide + voiceover
+│   ├── <slug>.voiceover.mp3
+│   ├── shorts/<slug>.mp4   # 1080x1920 native short
+│   └── manifest.json
 ├── transcripts/<slug>.json
 ├── voiceover/
 │   ├── script/<slug>.md   # spoken narration
 │   ├── sound/<slug>.mp3   # generated voiceover
 │   ├── build.mjs          # ElevenLabs + ffmpeg pipeline
+│   ├── compose.mjs        # video + voiceover
+│   ├── shorts.mjs         # 9:16 social cutdowns
 │   ├── check.mjs
 │   └── manifest.json
 ├── setup-demo.sh          # install agent pack + index a fixture
@@ -223,14 +230,32 @@ This is the **recommended two-job setup**: one sequential video batch plus one s
 - **Keep at most one video batch and one audio batch on a small machine.** ffmpeg joins and Chromium renders are CPU-heavy; reduce parallelism before increasing it.
 - **Both pipelines resume.** Video skips `recorded`/`vhs` entries; audio skips an existing `sound/<slug>.mp3` unless `--force`. If one side fails, retry the single item, not the whole batch.
 - **Do not edit scripts while a batch reads them.** Finish question and voiceover script edits first; then start both batches.
+- **Shorts are native renders.** `shorts.mjs` does not crop the guide MP4. It renders `short.html` from the transcript, then muxes `recordings/socials/<slug>.mp4` audio. If the short layout or intro/outro changes, regenerate shorts; do not reuse an old crop.
+- **Guides stay silent.** The website uses `recordings/<slug>.mp4` only. Voiced copies and shorts live under `recordings/socials/` and must never be copied into `public/demos` or used as the guide demo.
 
-After both jobs finish, run the combined validator:
+After both jobs finish, compose the two outputs:
+
+```bash
+pnpm voiceover:compose:all
+```
+
+This writes `docs/videos/agent/recordings/socials/<slug>.mp4` with the guide picture and voiceover audio. It is a social export only; the website keeps using the silent `recordings/<slug>.mp4` guide video.
+
+Then make the vertical social cutdowns:
+
+```bash
+pnpm voiceover:shorts:all
+```
+
+This renders `docs/videos/agent/recordings/socials/shorts/<slug>.mp4` at 1080×1920 with a **native short layout** from the transcript: WHY IT MATTERS at the top, chat only, one rgctl command at a time in a bottom EVIDENCE box, and short-specific intro/outro frames. It does not crop the 16:9 guide video. The default keeps the first two question blocks; use `--questions` to change that.
+
+Finally run the combined validator:
 
 ```bash
 pnpm check:agent-videos
 ```
 
-That checks the video manifest, scripts, recordings, voiceover scripts, and generated audio references. Then build the site with `pnpm build`.
+That checks the video manifest, scripts, recordings, voiceover scripts, and generated audio references. It does not validate socials media; inspect `recordings/socials/` before publishing. Then build the site with `pnpm build`.
 
 Intro/outro and quality settings are in `docs/videos/agent/.env.demo.agent`:
 

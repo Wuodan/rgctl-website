@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "scripts": [
+    {
+      "slug": "blast-radius-analysis",
+      "title": "Blast Radius Analysis",
+      "status": "short",
+      "video": "blast-radius-analysis.mp4",
+      "audio": "blast-radius-analysis.mp4",
+      "layout": "vertical-native",
+      "template": "short.html",
+      "aspectRatio": "9:16",
+      "width": 1080,
+      "height": 1920,
+      "questions": 2,
+      "durationSec": 34.16,
+      "commands": [
+        "rgctl -f json status",
+        "rgctl -f json find \"*priceShoppingCart*\"",
+        "rgctl -f json blast-radius \"com.redhat.coolstore.service.ShoppingCartService.priceShoppingCart\" --depth 3",
+        "rgctl -f json callers \"com.redhat.coolstore.service.ShoppingCartService.priceShoppingCart\" --depth 2",
+        "rgctl -f json blast-radius \"5f952d17-4970-57b5-9abf-a7539637e550\" --depth 3",
+        "rgctl -f json callers \"priceShoppingCart\" --depth 2",
+        "rgctl -f json relations --edge exposesroute",
+        "rgctl -f json blast-radius \"priceShoppingCart\" --depth 2"
+      ],
+      "platforms": [
+        "YouTube Shorts",
+        "TikTok",
+        "Instagram Reels"
+      ],
+      "hashtags": [
+        "#rgctl",
+        "#codeintelligence",
+        "#devtools",
+        "#ai"
+      ],
+      "description": "Blast Radius Analysis \u2014 a coding agent using rgctl, the code knowledge graph for AI agents.",
+      "generatedAt": "2026-11-24T15:08:10.479Z",
+      "source": "../blast-radius-analysis.mp4"
+    }
+  ],
+  "updatedAt": "2026-11-24T15:08:10.479Z"
+}

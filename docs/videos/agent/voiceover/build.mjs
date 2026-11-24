@@ -151,13 +151,16 @@ function resolveCli() {
   };
 }
 
-const cli = !dryRun && !mock ? resolveCli() : null;
-const apiKey = !dryRun && !mock ? value(env, "ELEVENLABS_API_KEY", "") : "";
-if (!dryRun && !mock) {
+let cli = null;
+let apiKey = "";
+function ensureApi() {
+  if (cli) return;
+  apiKey = value(env, "ELEVENLABS_API_KEY", "");
   if (!apiKey) die("ELEVENLABS_API_KEY is not set in docs/videos/agent/voiceover/.env.voiceover");
   if (!voiceId) die("ELEVENLABS_VOICE_ID is not set in docs/videos/agent/voiceover/.env.voiceover");
   const ffmpeg = spawnSync("ffmpeg", ["-version"], { stdio: "ignore" });
   if (ffmpeg.error || ffmpeg.status !== 0) die("ffmpeg is required");
+  cli = resolveCli();
 }
 
 function ffprobeDuration(file) {
@@ -186,6 +189,7 @@ function synthesizeMock(text, out) {
 }
 
 function synthesizeElevenLabs(text, out) {
+  ensureApi();
   const args = [
     ...cli.prefix,
     "say", "-",

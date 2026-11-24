@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=1080, initial-scale=1">
+<title>rgctl short</title>
+<style>
+  :root {
+    --bg: #07090c;
+    --panel: #0a0e14;
+    --panel-2: #0e1116;
+    --line: #252a33;
+    --text: #e4e4e7;
+    --muted: #8b94a3;
+    --accent: #38bdf8;
+    --accent-2: #0ea5e9;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; }
+  body {
+    background: radial-gradient(circle at 50% 0%, #10202b 0%, var(--bg) 55%);
+    color: var(--text);
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .screen { position: relative; height: 1920px; display: flex; flex-direction: column; }
+
+  .top-caption {
+    flex: 0 0 240px;
+    padding: 40px 48px 28px;
+    background: linear-gradient(180deg, #0d1820 0%, #090d12 100%);
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    color: var(--accent);
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  .top-caption strong {
+    display: block;
+    margin-top: 12px;
+    font-size: 38px;
+    line-height: 1.12;
+    letter-spacing: -.02em;
+    color: #f4f4f5;
+  }
+  .top-caption p {
+    margin: 10px 0 0;
+    font-size: 24px;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  .brand {
+    flex: 0 0 92px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 0 48px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+  }
+  .brand img { width: 54px; height: 54px; }
+  .brand-name { font-size: 30px; font-weight: 800; letter-spacing: -.03em; }
+  .badge {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 6px 10px;
+    color: var(--accent);
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: .08em;
+  }
+  .brand .title { color: var(--muted); font-size: 19px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .brand .count { margin-left: auto; color: var(--muted); font-size: 18px; white-space: nowrap; }
+
+  #messages {
+    flex: 1 1 auto;
+    overflow: hidden;
+    padding: 32px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(56, 189, 248, .06), transparent 38%),
+      var(--bg);
+  }
+  .msg { max-width: 92%; }
+  .msg.user { align-self: flex-end; }
+  .msg .role {
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    margin: 0 0 8px 4px;
+  }
+  .bubble {
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    background: var(--panel-2);
+    padding: 22px 26px;
+    font-size: 28px;
+    line-height: 1.42;
+    color: #dfe3ea;
+    overflow-wrap: anywhere;
+  }
+  .msg.user .bubble {
+    background: linear-gradient(135deg, #0b4a63, #0c3b50);
+    border-color: #176b88;
+    color: #f0f9ff;
+  }
+  .msg.assistant .bubble p { margin: 0 0 12px; }
+  .msg.assistant .bubble p:last-child { margin-bottom: 0; }
+  .msg.assistant .bubble code {
+    background: #151b23; border: 1px solid #252a33; border-radius: 6px;
+    padding: 1px 6px; color: #bae6fd; font-size: .9em;
+  }
+  .msg.assistant .bubble pre {
+    margin: 12px 0 0; padding: 16px; border-radius: 12px;
+    background: #070a0e; color: #cbd5e1; font-size: 20px;
+    line-height: 1.4; white-space: pre-wrap; overflow-wrap: anywhere;
+  }
+  .msg.assistant .bubble ul { margin: 10px 0 0 24px; padding: 0; }
+  .msg.assistant .bubble li { margin: 6px 0; }
+
+  .command-box {
+    flex: 0 0 262px;
+    margin: 0 48px 28px;
+    border: 1px solid #1b3a4a;
+    border-top: 2px solid var(--accent);
+    border-radius: 14px;
+    background: rgba(10, 14, 20, .96);
+    padding: 22px 26px;
+    overflow: hidden;
+  }
+  .command-box .label {
+    color: var(--accent);
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+  }
+  .command-box pre {
+    margin: 16px 0 0;
+    color: #f1f5f9;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 21px;
+    line-height: 1.38;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .footer {
+    flex: 0 0 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 48px 14px;
+    color: var(--muted);
+    font-size: 18px;
+  }
+  .footer strong { color: var(--accent); font-weight: 700; }
+
+  .intro, .outro {
+    position: absolute; inset: 0; z-index: 20;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 90px 76px;
+    background:
+      radial-gradient(circle at 50% 25%, #123040 0%, #080b0f 60%),
+      var(--bg);
+    opacity: 0; visibility: hidden; transition: opacity 420ms ease, visibility 420ms ease;
+  }
+  .intro.show, .outro.show { opacity: 1; visibility: visible; }
+  .intro .logo { width: 118px; height: 118px; margin-bottom: 44px; }
+  .intro h1, .outro h2 {
+    margin: 20px 0 0;
+    font-size: 78px;
+    line-height: 1.02;
+    letter-spacing: -.045em;
+    color: #fafafa;
+  }
+  .intro .guide { margin: 24px 0 0; color: #b6c2d1; font-size: 32px; line-height: 1.35; }
+  .intro .hook { margin: 44px 0 0; color: var(--accent); font-size: 28px; font-weight: 700; letter-spacing: .02em; }
+  .intro .rule, .outro .rule { width: 150px; height: 4px; margin-top: 42px; border-radius: 99px; background: var(--accent); }
+  .outro .big { margin: 22px 0 0; color: #fafafa; font-size: 64px; line-height: 1.08; letter-spacing: -.04em; }
+  .outro .cta { margin: 48px 0 0; color: var(--accent); font-size: 34px; font-weight: 800; }
+  .outro .sub { margin: 16px 0 0; color: #c0cad8; font-size: 27px; line-height: 1.4; }
+  .outro .community { margin-top: 34px; padding: 22px 26px; border: 1px solid #1b3a4a; border-radius: 16px; background: #0a1118; }
+  .outro .community strong { display: block; color: var(--accent); font-size: 23px; letter-spacing: .14em; text-transform: uppercase; }
+  .outro .community span { display: block; margin-top: 10px; color: #dbe5ef; font-size: 26px; }
+  .outro .fine { margin-top: 30px; color: #6f7b8a; font-size: 19px; }
+</style>
+</head>
+<body>
+<div class="screen">
+  <div class="top-caption">
+    <div class="eyebrow">Why it matters</div>
+    <strong id="caption-title">Call-graph impact, not a text search</strong>
+    <p id="caption-body">Resolved callers and external entry points make the change reviewable.</p>
+  </div>
+
+  <div class="brand">
+    <img id="logo" alt="rgctl">
+    <span class="brand-name">rgctl</span>
+    <span class="badge">SHORT</span>
+    <span class="title" id="guide"></span>
+    <span class="count" id="count"></span>
+  </div>
+
+  <div id="messages"></div>
+
+  <div class="command-box">
+    <div class="label">Evidence</div>
+    <pre id="command">Waiting for the first rgctl command…</pre>
+  </div>
+
+  <div class="footer">
+    <span><strong>rgctl.io</strong> · code knowledge graph for AI agents</span>
+    <span><strong>@rgctl</strong></span>
+  </div>
+
+  <div class="intro show" id="intro">
+    <img class="logo" id="intro-logo" alt="rgctl">
+    <div class="eyebrow">60-second rgctl guide</div>
+    <h1 id="intro-title">Blast Radius</h1>
+    <div class="guide" id="intro-guide">A coding agent answers one question with the graph.</div>
+    <div class="hook">One question. A graph-backed answer.</div>
+    <div class="rule"></div>
+  </div>
+
+  <div class="outro" id="outro">
+    <div class="eyebrow">Try rgctl</div>
+    <h2>Index once.<br>Ask better questions.</h2>
+    <div class="big">Start at rgctl.io/install</div>
+    <div class="cta">Join the community</div>
+    <div class="community">
+      <strong>Discord</strong>
+      <span>rgctl.io/community</span>
+      <strong style="margin-top:16px">GitHub</strong>
+      <span>github.com/rgctl/rgctl</span>
+    </div>
+    <div class="sub">If you build something with rgctl, we would love to see it.</div>
+    <div class="fine">Open source · MIT · built in Rust</div>
+  </div>
+</div>
+<script>
+  const timeline = __TIMELINE__;
+  const meta = timeline.meta || {};
+  const logo = "__LOGO__";
+  document.getElementById("logo").src = logo;
+  document.getElementById("intro-logo").src = logo;
+  document.getElementById("intro-title").textContent = meta.shortTitle || meta.title || "rgctl";
+  document.getElementById("intro-guide").textContent = meta.shortGuide || "A coding agent answers one question with the graph.";
+  document.getElementById("guide").textContent = meta.title || "";
+  const count = meta.questionCount || 0;
+  document.getElementById("count").textContent = count ? `${count} questions` : "";
+  document.getElementById("caption-title").textContent = meta.captionTitle || "Graph-backed answers, not text matches";
+  document.getElementById("caption-body").textContent = meta.captionBody || "Resolved symbols, callers, and data flow instead of a text search.";
+
+  const messages = document.getElementById("messages");
+  const command = document.getElementById("command");
+  const intro = document.getElementById("intro");
+  const outro = document.getElementById("outro");
+  const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+  function scroll() { messages.scrollTop = messages.scrollHeight; }
+
+  function addUser(text) {
+    const wrap = document.createElement("div");
+    wrap.className = "msg user";
+    wrap.innerHTML = '<div class="role">Question</div><div class="bubble"></div>';
+    wrap.querySelector(".bubble").textContent = text;
+    messages.appendChild(wrap);
+    scroll();
+  }
+
+  function addAssistant(text, html) {
+    const wrap = document.createElement("div");
+    wrap.className = "msg assistant";
+    wrap.innerHTML = '<div class="role">rgctl agent</div><div class="bubble"></div>';
+    const bubble = wrap.querySelector(".bubble");
+    if (html) bubble.innerHTML = html;
+    else bubble.textContent = text;
+    messages.appendChild(wrap);
+    scroll();
+  }
+
+  function showCaption(caption) {
+    if (!caption) return;
+    if (caption.title) document.getElementById("caption-title").textContent = caption.title;
+    if (caption.body) document.getElementById("caption-body").textContent = caption.body;
+  }
+
+  function showCommand(value) {
+    const line = String(value || "").split(/\r?\n/).find((item) => /^\s*rgctl\b/.test(item.replace(/^\s*cd\s+[^&;]+\s*&&\s*/, ""))) || "";
+    if (!line) return;
+    command.textContent = line.replace(/\s*2>&1.*$/, "").replace(/\s*\|\s*(head|tail|jq|grep)\b.*$/, "").trim();
+  }
+
+  async function play() {
+    await sleep(meta.introMs ?? 2200);
+    intro.classList.remove("show");
+    await sleep(420);
+
+    for (const event of timeline.events || []) {
+      if (event.type === "user") addUser(event.text);
+      else if (event.type === "assistant") addAssistant(event.text, event.html);
+      else if (event.type === "tool") {
+        showCommand(event.input?.command);
+        showCaption(event.caption);
+      }
+      await sleep(meta.pauseMs ?? 900);
+    }
+
+    await sleep(meta.endPauseMs ?? 900);
+    outro.classList.add("show");
+    await sleep(meta.outroMs ?? 2800);
+    window.__done = true;
+  }
+
+  window.__done = false;
+  play().catch((error) => {
+    console.error(error);
+    window.__error = String(error);
+    window.__done = true;
+  });
+</script>
+</body>
+</html>

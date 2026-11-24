@@ -60,7 +60,11 @@ export async function renderTimeline({
   ensureDir(rawDir);
   ensureDir(path.dirname(output));
 
-  const templateName = timeline.meta?.theme === "dashboard" ? "dashboard.html" : "index.html";
+  const templateName = timeline.meta?.theme === "dashboard"
+    ? "dashboard.html"
+    : timeline.meta?.theme === "short"
+      ? "short.html"
+      : "index.html";
   const templatePath = path.join(baseDir, "automation/renderer", templateName);
   const logoPath = path.resolve(baseDir, "../../../public/brand/rgctl-logo-dark.svg");
   const template = fs.readFileSync(templatePath, "utf8");

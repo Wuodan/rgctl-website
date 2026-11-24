@@ -66,6 +66,8 @@ if (existsSync(agentManifestPath) && existsSync(agentRecordings)) {
   const manifest = JSON.parse(readFileSync(agentManifestPath, "utf8"));
   for (const entry of manifest.scripts ?? []) {
     if (entry.status !== "recorded" || entry.slug === "cli-command-reference") continue;
+    // Guides stay silent on the site. Voiced social copies live under
+    // recordings/socials and are intentionally not copied here.
     const from = join(agentRecordings, `${entry.slug}.mp4`);
     if (!existsSync(from)) continue;
     const destName = `guide-${entry.slug}.mp4`;
