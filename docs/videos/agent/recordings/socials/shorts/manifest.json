@@ -6,7 +6,7 @@
       "title": "Blast Radius Analysis",
       "status": "short",
       "video": "blast-radius-analysis.mp4",
-      "audio": "blast-radius-analysis.mp4",
+      "audio": "shorts/blast-radius-analysis.voiceover.wav",
       "layout": "vertical-native",
       "template": "short.html",
       "aspectRatio": "9:16",
@@ -36,9 +36,12 @@
         "#ai"
       ],
       "description": "Blast Radius Analysis \u2014 a coding agent using rgctl, the code knowledge graph for AI agents.",
-      "generatedAt": "2026-11-24T15:08:10.479Z",
-      "source": "../blast-radius-analysis.mp4"
+      "generatedAt": "2026-11-24T15:16:09.788Z",
+      "source": "../blast-radius-analysis.mp4",
+      "voiceProvider": "deepseek",
+      "voiceId": "stella",
+      "voiceScript": "../../voiceover/short/blast-radius-analysis.md"
     }
   ],
-  "updatedAt": "2026-11-24T15:08:10.479Z"
+  "updatedAt": "2026-11-24T15:16:09.789Z"
 }

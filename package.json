@@ -23,7 +23,8 @@
     "voiceover:compose": "node docs/videos/agent/voiceover/compose.mjs",
     "voiceover:compose:all": "node docs/videos/agent/voiceover/compose.mjs --all --publish",
     "voiceover:shorts": "node docs/videos/agent/voiceover/shorts.mjs",
-    "voiceover:shorts:all": "node docs/videos/agent/voiceover/shorts.mjs --all --publish"
+    "voiceover:shorts:all": "node docs/videos/agent/voiceover/shorts.mjs --all --publish",
+    "voiceover:tts:deepseek": "node docs/videos/agent/voiceover/deepseek-tts.mjs"
   },
   "dependencies": {
     "@next/third-parties": "^16.2.11",

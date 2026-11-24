@@ -118,6 +118,35 @@ docs/videos/agent/voiceover/manifest.json
 
 The per-section stems are ignored by git; the combined MP3 is the reviewable deliverable.
 
+## DeepSeek TTS alternative
+
+DeepSeek also has a Text-to-Speech API. It is much simpler than ElevenLabs: two
+fixed voices (`stella`, default, and `tide`), ten languages, WAV/PCM output, and
+no voice cloning or speed control.
+
+Use it for short-form narration:
+
+```bash
+node docs/videos/agent/voiceover/deepseek-tts.mjs \
+  --script docs/videos/agent/voiceover/short/blast-radius-analysis.md \
+  --output docs/videos/agent/recordings/socials/shorts/blast-radius-analysis.voiceover.wav \
+  --voice stella
+```
+
+The provider reads `DEEPSEEK_API_KEY` from `.env.voiceover`, falls back to
+`.env.demo.agent`, and calls `POST https://api.deepseek.com/v1/tools/tts`.
+
+Then pass the track to the native short renderer:
+
+```bash
+pnpm voiceover:shorts -- --slug blast-radius-analysis \
+  --audio docs/videos/agent/recordings/socials/shorts/blast-radius-analysis.voiceover.wav \
+  --force --publish
+```
+
+For a final, normalized social track, run the WAV through `loudnorm` before
+muxing; the blast-radius example is normalized to about −17 dB mean.
+
 ### Validate
 
 ```bash

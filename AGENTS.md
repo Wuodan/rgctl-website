@@ -198,6 +198,11 @@ Use `--dry-run` to inspect the parsed sections without calling the API, and `--m
 
 The pipeline uses `elevenlabs` from `PATH` or falls back to `npx --yes @elevenlabs/cli@1.13.0`. Outputs are `voiceover/sound/<slug>.mp3`; per-section stems are ignored. The generated manifest records section timings for editing.
 
+For short-form narration, DeepSeek TTS is available as a simpler provider
+(`stella`/`tide`, no cloning). Use `voiceover/deepseek-tts.mjs` and pass the WAV
+to `voiceover:shorts --audio`.
+
+
 ## Run video and audio generation in parallel
 
 Video recording and voiceover generation are independent and should run at the same time when possible. Video uses the DeepSeek/Claude runner and the fixture graph; audio uses the ElevenLabs CLI and reads only the voiceover scripts. They do not share a manifest.

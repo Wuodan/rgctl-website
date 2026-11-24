@@ -10,16 +10,27 @@ socials/
 ├── manifest.json
 └── shorts/
     ├── <slug>.mp4                # native 1080×1920 short + voiceover
+    ├── <slug>.voiceover.wav
     └── manifest.json
 ```
 
-The blast-radius example was rendered with a local `espeak-ng` placeholder voice,
-not ElevenLabs. Configure `docs/videos/agent/voiceover/.env.voiceover` and run:
+## Blast radius example
+
+- The 16:9 social copy uses a local `espeak-ng` placeholder narration.
+- The short uses **DeepSeek TTS `stella`** with a dedicated 34s short script at
+  `voiceover/short/blast-radius-analysis.md`.
+
+Regenerate the short voice and video:
 
 ```bash
-pnpm voiceover:build -- --slug blast-radius-analysis --force --publish
-pnpm voiceover:compose -- --slug blast-radius-analysis --force --publish
-pnpm voiceover:shorts -- --slug blast-radius-analysis --force --publish
+node docs/videos/agent/voiceover/deepseek-tts.mjs \
+  --script docs/videos/agent/voiceover/short/blast-radius-analysis.md \
+  --output docs/videos/agent/recordings/socials/shorts/blast-radius-analysis.voiceover.wav \
+  --voice stella
+
+pnpm voiceover:shorts -- --slug blast-radius-analysis \
+  --audio docs/videos/agent/recordings/socials/shorts/blast-radius-analysis.voiceover.wav \
+  --force --publish
 ```
 
 The website copy step deliberately does **not** read this directory; guide pages
