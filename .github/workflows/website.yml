@@ -29,10 +29,17 @@ jobs:
       - name: Checkout website
         uses: actions/checkout@v4
 
+      - name: Resolve latest rgctl release
+        id: rgctl_release
+        run: |
+          release_tag="$(curl -fsSL -o /dev/null -w '%{url_effective}' https://github.com/rgctl/rgctl/releases/latest)"
+          echo "release_tag=${release_tag##*/}" >> "$GITHUB_OUTPUT"
+
       - name: Checkout rgctl (docs + language coverage)
         uses: actions/checkout@v4
         with:
           repository: rgctl/rgctl
+          ref: ${{ steps.rgctl_release.outputs.release_tag }}
           path: .rgctl-src
 
       - uses: pnpm/action-setup@v4
